@@ -1,1 +1,1 @@
-# english-school-management
+# jungle-app-frontend

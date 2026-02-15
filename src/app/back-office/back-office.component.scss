@@ -1,0 +1,50 @@
+// Variables
+$header-height: 64px;
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 80px;
+
+// App Layout
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #F9FAFB;
+}
+
+// Main Content
+.main-content {
+  flex: 1;
+  margin-top: $header-height;
+  margin-left: $sidebar-width;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: calc(100vh - #{$header-height});
+
+  &.sidebar-collapsed {
+    margin-left: $sidebar-collapsed-width;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+
+    &.sidebar-collapsed {
+      margin-left: 0;
+    }
+  }
+}
+
+// Content Wrapper
+.content-wrapper {
+  padding: 24px;
+  max-width: 1400px;
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+// Dark Mode
+:host-context(.dark-mode) {
+  .app-layout {
+    background: #111827;
+  }
+}
+

@@ -1,32 +1,72 @@
+// =============================================
+// IMPORTS
+// =============================================
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-
 @import 'swiper/css';
-@import  'swiper/css/pagination';
+@import 'swiper/css/pagination';
 @import 'swiper/css/navigation';
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
+// =============================================
+// VARIABLES GLOBALES
+// =============================================
+:root {
+  // Couleurs principales
+  --green:             #0ea37a;
+  --green-dark:        #0b8a68;
+  --green-light:       #e6f7f2;
+  --green-glow:        rgba(14, 163, 122, 0.18);
 
-body {
-  font-family: 'Rubik', sans-serif;
-  margin: 0;
-  padding: 0;
+  // Alias school (même couleur)
+  --school-primary:    #0ea37a;
+  --school-primary-dark: #0b8a68;
+
+  // Backgrounds
+  --white:             #ffffff;
+  --bg:                #f4f7f6;
+  --sidebar-bg:        #ffffff;
+  --chat-bg:           #f0f4f3;
+
+  // Bordures & ombres
+  --border:            #e2ebe8;
+  --shadow:            0 2px 16px rgba(14, 163, 122, 0.10);
+
+  // Textes
+  --text:              #1a2e28;
+  --text-sub:          #6b8f84;
+  --text-muted:        #a0b8b2;
+
+  // UI
+  --radius:            16px;
+  --radius-sm:         10px;
+  --transition:        all 0.25s cubic-bezier(.4, 0, .2, 1);
 }
 
+// =============================================
+// BASE
+// =============================================
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 html {
   scroll-behavior: smooth;
 }
 
+body {
+  font-family: 'Nunito', sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
 section {
   scroll-margin-top: 80px;
-}
-
-:root {
-  --school-primary: #0ea37a;
-  --school-primary-dark: #0b8a66;
 }

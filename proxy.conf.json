@@ -1,0 +1,15 @@
+{
+  "/api": {
+    "target": "http://localhost:8085/pi",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/img": {
+    "target": "http://localhost:8085/pi/img",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/img": ""
+    }
+  }
+}

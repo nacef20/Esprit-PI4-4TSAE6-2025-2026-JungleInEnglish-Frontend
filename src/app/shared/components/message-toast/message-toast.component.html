@@ -1,0 +1,8 @@
+@if (messageService.current(); as msg) {
+  <div class="toast" [class]="'toast--' + msg.type" role="alert">
+    <span>{{ msg.text }}</span>
+    <button type="button" class="toast__dismiss" (click)="messageService.dismiss()" aria-label="Fermer">
+      ×
+    </button>
+  </div>
+}

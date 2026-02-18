@@ -1,0 +1,34 @@
+<div class="user-list">
+  <header class="user-list__header">
+    <h1>Utilisateurs</h1>
+    <a routerLink="/users/create" class="btn btn--primary">Nouvel utilisateur</a>
+  </header>
+
+  @if (loading()) {
+    <p class="user-list__loading">Chargement…</p>
+  } @else if (users().length === 0) {
+    <p class="user-list__empty">Aucun utilisateur. <a routerLink="/users/create">Créer le premier</a>.</p>
+  } @else {
+    <ul class="user-list__grid">
+      @for (user of users(); track user.id) {
+        <li class="user-card">
+          <div class="user-card__body">
+            <h2 class="user-card__name">{{ user.name }}</h2>
+            <p class="user-card__email">{{ user.email }}</p>
+          </div>
+          <div class="user-card__actions">
+            <a [routerLink]="['/users', user.id, 'edit']" class="btn btn--secondary">Modifier</a>
+            <button
+              type="button"
+              class="btn btn--danger"
+              [disabled]="deletingId() === user.id"
+              (click)="delete(user)"
+            >
+              {{ deletingId() === user.id ? 'Suppression…' : 'Supprimer' }}
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

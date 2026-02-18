@@ -1,0 +1,75 @@
+<div class="container">
+    <div class="page-header">
+        <h1>🛒 Nos Produits</h1>
+        <p>Découvrez notre sélection de produits</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-bar">
+            <input type="text" placeholder="Rechercher un produit..." [ngModel]="search()"
+                (ngModelChange)="onSearch($event)" />
+        </div>
+        @if (auth.isLoggedIn()) {
+        <a routerLink="/products/create" class="btn btn-primary">+ Nouveau Produit</a>
+        }
+        <div class="flex gap-1">
+            <button class="btn btn-sm" [class.btn-primary]="selectedCategory() === ''"
+                [class.btn-secondary]="selectedCategory() !== ''" (click)="onCategoryFilter('')">Tous</button>
+            @for (cat of categories(); track cat.id) {
+            <button class="btn btn-sm" [class.btn-primary]="selectedCategory() === cat.name"
+                [class.btn-secondary]="selectedCategory() !== cat.name" (click)="onCategoryFilter(cat.name)">{{ cat.name
+                }}</button>
+            }
+        </div>
+    </div>
+
+    @if (loading()) {
+    <div class="loading-center">
+        <div class="spinner"></div>
+    </div>
+    } @else if (products().length === 0) {
+    <div class="empty-state">
+        <div class="empty-state__icon">📦</div>
+        <div class="empty-state__title">Aucun produit trouvé</div>
+        <p class="text-muted">Essayez avec d'autres critères de recherche</p>
+    </div>
+    } @else {
+    <div class="product-grid">
+        @for (p of products(); track p.id) {
+        <div class="card">
+            <div class="card__img">
+                <img [src]="productService.getImageUrl(p.image!)" [alt]="p.title" loading="lazy">
+            </div>
+            <div class="card__body">
+                <div class="card__title">{{ p.title }}</div>
+                <p class="card__text">{{ p.category }}</p>
+                <div class="flex-between mt-1">
+                    <div>
+                        <span class="price">{{ p.discountPrice | number:'1.2-2' }} TND</span>
+                        @if (p.discount > 0) {
+                        <span class="price--old">{{ p.price | number:'1.2-2' }} TND</span>
+                        }
+                    </div>
+                    @if (p.discount > 0) {
+                    <span class="discount-badge">-{{ p.discount }}%</span>
+                    }
+                </div>
+            </div>
+            <div class="card__footer">
+                <a [routerLink]="['/products', p.id]" class="btn btn-sm btn-outline">Détails</a>
+                @if (auth.isLoggedIn()) {
+                <div class="flex gap-1 mt-2">
+                    <button class="btn btn-sm btn-primary flex-1" (click)="addToCart(p)">+ Panier</button>
+                    <a [routerLink]="['/products', p.id, 'edit']" class="btn btn-sm btn-secondary">✏️</a>
+                    <button class="btn btn-sm btn-danger" (click)="deleteProduct(p)">🗑️</button>
+                </div>
+                }
+            </div>
+        </div>
+        }
+    </div>
+
+    <app-pagination [pageNo]="pageNo()" [totalPages]="totalPages()" [totalElements]="totalElements()" [first]="first()"
+        [last]="last()" (pageChange)="onPageChange($event)" />
+    }
+</div>

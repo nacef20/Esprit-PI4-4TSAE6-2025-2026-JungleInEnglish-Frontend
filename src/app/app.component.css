@@ -1,0 +1,89 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+}
+
+.nav {
+  padding: 0 1.5rem;
+  height: 56px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.nav__brand {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-primary-light) !important;
+  margin-right: .75rem;
+  letter-spacing: -0.02em;
+}
+
+.nav__link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: .875rem;
+  padding: .375rem .75rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition);
+}
+
+.nav__link:hover {
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+}
+
+.nav__link--active {
+  color: var(--color-primary-light) !important;
+  background: var(--color-primary-bg);
+}
+
+.nav__link--admin {
+  color: var(--color-warning);
+}
+
+.nav__link--cta {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: #fff !important;
+}
+
+.nav__link--cta:hover {
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.3);
+}
+
+.nav__spacer {
+  flex: 1;
+}
+
+.nav__user {
+  font-size: .85rem;
+  color: var(--color-text-muted);
+  margin-right: .5rem;
+}
+
+.nav__btn {
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+.nav__btn:hover {
+  color: var(--color-danger);
+}
+
+.main {
+  padding: 0;
+  min-height: calc(100vh - 56px);
+}

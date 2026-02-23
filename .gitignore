@@ -1,24 +1,50 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# ===================================================================
+# Jungle In English — Frontend .gitignore
+# Angular · Tailwind CSS · SCSS · PWA (ngsw)
+# ===================================================================
 
-# Compiled output
+# --------------- Compiled output ---------------
 /dist
 /tmp
 /out-tsc
 /bazel-out
+/.angular/cache
 
-# Node
+# --------------- Node / npm / yarn / pnpm ---------------
 /node_modules
 npm-debug.log
 yarn-error.log
+yarn-debug.log
+.yarn/cache
+.yarn/unplugged
+.yarn/install-state.gz
+.pnp.*
+pnpm-debug.log*
+.npm/
 
-# IDEs and editors
+# --------------- Environment & secrets ---------------
+*.env
+*.env.*
+!*.env.example
+src/environments/environment.local.ts
+
+# --------------- IDEs and editors ---------------
+# IntelliJ / WebStorm
 .idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
 .project
 .classpath
 .c9/
 *.launch
 .settings/
+
+# Sublime Text
 *.sublime-workspace
+*.sublime-project
 
 # Visual Studio Code
 .vscode/*
@@ -28,15 +54,35 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
-# Miscellaneous
-/.angular/cache
+# --------------- Testing & coverage ---------------
+/coverage
+testem.log
+/libpeerconnection.log
+/typings
+.nyc_output/
+junit.xml
+
+# --------------- Build & cache files ---------------
 .sass-cache/
 /connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+*.tgz
 
-# System files
+# --------------- PWA / Service Worker ---------------
+ngsw-worker.js
+ngsw.json
+
+# --------------- OS-generated files ---------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
+
+# --------------- Misc ---------------
+*.swp
+*.swo
+*~
+.cache/

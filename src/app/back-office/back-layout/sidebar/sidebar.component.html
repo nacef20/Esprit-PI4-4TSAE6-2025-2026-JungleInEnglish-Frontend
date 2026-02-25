@@ -55,6 +55,29 @@
   </a>
 </li>
 
+      <!-- Divider -->
+      <li class="nav-divider">
+        <span class="nav-divider__text">Quiz</span>
+      </li>
+
+      <!-- Quiz Management -->
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [routerLink]="['quizzes']"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <div class="nav-link__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="nav-link__text">Quiz</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
 
       <!-- Forum -->
       <li class="nav-item">

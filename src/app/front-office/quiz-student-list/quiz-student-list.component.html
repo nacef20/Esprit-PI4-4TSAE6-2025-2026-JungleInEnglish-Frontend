@@ -1,0 +1,51 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-24 pb-16 px-6">
+  <div class="max-w-screen-xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Quiz disponibles</h1>
+      <p class="text-gray-500">Sélectionnez un quiz pour commencer</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="quizzes.length === 0" class="text-center py-20 text-gray-400">
+      <svg class="mx-auto mb-4" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      <p class="text-lg">Aucun quiz publié pour le moment</p>
+    </div>
+
+    <!-- Quiz grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let quiz of quizzes"
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer"
+        (click)="startQuiz(quiz.id!)">
+
+        <!-- Top accent bar -->
+        <div class="h-2 bg-gradient-to-r from-[#0ea37a] to-[#0b8a68]"></div>
+
+        <div class="p-6">
+          <!-- Duration badge -->
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-medium text-[#0ea37a] bg-[#0ea37a]/10 px-2.5 py-1 rounded-full flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ quiz.duration }} min
+            </span>
+          </div>
+
+          <!-- Title & description -->
+          <h3 class="text-lg font-bold text-gray-800 mb-2 group-hover:text-[#0ea37a] transition-colors">{{ quiz.title }}</h3>
+          <p class="text-sm text-gray-500 mb-6 line-clamp-2">{{ quiz.description }}</p>
+
+          <!-- CTA -->
+          <button
+            class="w-full py-2.5 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all group-hover:shadow-md">
+            Commencer le quiz
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

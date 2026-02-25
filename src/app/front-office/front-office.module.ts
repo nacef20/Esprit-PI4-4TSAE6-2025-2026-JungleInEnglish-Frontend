@@ -16,7 +16,10 @@ import { TestimoniComponent } from './pages/testimoni/testimoni.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ForgotpasswordComponent } from './pages/Reset/forgotpassword/forgotpassword.component';
 import { FirstloginComponent } from './pages/Reset/firstlogin/firstlogin.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+import { QuizStudentListComponent } from './quiz-student-list/quiz-student-list.component';
+import { QuizPassComponent } from './quiz-pass/quiz-pass.component';
 
 
 @NgModule({
@@ -35,12 +38,15 @@ import { FormsModule } from '@angular/forms';
          TestimoniComponent,
          HomeComponent,
          ForgotpasswordComponent,
-         FirstloginComponent
+         FirstloginComponent,
+    QuizStudentListComponent,
+    QuizPassComponent,
   ],
   imports: [
     CommonModule,
     FrontOfficeRoutingModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ]
   ,
     schemas: [CUSTOM_ELEMENTS_SCHEMA],

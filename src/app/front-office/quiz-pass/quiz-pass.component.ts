@@ -7,6 +7,7 @@ import { QuizService } from '../../services/quiz.service';
 import { QuestionService } from '../../services/question.service';
 import { ChoiceService } from '../../services/choice.service';
 import { AttemptService } from '../../services/attempt.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-quiz-pass',
@@ -22,6 +23,7 @@ export class QuizPassComponent implements OnInit {
   submitted = false;
   score = 0;
   totalPoints = 0;
+  loading = true;
 
   constructor(
     private quizService: QuizService,
@@ -39,16 +41,33 @@ export class QuizPassComponent implements OnInit {
       this.quiz = quiz;
     });
 
-    this.questionService.getAll().subscribe(allQuestions => {
-      this.questions = allQuestions.filter(q => q.quiz?.id === quizId);
-      this.totalPoints = this.questions.reduce((sum, q) => sum + q.points, 0);
+    // Use dedicated endpoint to get questions by quiz ID
+    this.questionService.getByQuizId(quizId).subscribe({
+      next: (questions) => {
+        this.questions = questions;
+        this.totalPoints = this.questions.reduce((sum, q) => sum + q.points, 0);
 
-      this.choiceService.getAll().subscribe(allChoices => {
-        this.questions.forEach(q => {
-          const qChoices = allChoices.filter(c => c.question?.id === q.id);
-          this.choicesByQuestion.set(q.id!, qChoices);
+        if (this.questions.length === 0) {
+          this.loading = false;
+          return;
+        }
+
+        // Load choices for each question using dedicated endpoints
+        const choiceRequests = this.questions.map(q =>
+          this.choiceService.getByQuestionId(q.id!)
+        );
+
+        forkJoin(choiceRequests).subscribe({
+          next: (choicesArrays) => {
+            choicesArrays.forEach((choices, index) => {
+              this.choicesByQuestion.set(this.questions[index].id!, choices);
+            });
+            this.loading = false;
+          },
+          error: () => this.loading = false
         });
-      });
+      },
+      error: () => this.loading = false
     });
   }
 

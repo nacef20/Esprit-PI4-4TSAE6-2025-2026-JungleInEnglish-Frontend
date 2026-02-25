@@ -7,6 +7,7 @@ import { QuestionListComponent } from './question-list/question-list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { ChoiceListComponent } from './choice-list/choice-list.component';
 import { ChoiceFormComponent } from './choice-form/choice-form.component';
+import { AttemptListComponent } from './attempt-list/attempt-list.component';
 
 const routes: Routes = [
   {
@@ -30,6 +31,8 @@ const routes: Routes = [
       { path: 'questions/:questionId/choices', component: ChoiceListComponent },
       { path: 'questions/:questionId/choices/new', component: ChoiceFormComponent },
       { path: 'questions/:questionId/choices/edit/:choiceId', component: ChoiceFormComponent },
+      // Attempts
+      { path: 'attempts', component: AttemptListComponent },
       {
         path: '',
         redirectTo: 'quizzes',

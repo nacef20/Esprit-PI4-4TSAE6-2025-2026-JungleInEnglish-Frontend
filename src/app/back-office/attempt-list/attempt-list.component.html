@@ -1,0 +1,80 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-800">Historique des Tentatives</h1>
+    <span class="text-sm text-gray-400">{{ attempts.length }} tentative(s)</span>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="attempts.length === 0" class="text-center py-16 text-gray-400">
+    <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p class="text-lg">Aucune tentative pour le moment</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="attempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+        <tr>
+          <th class="px-6 py-4">Quiz</th>
+          <th class="px-6 py-4">Étudiant ID</th>
+          <th class="px-6 py-4">Score</th>
+          <th class="px-6 py-4">Début</th>
+          <th class="px-6 py-4">Soumis le</th>
+          <th class="px-6 py-4 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let attempt of attempts" class="hover:bg-gray-50 transition-colors">
+          <!-- Quiz title -->
+          <td class="px-6 py-4 font-medium text-gray-800">
+            {{ attempt.quiz?.title || 'Quiz #' + attempt.quiz?.id }}
+          </td>
+
+          <!-- Student -->
+          <td class="px-6 py-4 text-gray-600">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              #{{ attempt.studentId }}
+            </span>
+          </td>
+
+          <!-- Score -->
+          <td class="px-6 py-4">
+            <span class="text-lg font-bold" [ngClass]="getScoreColor(attempt)">
+              {{ attempt.score ?? '—' }}
+            </span>
+          </td>
+
+          <!-- Start date -->
+          <td class="px-6 py-4 text-gray-500">
+            {{ formatDate(attempt.startedAt) }}
+          </td>
+
+          <!-- Submit date -->
+          <td class="px-6 py-4 text-gray-500">
+            {{ formatDate(attempt.submittedAt) }}
+          </td>
+
+          <!-- Actions -->
+          <td class="px-6 py-4 text-right">
+            <button (click)="deleteAttempt(attempt.id!)"
+              class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Supprimer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/>
+                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

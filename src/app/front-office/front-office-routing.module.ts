@@ -6,6 +6,7 @@ import { FirstloginComponent } from './pages/Reset/firstlogin/firstlogin.compone
 import { ForgotpasswordComponent } from './pages/Reset/forgotpassword/forgotpassword.component';
 import { QuizStudentListComponent } from './quiz-student-list/quiz-student-list.component';
 import { QuizPassComponent } from './quiz-pass/quiz-pass.component';
+import { AttemptHistoryComponent } from './attempt-history/attempt-history.component';
 
 const routes: Routes = [
   { path: '', component: FrontOfficeComponent },
@@ -15,6 +16,7 @@ const routes: Routes = [
   // Quiz student routes
   { path: 'quizzes', component: QuizStudentListComponent },
   { path: 'quiz/:id', component: QuizPassComponent },
+  { path: 'my-attempts', component: AttemptHistoryComponent },
 ];
 
 

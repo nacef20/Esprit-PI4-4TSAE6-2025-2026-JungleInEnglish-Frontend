@@ -44,8 +44,16 @@
       </div>
     </div>
 
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-16">
+      <svg class="animate-spin mx-auto mb-4 text-[#0ea37a]" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/>
+      </svg>
+      <p class="text-gray-500">Chargement des questions...</p>
+    </div>
+
     <!-- Questions -->
-    <div class="space-y-6">
+    <div class="space-y-6" *ngIf="!loading">
       <div *ngFor="let question of questions; let i = index"
         class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
 
@@ -90,7 +98,7 @@
     </div>
 
     <!-- Submit button -->
-    <div *ngIf="!submitted && questions.length > 0" class="mt-8 text-center">
+    <div *ngIf="!submitted && !loading && questions.length > 0" class="mt-8 text-center">
       <button (click)="submit()"
         class="px-8 py-3 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all shadow-md hover:shadow-lg text-lg">
         Soumettre le quiz

@@ -14,6 +14,10 @@ export class ChoiceService {
     return this.http.get<Choice[]>(this.apiUrl);
   }
 
+  getByQuestionId(questionId: number): Observable<Choice[]> {
+    return this.http.get<Choice[]>(`${this.apiUrl}/question/${questionId}`);
+  }
+
   getById(id: number): Observable<Choice> {
     return this.http.get<Choice>(`${this.apiUrl}/${id}`);
   }

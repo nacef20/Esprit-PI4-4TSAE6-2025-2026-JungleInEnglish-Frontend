@@ -1,28 +1,45 @@
-import { NgModule, isDevMode } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule, Routes } from '@angular/router';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { FrontOfficeComponent } from './front-office/front-office.component';
-import { BackOfficeComponent } from './back-office/back-office.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
+// Import services
+import { CoursesService } from './services/courses.service';
+import { LessonsService } from './services/lessons.service';
+
+// Define routes
+const routes: Routes = [
+  {
+    path: '',
+    loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule)
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./back-office/back-office.module').then(m => m.BackOfficeModule)
+  },
+  {
+    path: '**',
+    redirectTo: ''
+  }
+];
+
 @NgModule({
   declarations: [
-    AppComponent,
-   
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: !isDevMode(),
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    })
+    CommonModule,
+    HttpClientModule,
+    RouterModule.forRoot(routes)
   ],
-  providers: [],
+  providers: [
+    CoursesService,
+    LessonsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

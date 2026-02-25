@@ -1,21 +1,33 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BackOfficeComponent } from './back-office.component';
+import { CoursesManagementComponent } from './pages/courses-management/courses-management.component';
+import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';
 
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
-
-const routes: Routes = [{ path: '', component: BackOfficeComponent }];
+const routes: Routes = [
+  {
+    path: '',
+    component: BackOfficeComponent,
+    children: [
+      {
+        path: 'courses',
+        component: CoursesManagementComponent
+      },
+      {
+        path: 'lessons',
+        component: LessonsManagementComponent
+      },
+      {
+        path: '',
+        redirectTo: 'courses',
+        pathMatch: 'full'
+      }
+    ]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule, CommonModule, FormsModule]
+  exports: [RouterModule]
 })
-export class BackOfficeRoutingModule {
-
-
- 
-
-
- }
+export class BackOfficeRoutingModule { }

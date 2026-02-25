@@ -33,7 +33,7 @@ export class QuizFormComponent implements OnInit {
       courseId: [null]
     });
 
-    this.quizId = this.route.snapshot.params['id'];
+    this.quizId = +this.route.snapshot.params['id'];
     if (this.quizId) {
       this.isEdit = true;
       this.quizService.getById(this.quizId).subscribe(quiz => {

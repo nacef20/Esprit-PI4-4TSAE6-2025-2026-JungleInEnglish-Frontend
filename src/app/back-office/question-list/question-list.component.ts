@@ -25,8 +25,8 @@ export class QuestionListComponent implements OnInit {
   }
 
   loadQuestions(): void {
-    this.questionService.getAll().subscribe(data => {
-      this.questions = data.filter(q => q.quiz?.id === this.quizId);
+    this.questionService.getByQuizId(this.quizId).subscribe(data => {
+      this.questions = data;
     });
   }
 

@@ -25,8 +25,8 @@ export class ChoiceListComponent implements OnInit {
   }
 
   loadChoices(): void {
-    this.choiceService.getAll().subscribe(data => {
-      this.choices = data.filter(c => c.question?.id === this.questionId);
+    this.choiceService.getByQuestionId(this.questionId).subscribe(data => {
+      this.choices = data;
     });
   }
 

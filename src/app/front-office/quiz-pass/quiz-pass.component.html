@@ -1,5 +1,18 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-24 pb-16 px-6">
-  <div class="max-w-3xl mx-auto">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+  <!-- Navigation bar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-screen-xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a routerLink="/front" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
+      <div class="flex items-center gap-4">
+        <a routerLink="/front/quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
+        <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Mes Tentatives</a>
+        <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Accueil</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-24 pb-16 px-6">
+    <div class="max-w-3xl mx-auto">
 
     <!-- Score result -->
     <div *ngIf="submitted" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center mb-8">

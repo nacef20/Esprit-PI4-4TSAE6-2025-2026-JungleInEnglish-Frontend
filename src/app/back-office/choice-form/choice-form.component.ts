@@ -24,7 +24,7 @@ export class ChoiceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.questionId = +this.route.snapshot.params['questionId'];
-    this.choiceId = this.route.snapshot.params['choiceId'];
+    this.choiceId = +this.route.snapshot.params['choiceId'] || undefined;
 
     this.choiceForm = this.fb.group({
       content: ['', Validators.required],

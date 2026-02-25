@@ -24,7 +24,7 @@ export class QuestionFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.quizId = +this.route.snapshot.params['quizId'];
-    this.questionId = this.route.snapshot.params['questionId'];
+    this.questionId = +this.route.snapshot.params['questionId'] || undefined;
 
     this.questionForm = this.fb.group({
       content: ['', Validators.required],

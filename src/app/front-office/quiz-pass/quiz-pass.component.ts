@@ -125,6 +125,7 @@ export class QuizPassComponent implements OnInit {
     // Save attempt
     const attempt = {
       score: this.score,
+      totalPoints: this.totalPoints,
       startedAt: new Date().toISOString(),
       submittedAt: new Date().toISOString(),
       quiz: { id: this.quiz?.id } as Quiz,

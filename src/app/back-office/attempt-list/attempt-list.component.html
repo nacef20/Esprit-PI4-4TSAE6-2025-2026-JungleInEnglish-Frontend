@@ -1,64 +1,121 @@
 <div class="space-y-6">
   <!-- Header -->
   <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-gray-800">Historique des Tentatives</h1>
-    <span class="text-sm text-gray-400">{{ attempts.length }} tentative(s)</span>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Résultats des Étudiants</h1>
+      <p class="text-sm text-gray-400 mt-1">Consultez et filtrez les tentatives de quiz</p>
+    </div>
+    <span class="text-sm text-gray-400">{{ filteredAttempts.length }} tentative(s)</span>
+  </div>
+
+  <!-- Statistics cards -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Total tentatives</div>
+      <div class="text-2xl font-bold text-gray-800">{{ totalAttempts }}</div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Score moyen</div>
+      <div class="text-2xl font-bold text-[#0ea37a]">{{ avgScore }}%</div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Taux de réussite</div>
+      <div class="text-2xl font-bold" [ngClass]="passRate >= 50 ? 'text-green-600' : 'text-red-500'">{{ passRate }}%</div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Meilleur score</div>
+      <div class="text-2xl font-bold text-blue-600">{{ bestScore }}%</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex flex-wrap items-center gap-4">
+    <div class="flex items-center gap-2">
+      <svg class="text-gray-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      <span class="text-sm font-medium text-gray-600">Filtres :</span>
+    </div>
+
+    <select [(ngModel)]="selectedQuizId" (ngModelChange)="applyFilters()"
+      class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none bg-white">
+      <option [ngValue]="null">Tous les quiz</option>
+      <option *ngFor="let q of quizzes" [ngValue]="q.id">{{ q.title }}</option>
+    </select>
+
+    <input [(ngModel)]="searchStudentId" (ngModelChange)="applyFilters()"
+      placeholder="ID Étudiant..."
+      class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none w-40" />
+
+    <button *ngIf="selectedQuizId || searchStudentId" (click)="resetFilters()"
+      class="text-sm text-gray-500 hover:text-gray-700 underline">Réinitialiser</button>
   </div>
 
   <!-- Empty state -->
-  <div *ngIf="attempts.length === 0" class="text-center py-16 text-gray-400">
+  <div *ngIf="filteredAttempts.length === 0" class="text-center py-16 text-gray-400">
     <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
       <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
-    <p class="text-lg">Aucune tentative pour le moment</p>
+    <p class="text-lg">Aucune tentative trouvée</p>
   </div>
 
   <!-- Table -->
-  <div *ngIf="attempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <div *ngIf="filteredAttempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-sm text-left">
       <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
         <tr>
           <th class="px-6 py-4">Quiz</th>
-          <th class="px-6 py-4">Étudiant ID</th>
+          <th class="px-6 py-4">Étudiant</th>
           <th class="px-6 py-4">Score</th>
-          <th class="px-6 py-4">Début</th>
-          <th class="px-6 py-4">Soumis le</th>
+          <th class="px-6 py-4">Résultat</th>
+          <th class="px-6 py-4">Date</th>
           <th class="px-6 py-4 text-right">Actions</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let attempt of attempts" class="hover:bg-gray-50 transition-colors">
+        <tr *ngFor="let attempt of filteredAttempts" class="hover:bg-gray-50 transition-colors">
           <!-- Quiz title -->
-          <td class="px-6 py-4 font-medium text-gray-800">
-            {{ attempt.quiz?.title || 'Quiz #' + attempt.quiz?.id }}
+          <td class="px-6 py-4">
+            <div class="font-medium text-gray-800">{{ attempt.quiz?.title || 'Quiz inconnu' }}</div>
+            <div class="text-xs text-gray-400 mt-0.5">ID: {{ attempt.quiz?.id }}</div>
           </td>
 
           <!-- Student -->
-          <td class="px-6 py-4 text-gray-600">
+          <td class="px-6 py-4">
             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
                 <circle cx="12" cy="7" r="4"/>
               </svg>
-              #{{ attempt.studentId }}
+              Étudiant #{{ attempt.studentId }}
             </span>
           </td>
 
           <!-- Score -->
           <td class="px-6 py-4">
-            <span class="text-lg font-bold" [ngClass]="getScoreColor(attempt)">
-              {{ attempt.score ?? '—' }}
+            <div class="flex items-center gap-2">
+              <span class="text-lg font-bold" [ngClass]="getScoreColor(attempt)">
+                {{ attempt.score ?? 0 }}<span *ngIf="attempt.totalPoints" class="text-sm font-normal text-gray-400">/{{ attempt.totalPoints }}</span>
+              </span>
+              <span *ngIf="attempt.totalPoints" class="text-xs px-2 py-0.5 rounded-full"
+                [ngClass]="getScoreBadgeBg(attempt)" [class]="getScoreColor(attempt)">
+                {{ getPercentage(attempt) }}%
+              </span>
+            </div>
+          </td>
+
+          <!-- Pass/Fail -->
+          <td class="px-6 py-4">
+            <span *ngIf="attempt.totalPoints" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getPassBadgeClasses(attempt)">
+              {{ getPassLabel(attempt) }}
             </span>
+            <span *ngIf="!attempt.totalPoints" class="text-gray-400 text-xs">—</span>
           </td>
 
-          <!-- Start date -->
-          <td class="px-6 py-4 text-gray-500">
-            {{ formatDate(attempt.startedAt) }}
-          </td>
-
-          <!-- Submit date -->
-          <td class="px-6 py-4 text-gray-500">
-            {{ formatDate(attempt.submittedAt) }}
+          <!-- Date -->
+          <td class="px-6 py-4 text-gray-500 text-xs">
+            <div>{{ formatDate(attempt.submittedAt) }}</div>
           </td>
 
           <!-- Actions -->

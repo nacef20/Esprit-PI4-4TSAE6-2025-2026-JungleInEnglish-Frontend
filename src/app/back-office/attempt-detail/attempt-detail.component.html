@@ -1,0 +1,130 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center gap-3">
+    <button (click)="goBack()" class="p-2 hover:bg-gray-100 rounded-lg transition-all">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Détail de la tentative</h1>
+      <p class="text-sm text-gray-400" *ngIf="attempt">
+        {{ attempt.quiz?.title }} — Étudiant #{{ attempt.studentId }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-16">
+    <svg class="animate-spin mx-auto mb-4 text-[#0ea37a]" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/>
+    </svg>
+    <p class="text-gray-500">Chargement...</p>
+  </div>
+
+  <!-- Summary card -->
+  <div *ngIf="!loading && attempt" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h2 class="text-lg font-bold text-gray-800">{{ attempt.quiz?.title }}</h2>
+        <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+          <span class="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            Étudiant #{{ attempt.studentId }}
+          </span>
+          <span>{{ formatDate(attempt.submittedAt) }}</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Score -->
+        <div class="text-center px-5 py-3 rounded-xl border"
+          [ngClass]="isPassed() ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'">
+          <div class="text-2xl font-bold" [ngClass]="isPassed() ? 'text-green-600' : 'text-red-500'">
+            {{ attempt.score ?? 0 }}<span *ngIf="attempt.totalPoints" class="text-sm font-normal text-gray-400">/{{ attempt.totalPoints }}</span>
+          </div>
+          <div class="text-xs text-gray-500">{{ getPercentage() }}%</div>
+        </div>
+
+        <!-- Badge -->
+        <span class="px-3 py-1.5 rounded-full text-sm font-medium"
+          [ngClass]="isPassed() ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+          {{ isPassed() ? 'Réussi' : 'Échoué' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions & answers -->
+  <div *ngIf="!loading" class="space-y-4">
+    <div *ngFor="let question of questions; let i = index"
+      class="bg-white rounded-xl shadow-sm border overflow-hidden"
+      [ngClass]="isQuestionCorrect(question.id!) ? 'border-green-200' : 'border-red-200'">
+
+      <!-- Question header -->
+      <div class="px-6 py-4 flex items-center justify-between"
+        [ngClass]="isQuestionCorrect(question.id!) ? 'bg-green-50' : 'bg-red-50'">
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-bold px-2.5 py-1 rounded-full"
+            [ngClass]="isQuestionCorrect(question.id!) ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'">
+            Q{{ i + 1 }}
+          </span>
+          <p class="font-medium text-gray-800">{{ question.content }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-500">{{ question.points }} pts</span>
+          <svg *ngIf="isQuestionCorrect(question.id!)" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-green-600">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <svg *ngIf="!isQuestionCorrect(question.id!)" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-red-500">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Choices -->
+      <div class="p-6 space-y-2">
+        <div *ngFor="let choice of choicesByQuestion.get(question.id!)"
+          class="flex items-center gap-3 px-4 py-3 rounded-lg border-2"
+          [ngClass]="{
+            'border-green-500 bg-green-50': isCorrectChoice(choice.id!, question.id!),
+            'border-red-400 bg-red-50': isSelectedChoice(question.id!, choice.id!) && !isCorrectChoice(choice.id!, question.id!),
+            'border-gray-100 bg-gray-50/50': !isSelectedChoice(question.id!, choice.id!) && !isCorrectChoice(choice.id!, question.id!)
+          }">
+
+          <!-- Indicator -->
+          <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+            [ngClass]="{
+              'border-green-500': isCorrectChoice(choice.id!, question.id!),
+              'border-red-400': isSelectedChoice(question.id!, choice.id!) && !isCorrectChoice(choice.id!, question.id!),
+              'border-gray-300': !isSelectedChoice(question.id!, choice.id!) && !isCorrectChoice(choice.id!, question.id!)
+            }">
+            <span *ngIf="isSelectedChoice(question.id!, choice.id!) || isCorrectChoice(choice.id!, question.id!)"
+              class="w-2.5 h-2.5 rounded-full"
+              [ngClass]="isCorrectChoice(choice.id!, question.id!) ? 'bg-green-500' : 'bg-red-400'">
+            </span>
+          </span>
+
+          <span class="flex-1 text-gray-700">{{ choice.content }}</span>
+
+          <!-- Labels -->
+          <span *ngIf="isSelectedChoice(question.id!, choice.id!) && !isCorrectChoice(choice.id!, question.id!)"
+            class="text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+            Votre réponse
+          </span>
+          <span *ngIf="isCorrectChoice(choice.id!, question.id!)"
+            class="text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+            {{ isSelectedChoice(question.id!, choice.id!) ? 'Correct ✓' : 'Bonne réponse' }}
+          </span>
+        </div>
+
+        <!-- No answer -->
+        <div *ngIf="!answerByQuestion.has(question.id!)" class="text-sm text-gray-400 italic mt-2">
+          Aucune réponse sélectionnée
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

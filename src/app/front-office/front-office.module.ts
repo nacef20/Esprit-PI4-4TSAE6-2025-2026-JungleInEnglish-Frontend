@@ -21,6 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { QuizStudentListComponent } from './quiz-student-list/quiz-student-list.component';
 import { QuizPassComponent } from './quiz-pass/quiz-pass.component';
 import { AttemptHistoryComponent } from './attempt-history/attempt-history.component';
+import { AttemptDetailStudentComponent } from './attempt-detail/attempt-detail.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { AttemptHistoryComponent } from './attempt-history/attempt-history.compo
     QuizStudentListComponent,
     QuizPassComponent,
     AttemptHistoryComponent,
+    AttemptDetailStudentComponent,
   ],
   imports: [
     CommonModule,

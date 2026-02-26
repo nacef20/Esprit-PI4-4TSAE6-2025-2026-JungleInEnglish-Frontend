@@ -7,6 +7,7 @@ import { QuizService } from '../../services/quiz.service';
 import { QuestionService } from '../../services/question.service';
 import { ChoiceService } from '../../services/choice.service';
 import { AttemptService } from '../../services/attempt.service';
+import { AttemptAnswerService } from '../../services/attempt-answer.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -32,6 +33,7 @@ export class QuizPassComponent implements OnInit {
     private questionService: QuestionService,
     private choiceService: ChoiceService,
     private attemptService: AttemptService,
+    private attemptAnswerService: AttemptAnswerService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -132,7 +134,20 @@ export class QuizPassComponent implements OnInit {
       studentId: 1 // placeholder — no auth
     };
 
-    this.attemptService.create(attempt).subscribe();
+    this.attemptService.create(attempt).subscribe(savedAttempt => {
+      // Save individual answers
+      const answers = this.questions
+        .filter(q => this.selectedChoices.has(q.id!))
+        .map(q => ({
+          attempt: { id: savedAttempt.id },
+          question: { id: q.id },
+          selectedChoice: { id: this.selectedChoices.get(q.id!) }
+        }));
+
+      if (answers.length > 0) {
+        this.attemptAnswerService.saveAll(answers as any).subscribe();
+      }
+    });
     this.submitted = true;
   }
 

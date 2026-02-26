@@ -107,6 +107,10 @@ export class AttemptHistoryComponent implements OnInit {
     }
   }
 
+  viewDetail(attemptId: number): void {
+    this.router.navigate(['/front/my-attempts', attemptId]);
+  }
+
   goToQuizzes(): void {
     this.router.navigate(['/front/quizzes']);
   }

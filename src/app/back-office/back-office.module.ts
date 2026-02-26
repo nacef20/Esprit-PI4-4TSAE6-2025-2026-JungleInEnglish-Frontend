@@ -14,6 +14,7 @@ import { QuestionFormComponent } from './question-form/question-form.component';
 import { ChoiceListComponent } from './choice-list/choice-list.component';
 import { ChoiceFormComponent } from './choice-form/choice-form.component';
 import { AttemptListComponent } from './attempt-list/attempt-list.component';
+import { AttemptDetailComponent } from './attempt-detail/attempt-detail.component';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { AttemptListComponent } from './attempt-list/attempt-list.component';
     ChoiceListComponent,
     ChoiceFormComponent,
     AttemptListComponent,
+    AttemptDetailComponent,
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Attempt } from '../../models/attempt.model';
 import { AttemptService } from '../../services/attempt.service';
 import { Quiz } from '../../models/quiz.model';
@@ -26,7 +27,8 @@ export class AttemptListComponent implements OnInit {
 
   constructor(
     private attemptService: AttemptService,
-    private quizService: QuizService
+    private quizService: QuizService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -126,5 +128,9 @@ export class AttemptListComponent implements OnInit {
     this.selectedQuizId = null;
     this.searchStudentId = '';
     this.applyFilters();
+  }
+
+  viewDetail(attemptId: number): void {
+    this.router.navigate(['/back/attempts', attemptId]);
   }
 }

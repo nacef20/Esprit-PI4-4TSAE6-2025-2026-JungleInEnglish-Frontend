@@ -73,7 +73,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let attempt of filteredAttempts" class="hover:bg-gray-50 transition-colors">
+        <tr *ngFor="let attempt of filteredAttempts" class="hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewDetail(attempt.id!)">
           <!-- Quiz title -->
           <td class="px-6 py-4">
             <div class="font-medium text-gray-800">{{ attempt.quiz?.title || 'Quiz inconnu' }}</div>
@@ -119,7 +119,7 @@
           </td>
 
           <!-- Actions -->
-          <td class="px-6 py-4 text-right">
+          <td class="px-6 py-4 text-right" (click)="$event.stopPropagation()">
             <button (click)="deleteAttempt(attempt.id!)"
               class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Supprimer">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

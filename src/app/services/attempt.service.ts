@@ -29,4 +29,8 @@ export class AttemptService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  countByQuizAndStudent(quizId: number, studentId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/count?quizId=${quizId}&studentId=${studentId}`);
+  }
 }

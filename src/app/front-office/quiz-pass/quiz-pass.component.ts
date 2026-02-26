@@ -24,6 +24,8 @@ export class QuizPassComponent implements OnInit {
   score = 0;
   totalPoints = 0;
   loading = true;
+  blocked = false;
+  blockReason = '';
 
   constructor(
     private quizService: QuizService,
@@ -36,12 +38,37 @@ export class QuizPassComponent implements OnInit {
 
   ngOnInit(): void {
     const quizId = +this.route.snapshot.params['id'];
+    const studentId = 1; // placeholder — no auth
 
     this.quizService.getById(quizId).subscribe(quiz => {
       this.quiz = quiz;
-    });
 
-    // Use dedicated endpoint to get questions by quiz ID
+      // Check if quiz is closed
+      if (quiz.status === 'CLOSED') {
+        this.blocked = true;
+        this.blockReason = 'Ce quiz est ferm\u00e9. Vous ne pouvez plus le passer.';
+        this.loading = false;
+        return;
+      }
+
+      // Check max attempts
+      if (quiz.maxAttempts && quiz.maxAttempts > 0) {
+        this.attemptService.countByQuizAndStudent(quizId, studentId).subscribe(count => {
+          if (count >= quiz.maxAttempts!) {
+            this.blocked = true;
+            this.blockReason = `Vous avez atteint le nombre maximum de tentatives (${quiz.maxAttempts}).`;
+            this.loading = false;
+          } else {
+            this.loadQuestions(quizId);
+          }
+        });
+      } else {
+        this.loadQuestions(quizId);
+      }
+    });
+  }
+
+  private loadQuestions(quizId: number): void {
     this.questionService.getByQuizId(quizId).subscribe({
       next: (questions) => {
         this.questions = questions;

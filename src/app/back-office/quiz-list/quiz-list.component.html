@@ -64,4 +64,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4">
+    <span class="text-sm text-gray-500">
+      Page {{ currentPage }} sur {{ totalPages }} — {{ totalElements }} quiz
+    </span>
+    <div class="flex items-center gap-1">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        ← Précédent
+      </button>
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button (click)="goToPage(page)"
+          class="w-9 h-9 text-sm rounded-lg border transition-all"
+          [ngClass]="page === currentPage ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 hover:bg-gray-50'">
+          {{ page }}
+        </button>
+      </ng-container>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        Suivant →
+      </button>
+    </div>
+  </div>
 </div>

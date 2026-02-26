@@ -12,12 +12,17 @@ import { QuizService } from '../../services/quiz.service';
 })
 export class AttemptListComponent implements OnInit {
 
-  allAttempts: Attempt[] = [];
-  filteredAttempts: Attempt[] = [];
+  attempts: Attempt[] = [];
   quizzes: Quiz[] = [];
 
   selectedQuizId: number | null = null;
   searchStudentId = '';
+
+  // Pagination (server-side)
+  currentPage = 1;
+  pageSize = 5;
+  totalElements = 0;
+  totalPages = 0;
 
   // Stats
   totalAttempts = 0;
@@ -33,38 +38,28 @@ export class AttemptListComponent implements OnInit {
 
   ngOnInit(): void {
     this.quizService.getAll().subscribe(data => this.quizzes = data);
-    this.loadAttempts();
+    this.loadPage();
   }
 
-  loadAttempts(): void {
-    this.attemptService.getAll().subscribe(data => {
-      this.allAttempts = data.sort((a, b) => {
-        const dateA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-        const dateB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-        return dateB - dateA;
-      });
-      this.applyFilters();
+  loadPage(): void {
+    this.attemptService.getAllPaginated(
+      this.currentPage - 1, this.pageSize, this.selectedQuizId, this.searchStudentId
+    ).subscribe(page => {
+      this.attempts = page.content;
+      this.totalElements = page.totalElements;
+      this.totalPages = page.totalPages;
+      this.computeStats();
     });
   }
 
   applyFilters(): void {
-    let result = [...this.allAttempts];
-
-    if (this.selectedQuizId) {
-      result = result.filter(a => a.quiz?.id === this.selectedQuizId);
-    }
-
-    if (this.searchStudentId.trim()) {
-      result = result.filter(a => String(a.studentId).includes(this.searchStudentId.trim()));
-    }
-
-    this.filteredAttempts = result;
-    this.computeStats();
+    this.currentPage = 1;
+    this.loadPage();
   }
 
   computeStats(): void {
-    const attempts = this.filteredAttempts;
-    this.totalAttempts = attempts.length;
+    const attempts = this.attempts;
+    this.totalAttempts = this.totalElements;
 
     if (attempts.length === 0) {
       this.avgScore = 0;
@@ -87,7 +82,7 @@ export class AttemptListComponent implements OnInit {
 
   deleteAttempt(id: number): void {
     if (confirm('Supprimer cette tentative ?')) {
-      this.attemptService.delete(id).subscribe(() => this.loadAttempts());
+      this.attemptService.delete(id).subscribe(() => this.loadPage());
     }
   }
 
@@ -132,5 +127,20 @@ export class AttemptListComponent implements OnInit {
 
   viewDetail(attemptId: number): void {
     this.router.navigate(['/back/attempts', attemptId]);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadPage();
+    }
   }
 }

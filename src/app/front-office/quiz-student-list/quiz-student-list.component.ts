@@ -15,6 +15,12 @@ export class QuizStudentListComponent implements OnInit {
   attemptCounts: Map<number, number> = new Map();
   studentId = 1; // placeholder — no auth
 
+  // Pagination (server-side)
+  currentPage = 1;
+  pageSize = 6;
+  totalElements = 0;
+  totalPages = 0;
+
   constructor(
     private quizService: QuizService,
     private attemptService: AttemptService,
@@ -22,9 +28,15 @@ export class QuizStudentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.quizService.getAll().subscribe(data => {
-      this.quizzes = data.filter(q => q.status === 'PUBLISHED' || q.status === 'CLOSED');
-      // Load attempt counts for each quiz
+    this.loadPage();
+  }
+
+  loadPage(): void {
+    this.quizService.getAvailablePaginated(this.currentPage - 1, this.pageSize).subscribe(page => {
+      this.quizzes = page.content;
+      this.totalElements = page.totalElements;
+      this.totalPages = page.totalPages;
+      // Load attempt counts for each quiz on this page
       this.quizzes.forEach(quiz => {
         if (quiz.id) {
           this.attemptService.countByQuizAndStudent(quiz.id, this.studentId).subscribe(count => {
@@ -56,5 +68,20 @@ export class QuizStudentListComponent implements OnInit {
   startQuiz(quiz: Quiz): void {
     if (!this.canTakeQuiz(quiz)) return;
     this.router.navigate(['/front/quiz', quiz.id]);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadPage();
+    }
   }
 }

@@ -13,6 +13,12 @@ export class AttemptHistoryComponent implements OnInit {
   attempts: Attempt[] = [];
   studentId = 1; // placeholder — no auth
 
+  // Pagination (server-side)
+  currentPage = 1;
+  pageSize = 3;
+  totalElements = 0;
+  totalPages = 0;
+
   // Stats
   totalAttempts = 0;
   avgScore = 0;
@@ -25,24 +31,21 @@ export class AttemptHistoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadAttempts();
+    this.loadPage();
   }
 
-  loadAttempts(): void {
-    this.attemptService.getAll().subscribe(data => {
-      this.attempts = data
-        .filter(a => a.studentId === this.studentId)
-        .sort((a, b) => {
-          const dateA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-          const dateB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-          return dateB - dateA;
-        });
-      this.computeStats();
-    });
+  loadPage(): void {
+    this.attemptService.getByStudentPaginated(this.studentId, this.currentPage - 1, this.pageSize)
+      .subscribe(page => {
+        this.attempts = page.content;
+        this.totalElements = page.totalElements;
+        this.totalPages = page.totalPages;
+        this.computeStats();
+      });
   }
 
   computeStats(): void {
-    this.totalAttempts = this.attempts.length;
+    this.totalAttempts = this.totalElements;
     if (this.attempts.length === 0) {
       this.avgScore = 0;
       this.bestScore = 0;
@@ -113,5 +116,20 @@ export class AttemptHistoryComponent implements OnInit {
 
   goToQuizzes(): void {
     this.router.navigate(['/front/quizzes']);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadPage();
+    }
   }
 }

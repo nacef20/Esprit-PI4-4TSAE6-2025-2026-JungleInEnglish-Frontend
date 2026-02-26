@@ -5,7 +5,7 @@
       <h1 class="text-2xl font-bold text-gray-800">Résultats des Étudiants</h1>
       <p class="text-sm text-gray-400 mt-1">Consultez et filtrez les tentatives de quiz</p>
     </div>
-    <span class="text-sm text-gray-400">{{ filteredAttempts.length }} tentative(s)</span>
+    <span class="text-sm text-gray-400">{{ totalElements }} tentative(s)</span>
   </div>
 
   <!-- Statistics cards -->
@@ -52,7 +52,7 @@
   </div>
 
   <!-- Empty state -->
-  <div *ngIf="filteredAttempts.length === 0" class="text-center py-16 text-gray-400">
+  <div *ngIf="attempts.length === 0" class="text-center py-16 text-gray-400">
     <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
       <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
@@ -60,7 +60,7 @@
   </div>
 
   <!-- Table -->
-  <div *ngIf="filteredAttempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <div *ngIf="attempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-sm text-left">
       <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
         <tr>
@@ -73,7 +73,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let attempt of filteredAttempts" class="hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewDetail(attempt.id!)">
+        <tr *ngFor="let attempt of attempts" class="hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewDetail(attempt.id!)">
           <!-- Quiz title -->
           <td class="px-6 py-4">
             <div class="font-medium text-gray-800">{{ attempt.quiz?.title || 'Quiz inconnu' }}</div>
@@ -133,5 +133,29 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4">
+    <span class="text-sm text-gray-500">
+      Page {{ currentPage }} sur {{ totalPages }} — {{ totalElements }} résultat(s)
+    </span>
+    <div class="flex items-center gap-1">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        ← Précédent
+      </button>
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button (click)="goToPage(page)"
+          class="w-9 h-9 text-sm rounded-lg border transition-all"
+          [ngClass]="page === currentPage ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 hover:bg-gray-50'">
+          {{ page }}
+        </button>
+      </ng-container>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        Suivant →
+      </button>
+    </div>
   </div>
 </div>

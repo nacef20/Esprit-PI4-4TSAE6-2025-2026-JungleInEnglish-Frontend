@@ -3,6 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Quiz } from '../models/quiz.model';
 
+export interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class QuizService {
 
@@ -28,5 +36,13 @@ export class QuizService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getAllPaginated(page: number, size: number): Observable<Page<Quiz>> {
+    return this.http.get<Page<Quiz>>(`${this.apiUrl}/page?page=${page}&size=${size}`);
+  }
+
+  getAvailablePaginated(page: number, size: number): Observable<Page<Quiz>> {
+    return this.http.get<Page<Quiz>>(`${this.apiUrl}/page/available?page=${page}&size=${size}`);
   }
 }

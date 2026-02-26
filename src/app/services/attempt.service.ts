@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Attempt } from '../models/attempt.model';
+import { Page } from './quiz.service';
 
 @Injectable({ providedIn: 'root' })
 export class AttemptService {
@@ -32,5 +33,23 @@ export class AttemptService {
 
   countByQuizAndStudent(quizId: number, studentId: number): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/count?quizId=${quizId}&studentId=${studentId}`);
+  }
+
+  getAllPaginated(page: number, size: number, quizId?: number | null, studentId?: string): Observable<Page<Attempt>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (quizId) {
+      params = params.set('quizId', quizId.toString());
+    }
+    if (studentId && studentId.trim()) {
+      params = params.set('studentId', studentId.trim());
+    }
+    return this.http.get<Page<Attempt>>(`${this.apiUrl}/page`, { params });
+  }
+
+  getByStudentPaginated(studentId: number, page: number, size: number): Observable<Page<Attempt>> {
+    return this.http.get<Page<Attempt>>(
+      `${this.apiUrl}/page/student/${studentId}?page=${page}&size=${size}`);
   }
 }

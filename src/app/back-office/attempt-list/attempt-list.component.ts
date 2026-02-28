@@ -39,6 +39,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   stats: DashboardStats | null = null;
   quizStatsList: QuizStats[] = [];
   mostFailedQuestions: FailedQuestion[] = [];
+  exporting = false;
 
   // Chart data
   avgScoreChartData: ChartData<'bar'> = { labels: [], datasets: [] };
@@ -278,5 +279,24 @@ export class AttemptListComponent implements OnInit, OnDestroy {
     if (failRate >= 70) return 'bg-red-500';
     if (failRate >= 40) return 'bg-yellow-500';
     return 'bg-green-500';
+  }
+
+  exportPdf(): void {
+    if (this.exporting) return;
+    this.exporting = true;
+    this.attemptService.exportListPdf(this.selectedQuizId, this.searchQuizTitle, this.searchStudentName).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'attempts-report.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.exporting = false;
+      },
+      error: () => {
+        this.exporting = false;
+      }
+    });
   }
 }

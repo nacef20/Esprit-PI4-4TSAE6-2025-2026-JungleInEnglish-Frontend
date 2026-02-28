@@ -32,6 +32,7 @@ export class AttemptHistoryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPage();
+    this.loadStats();
   }
 
   loadPage(): void {
@@ -40,22 +41,16 @@ export class AttemptHistoryComponent implements OnInit {
         this.attempts = page.content;
         this.totalElements = page.totalElements;
         this.totalPages = page.totalPages;
-        this.computeStats();
       });
   }
 
-  computeStats(): void {
-    this.totalAttempts = this.totalElements;
-    if (this.attempts.length === 0) {
-      this.avgScore = 0;
-      this.bestScore = 0;
-      this.passRate = 0;
-      return;
-    }
-    const percentages = this.attempts.map(a => this.getPercentage(a));
-    this.avgScore = Math.round(percentages.reduce((s, p) => s + p, 0) / percentages.length);
-    this.bestScore = Math.max(...percentages);
-    this.passRate = Math.round((percentages.filter(p => p >= 50).length / percentages.length) * 100);
+  loadStats(): void {
+    this.attemptService.getStudentStats(this.studentId).subscribe(stats => {
+      this.totalAttempts = stats.totalAttempts;
+      this.avgScore = stats.avgScore;
+      this.bestScore = stats.bestScore;
+      this.passRate = stats.passRate;
+    });
   }
 
   getPercentage(attempt: Attempt): number {

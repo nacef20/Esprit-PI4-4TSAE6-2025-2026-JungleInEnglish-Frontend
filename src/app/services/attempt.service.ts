@@ -55,4 +55,9 @@ export class AttemptService {
     return this.http.get<Page<Attempt>>(
       `${this.apiUrl}/page/student/${studentId}?page=${page}&size=${size}`);
   }
+
+  getStudentStats(studentId: number): Observable<{ totalAttempts: number; avgScore: number; bestScore: number; passRate: number }> {
+    return this.http.get<{ totalAttempts: number; avgScore: number; bestScore: number; passRate: number }>(
+      `${this.apiUrl}/stats/student/${studentId}`);
+  }
 }

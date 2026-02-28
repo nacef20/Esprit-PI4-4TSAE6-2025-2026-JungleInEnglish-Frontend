@@ -24,6 +24,12 @@ export class AttemptDetailStudentComponent implements OnInit {
   answerByQuestion: Map<number, AttemptAnswer> = new Map();
   loading = true;
   downloading = false;
+  downloadingCert = false;
+  certEligible = false;
+  certExists = false;
+  certificateId?: number;
+  certificateNumber?: string;
+  certGrade?: string;
 
   constructor(
     private attemptService: AttemptService,
@@ -39,6 +45,23 @@ export class AttemptDetailStudentComponent implements OnInit {
 
     this.attemptService.getById(attemptId).subscribe(attempt => {
       this.attempt = attempt;
+
+      // Check certificate status
+      this.attemptService.getCertificateStatus(attemptId).subscribe({
+        next: (status) => {
+          this.certEligible = status.eligible;
+          this.certExists = status.exists;
+          if (status.exists && status.certificateId) {
+            this.certificateId = status.certificateId;
+            this.certificateNumber = status.certificateNumber;
+            this.certGrade = status.grade;
+          }
+        },
+        error: () => {
+          this.certEligible = false;
+          this.certExists = false;
+        }
+      });
 
       if (!attempt.quiz?.id) {
         this.loading = false;
@@ -131,6 +154,33 @@ export class AttemptDetailStudentComponent implements OnInit {
       },
       error: () => {
         this.downloading = false;
+      }
+    });
+  }
+
+  downloadCertificate(): void {
+    if (!this.attempt?.id || this.downloadingCert) return;
+
+    // If certificate already exists, open it in a new tab
+    if (this.certExists && this.certificateId) {
+      window.open(this.attemptService.getCertificateViewUrl(this.certificateId), '_blank');
+      return;
+    }
+
+    // Otherwise, generate it first
+    this.downloadingCert = true;
+    this.attemptService.generateCertificate(this.attempt.id).subscribe({
+      next: (result) => {
+        this.certExists = true;
+        this.certificateId = result.certificateId;
+        this.certificateNumber = result.certificateNumber;
+        this.certGrade = result.grade;
+        this.downloadingCert = false;
+        // Open the newly generated certificate
+        window.open(this.attemptService.getCertificateViewUrl(result.certificateId), '_blank');
+      },
+      error: () => {
+        this.downloadingCert = false;
       }
     });
   }

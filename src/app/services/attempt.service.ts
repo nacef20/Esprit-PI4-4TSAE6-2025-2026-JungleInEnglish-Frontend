@@ -73,6 +73,25 @@ export class AttemptService {
     return this.http.get(`${this.apiUrl}/export/pdf`, { params, responseType: 'blob' });
   }
 
+  // ── Certificate API ──
+  private certApiUrl = 'http://localhost:8089/api/certificates';
+
+  getCertificateStatus(attemptId: number): Observable<{ eligible: boolean; exists: boolean; certificateId?: number; certificateNumber?: string; grade?: string; issuedAt?: string; viewUrl?: string }> {
+    return this.http.get<any>(`${this.certApiUrl}/attempt/${attemptId}/status`);
+  }
+
+  generateCertificate(attemptId: number): Observable<{ certificateId: number; certificateNumber: string; viewUrl: string; downloadUrl: string; grade: string; issuedAt: string }> {
+    return this.http.post<any>(`${this.certApiUrl}/attempt/${attemptId}/generate`, {});
+  }
+
+  getCertificateViewUrl(certificateId: number): string {
+    return `${this.certApiUrl}/${certificateId}/view`;
+  }
+
+  getCertificateDownloadUrl(certificateId: number): string {
+    return `${this.certApiUrl}/${certificateId}/download`;
+  }
+
   exportListExcel(quizId?: number | null, quizTitle?: string, studentName?: string): Observable<Blob> {
     let params = new HttpParams();
     if (quizId) params = params.set('quizId', quizId.toString());

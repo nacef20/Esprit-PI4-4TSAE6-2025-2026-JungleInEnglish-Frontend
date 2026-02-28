@@ -104,12 +104,6 @@ export class AttemptHistoryComponent implements OnInit {
     });
   }
 
-  retakeQuiz(quizId?: number): void {
-    if (quizId) {
-      this.router.navigate(['/front/quiz', quizId]);
-    }
-  }
-
   viewDetail(attemptId: number): void {
     this.router.navigate(['/front/my-attempts', attemptId]);
   }

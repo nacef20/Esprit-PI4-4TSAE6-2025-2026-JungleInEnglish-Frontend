@@ -110,13 +110,6 @@
               </div>
               <div class="text-xs text-gray-500 mt-0.5">{{ attempt.totalPoints ? 'score' : 'points' }}</div>
             </div>
-            <button (click)="$event.stopPropagation(); retakeQuiz(attempt.quiz?.id)"
-              class="flex items-center gap-1.5 px-3 py-1.5 border border-[#0ea37a] text-[#0ea37a] rounded-lg hover:bg-[#0ea37a]/10 transition-all text-xs font-medium">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
-              </svg>
-              Repasser
-            </button>
           </div>
         </div>
       </div>

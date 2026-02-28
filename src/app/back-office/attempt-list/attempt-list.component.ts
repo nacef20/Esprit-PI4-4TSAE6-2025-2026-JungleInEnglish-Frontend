@@ -1,22 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Attempt } from '../../models/attempt.model';
 import { AttemptService } from '../../services/attempt.service';
 import { Quiz } from '../../models/quiz.model';
 import { QuizService } from '../../services/quiz.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-attempt-list',
   templateUrl: './attempt-list.component.html',
   styleUrls: ['./attempt-list.component.scss']
 })
-export class AttemptListComponent implements OnInit {
+export class AttemptListComponent implements OnInit, OnDestroy {
 
   attempts: Attempt[] = [];
   quizzes: Quiz[] = [];
 
   selectedQuizId: number | null = null;
   searchStudentId = '';
+  searchQuizTitle = '';
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   // Pagination (server-side)
   currentPage = 1;
@@ -38,12 +43,31 @@ export class AttemptListComponent implements OnInit {
 
   ngOnInit(): void {
     this.quizService.getAll().subscribe(data => this.quizzes = data);
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(term => {
+      this.searchQuizTitle = term;
+      this.currentPage = 1;
+      this.loadPage();
+    });
     this.loadPage();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSearchQuizTitle(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
   }
 
   loadPage(): void {
     this.attemptService.getAllPaginated(
-      this.currentPage - 1, this.pageSize, this.selectedQuizId, this.searchStudentId
+      this.currentPage - 1, this.pageSize, this.selectedQuizId, this.searchStudentId, this.searchQuizTitle
     ).subscribe(page => {
       this.attempts = page.content;
       this.totalElements = page.totalElements;
@@ -122,6 +146,7 @@ export class AttemptListComponent implements OnInit {
   resetFilters(): void {
     this.selectedQuizId = null;
     this.searchStudentId = '';
+    this.searchQuizTitle = '';
     this.applyFilters();
   }
 

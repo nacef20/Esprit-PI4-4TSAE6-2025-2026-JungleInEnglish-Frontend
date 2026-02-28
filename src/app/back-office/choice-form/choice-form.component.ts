@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChoiceService } from '../../services/choice.service';
 
@@ -29,7 +29,7 @@ export class ChoiceFormComponent implements OnInit {
     this.choiceId = +this.route.snapshot.params['choiceId'] || undefined;
 
     this.choiceForm = this.fb.group({
-      content: ['', Validators.required],
+      content: [''],
       isCorrect: [false]
     });
 
@@ -42,7 +42,6 @@ export class ChoiceFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.choiceForm.invalid) return;
     this.serverErrors = {};
     this.submitting = true;
 

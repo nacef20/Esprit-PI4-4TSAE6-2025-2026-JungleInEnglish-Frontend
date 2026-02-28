@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuizService } from '../../services/quiz.service';
 import { QuizStatus } from '../../models/quiz.model';
@@ -27,10 +27,10 @@ export class QuizFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.quizForm = this.fb.group({
-      title: ['', Validators.required],
+      title: [''],
       description: [''],
-      duration: [30, Validators.required],
-      status: [QuizStatus.DRAFT, Validators.required],
+      duration: [30],
+      status: [QuizStatus.DRAFT],
       teacherId: [null],
       courseId: [null]
     });
@@ -45,7 +45,6 @@ export class QuizFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.quizForm.invalid) return;
     this.serverErrors = {};
     this.submitting = true;
 

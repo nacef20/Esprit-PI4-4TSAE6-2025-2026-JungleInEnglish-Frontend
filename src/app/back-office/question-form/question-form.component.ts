@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QuestionService } from '../../services/question.service';
 
@@ -29,8 +29,8 @@ export class QuestionFormComponent implements OnInit {
     this.questionId = +this.route.snapshot.params['questionId'] || undefined;
 
     this.questionForm = this.fb.group({
-      content: ['', Validators.required],
-      points: [1, Validators.required]
+      content: [''],
+      points: [1]
     });
 
     if (this.questionId) {
@@ -42,7 +42,6 @@ export class QuestionFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.questionForm.invalid) return;
     this.serverErrors = {};
     this.submitting = true;
 

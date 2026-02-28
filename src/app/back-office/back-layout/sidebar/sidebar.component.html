@@ -1,10 +1,8 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <!-- Toggle Button at Top -->
   <div class="sidebar__header">
-    <button class="sidebar__toggle" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Ouvrir le menu' : 'Fermer le menu'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 640 640">
-        <path fill="hsla(162, 72%, 65%, 1.00)" d="M96 160C96 142.3 110.3 128 128 128L512 128C529.7 128 544 142.3 544 160C544 177.7 529.7 192 512 192L128 192C110.3 192 96 177.7 96 160zM96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320zM544 480C544 497.7 529.7 512 512 512L128 512C110.3 512 96 497.7 96 480C96 462.3 110.3 448 128 448L512 448C529.7 448 544 462.3 544 480z"/>
-      </svg>
+    <button class="sidebar__toggle" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Open menu' : 'Close menu'">
+      <span class="material-symbols-outlined" style="font-size:32px;color:hsla(162, 72%, 65%, 1.00)">menu</span>
     </button>
   </div>
 
@@ -20,12 +18,7 @@
           routerLinkActive="active"
         >
           <div class="nav-link__icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="7" height="7"/>
-              <rect x="14" y="3" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/>
-              <rect x="3" y="14" width="7" height="7"/>
-            </svg>
+            <span class="material-symbols-outlined">dashboard</span>
           </div>
           <span class="nav-link__text">Dashboard</span>
           <div class="nav-link__indicator"></div>
@@ -46,9 +39,7 @@
     [routerLinkActiveOptions]="{ exact: true }"
   >
     <div class="nav-link__icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
+      <span class="material-symbols-outlined">chat</span>
     </div>
     <span class="nav-link__text">Chat Privé</span>
     <div class="nav-link__indicator"></div>
@@ -69,9 +60,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
         >
           <div class="nav-link__icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
+            <span class="material-symbols-outlined">quiz</span>
           </div>
           <span class="nav-link__text">Quiz</span>
           <div class="nav-link__indicator"></div>
@@ -87,9 +76,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
         >
           <div class="nav-link__icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
+            <span class="material-symbols-outlined">history</span>
           </div>
           <span class="nav-link__text">Attempts</span>
           <div class="nav-link__indicator"></div>
@@ -106,9 +93,7 @@
           routerLinkActive="active"
         >
           <div class="nav-link__icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-            </svg>
+            <span class="material-symbols-outlined">forum</span>
           </div>
           <span class="nav-link__text">Forum</span>
           <div class="nav-link__indicator"></div>
@@ -121,13 +106,9 @@
   <div class="sidebar__footer">
     <div class="footer-info">
       <div class="footer-info__icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="16" x2="12" y2="12"/>
-          <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size:20px">info</span>
       </div>
-      <span class="footer-info__text">Centre d'aide</span>
+      <span class="footer-info__text">Help Center</span>
     </div>
   </div>
 </aside>

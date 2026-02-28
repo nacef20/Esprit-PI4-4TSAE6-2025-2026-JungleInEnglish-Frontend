@@ -11,7 +11,7 @@
       <!-- Badge supérieur -->
       <div class="inline-block mb-6">
         <span class="px-4 py-2 bg-school-accent/10 text-school-primary rounded-full text-sm font-semibold border border-school-accent/20 backdrop-blur-sm">
-          🌿 English Learning Academy
+          <span class="material-symbols-outlined text-sm text-school-primary mr-1">eco</span> English Learning Academy
         </span>
       </div>
 
@@ -37,7 +37,7 @@
       <!-- Encadré "What is Jungle in English?" -->
       <div class="bg-school-secondary/50 border-l-4 border-school-primary rounded-lg p-6 mb-8 backdrop-blur-sm">
         <h2 class="text-xl lg:text-2xl font-bold text-school-primary mb-3 flex items-center gap-2">
-          <span class="text-2xl">🌟</span>
+          <span class="material-symbols-outlined text-2xl text-yellow-500">auto_awesome</span>
           What is Jungle in English?
         </h2>
         <p class="text-base lg:text-lg text-gray-700 leading-relaxed">
@@ -55,12 +55,7 @@
   (click)="openVideo()"
   class="group px-8 py-4 bg-white border-2 border-school-primary text-school-primary rounded-xl font-semibold hover:bg-school-secondary transition-all duration-300 flex items-center justify-center gap-2"
 >
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-  </svg>
+  <span class="material-symbols-outlined w-5 h-5">play_circle</span>
   Watch Demo
 </button>
       </div>
@@ -92,10 +87,7 @@
           <div class="absolute top-1/2 -left-8 lg:-left-12 -translate-y-1/2 badge-pro badge-green animate-float">
             <div class="badge-row">
               <div class="badge-ico">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 20h5v-2a4 4 0 00-4-4h-1m-4 6H2v-2a4 4 0 014-4h1m6 6v-2a4 4 0 00-4-4H8m8-4a4 4 0 11-8 0 4 4 0 018 0z"/>
-                </svg>
+                <span class="material-symbols-outlined w-5 h-5 text-white">group</span>
               </div>
               <div class="badge-text">
                 <p class="badge-title">Students</p>
@@ -108,10 +100,7 @@
           <div class="absolute top-1/4 -right-8 lg:-right-12 badge-pro badge-white hidden lg:block animate-float animation-delay-1500">
             <div class="badge-row">
               <div class="badge-ico badge-ico-dark">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                <span class="material-symbols-outlined w-5 h-5 text-white">verified</span>
               </div>
               <div class="badge-text">
                 <p class="badge-title">Success</p>
@@ -152,7 +141,9 @@
 <div *ngIf="videoOpen" class="video-overlay" (click)="closeVideo()">
   <div class="video-modal" (click)="$event.stopPropagation()">
 
-    <button class="video-close" (click)="closeVideo()">✕</button>
+    <button class="video-close" (click)="closeVideo()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
 
     <div class="tiktok-container">
       <iframe

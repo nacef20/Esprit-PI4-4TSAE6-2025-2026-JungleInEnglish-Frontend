@@ -56,7 +56,7 @@ ngOnInit(): void {
     this.groups = data.map(g => ({
       id: g.id,
       name: g.name,
-      avatar: g.image || '👤',
+      avatar: g.image || '',
       lastMessage: g.lastMessage || 'Aucun message',
       time: g.time || '',
       unread: g.unread || 0,
@@ -121,7 +121,7 @@ ngOnInit(): void {
     const newGroup: Group = {
       id: data.id || this.groups.length + 1,
       name: data.name,
-      avatar: data.image || '📁',
+      avatar: data.image || '',
       lastMessage: 'Nouveau groupe créé',
       time: 'Maintenant',
       unread: 0,
@@ -322,11 +322,11 @@ showDeleteIcon(msg: Message): void {
 
  
   startVideoCall(): void {
-    alert('Appel vidéo en cours... 📹');
+    alert('Video call in progress...');
   }
 
   startAudioCall(): void {
-    alert('Appel audio en cours... 📞');
+    alert('Audio call in progress...');
   }
 
   private scrollToBottom(): void {

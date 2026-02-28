@@ -2,11 +2,12 @@
   <!-- Header -->
   <div class="flex items-center gap-3">
     <button (click)="cancel()" class="p-2 hover:bg-gray-100 rounded-lg transition-all">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
+      <span class="material-symbols-outlined">arrow_back</span>
     </button>
-    <h1 class="text-2xl font-bold text-gray-800">{{ isEdit ? 'Edit Choice' : 'New Choice' }}</h1>
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#0ea37a]">{{ isEdit ? 'edit_note' : 'playlist_add' }}</span>
+      {{ isEdit ? 'Edit Choice' : 'New Choice' }}
+    </h1>
   </div>
 
   <!-- Form card -->
@@ -31,11 +32,13 @@
     <!-- Actions -->
     <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
       <button type="submit" [disabled]="choiceForm.invalid"
-        class="px-6 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium">
+        class="flex items-center gap-2 px-6 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium">
+        <span class="material-symbols-outlined text-xl">{{ isEdit ? 'save' : 'add_circle' }}</span>
         {{ isEdit ? 'Save' : 'Create' }}
       </button>
       <button type="button" (click)="cancel()"
-        class="px-6 py-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all font-medium">
+        class="flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all font-medium">
+        <span class="material-symbols-outlined text-xl">close</span>
         Cancel
       </button>
     </div>

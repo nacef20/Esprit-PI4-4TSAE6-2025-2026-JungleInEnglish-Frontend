@@ -22,9 +22,7 @@
       </div>
       <button (click)="goToQuizzes()"
         class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all font-medium">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 19l-7-7 7-7"/>
-        </svg>
+        <span class="material-symbols-outlined text-xl">arrow_back</span>
         Back to Quizzes
       </button>
     </div>
@@ -52,9 +50,7 @@
     <!-- Empty state -->
     <div *ngIf="attempts.length === 0"
       class="text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
-      <svg class="mx-auto mb-4 text-gray-300" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
+      <span class="material-symbols-outlined text-5xl text-gray-300 mb-4 block mx-auto">history</span>
       <p class="text-xl text-gray-400 mb-2">No attempts</p>
       <p class="text-gray-400 mb-6">Take a quiz to see your results here</p>
       <button (click)="goToQuizzes()"

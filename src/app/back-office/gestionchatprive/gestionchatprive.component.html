@@ -173,7 +173,7 @@
       (dblclick)="showDeleteIcon(message)"
       [class.own]="message.sender === currentUserId"
     >
-      <div class="message-avatar">👨‍💻</div>
+      <div class="message-avatar"><span class="material-symbols-outlined">person</span></div>
 
       <div class="message-content" [class.deleted-text]="message.deleted">
         <span class="message-sender">

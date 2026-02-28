@@ -39,7 +39,7 @@ export class ChoiceListComponent implements OnInit {
   }
 
   deleteChoice(id: number): void {
-    if (confirm('Supprimer ce choix ?')) {
+    if (confirm('Delete this choice?')) {
       this.choiceService.delete(id).subscribe(() => this.loadChoices());
     }
   }

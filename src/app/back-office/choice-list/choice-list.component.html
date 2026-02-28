@@ -7,20 +7,20 @@
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <h1 class="text-2xl font-bold text-gray-800">Choix de la Question #{{ questionId }}</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Choices for Question #{{ questionId }}</h1>
     </div>
     <button (click)="addChoice()"
       class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
-      Nouveau Choix
+      New Choice
     </button>
   </div>
 
   <!-- Empty state -->
   <div *ngIf="choices.length === 0" class="text-center py-16 text-gray-400">
-    <p class="text-lg">Aucun choix pour cette question</p>
+    <p class="text-lg">No choices for this question</p>
   </div>
 
   <!-- Choices list -->

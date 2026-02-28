@@ -75,7 +75,7 @@ export class QuizListComponent implements OnInit, OnDestroy {
   }
 
   deleteQuiz(id: number): void {
-    if (confirm('Supprimer ce quiz ?')) {
+    if (confirm('Delete this quiz?')) {
       this.quizService.delete(id).subscribe(() => this.loadPage());
     }
   }

@@ -79,7 +79,7 @@ export class AttemptHistoryComponent implements OnInit {
   }
 
   getPassLabel(attempt: Attempt): string {
-    return this.getPercentage(attempt) >= 50 ? 'Réussi' : 'Échoué';
+    return this.getPercentage(attempt) >= 50 ? 'Passed' : 'Failed';
   }
 
   getPassBadge(attempt: Attempt): string {
@@ -98,7 +98,7 @@ export class AttemptHistoryComponent implements OnInit {
   formatDate(dateStr?: string): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', {
+    return d.toLocaleDateString('en-US', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });

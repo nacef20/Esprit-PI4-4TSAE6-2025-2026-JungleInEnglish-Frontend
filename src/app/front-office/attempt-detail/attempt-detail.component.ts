@@ -105,7 +105,7 @@ export class AttemptDetailStudentComponent implements OnInit {
   formatDate(dateStr?: string): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', {
+    return d.toLocaleDateString('en-US', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });

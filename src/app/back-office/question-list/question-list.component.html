@@ -7,20 +7,20 @@
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <h1 class="text-2xl font-bold text-gray-800">Questions du Quiz #{{ quizId }}</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Questions for Quiz #{{ quizId }}</h1>
     </div>
     <button (click)="addQuestion()"
       class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
-      Nouvelle Question
+      New Question
     </button>
   </div>
 
   <!-- Empty state -->
   <div *ngIf="questions.length === 0" class="text-center py-16 text-gray-400">
-    <p class="text-lg">Aucune question pour ce quiz</p>
+    <p class="text-lg">No questions for this quiz</p>
   </div>
 
   <!-- Questions list -->
@@ -38,7 +38,7 @@
         <div class="flex items-center gap-1 ml-4">
           <button (click)="manageChoices(question.id!)"
             class="text-sm px-3 py-1.5 bg-[#0ea37a]/10 text-[#0ea37a] rounded-lg hover:bg-[#0ea37a]/20 transition-all font-medium">
-            Choix
+            Choices
           </button>
           <button (click)="editQuestion(question.id!)"
             class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all">

@@ -48,7 +48,7 @@ export class QuizPassComponent implements OnInit {
       // Check if quiz is closed
       if (quiz.status === 'CLOSED') {
         this.blocked = true;
-        this.blockReason = 'Ce quiz est ferm\u00e9. Vous ne pouvez plus le passer.';
+        this.blockReason = 'This quiz is closed. You can no longer take it.';
         this.loading = false;
         return;
       }
@@ -57,7 +57,7 @@ export class QuizPassComponent implements OnInit {
       this.attemptService.countByQuizAndStudent(quizId, studentId).subscribe(count => {
         if (count >= 1) {
           this.blocked = true;
-          this.blockReason = 'Vous avez déjà passé ce quiz.';
+          this.blockReason = 'You have already taken this quiz.';
           this.loading = false;
         } else {
           this.loadQuestions(quizId);
@@ -128,7 +128,7 @@ export class QuizPassComponent implements OnInit {
       submittedAt: new Date().toISOString(),
       quiz: { id: this.quiz?.id } as Quiz,
       studentId: 1, // placeholder — no auth
-      studentName: 'Étudiant 1' // placeholder — no auth
+      studentName: 'Student 1' // placeholder — no auth
     };
 
     this.attemptService.create(attempt).subscribe(savedAttempt => {

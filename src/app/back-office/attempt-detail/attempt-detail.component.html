@@ -7,9 +7,9 @@
       </svg>
     </button>
     <div>
-      <h1 class="text-2xl font-bold text-gray-800">Détail de la tentative</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Attempt Detail</h1>
       <p class="text-sm text-gray-400" *ngIf="attempt">
-        {{ attempt.quiz?.title }} — Étudiant #{{ attempt.studentId }}
+        {{ attempt.quiz?.title }} — Student #{{ attempt.studentId }}
       </p>
     </div>
   </div>
@@ -19,7 +19,7 @@
     <svg class="animate-spin mx-auto mb-4 text-[#0ea37a]" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/>
     </svg>
-    <p class="text-gray-500">Chargement...</p>
+    <p class="text-gray-500">Loading...</p>
   </div>
 
   <!-- Summary card -->
@@ -32,7 +32,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
-            Étudiant #{{ attempt.studentId }}
+            Student #{{ attempt.studentId }}
           </span>
           <span>{{ formatDate(attempt.submittedAt) }}</span>
         </div>
@@ -51,7 +51,7 @@
         <!-- Badge -->
         <span class="px-3 py-1.5 rounded-full text-sm font-medium"
           [ngClass]="isPassed() ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-          {{ isPassed() ? 'Réussi' : 'Échoué' }}
+          {{ isPassed() ? 'Passed' : 'Failed' }}
         </span>
       </div>
     </div>
@@ -112,17 +112,17 @@
           <!-- Labels -->
           <span *ngIf="isSelectedChoice(question.id!, choice.id!) && !isCorrectChoice(choice.id!, question.id!)"
             class="text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
-            Votre réponse
+            Your answer
           </span>
           <span *ngIf="isCorrectChoice(choice.id!, question.id!)"
             class="text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
-            {{ isSelectedChoice(question.id!, choice.id!) ? 'Correct ✓' : 'Bonne réponse' }}
+            {{ isSelectedChoice(question.id!, choice.id!) ? 'Correct ✓' : 'Correct answer' }}
           </span>
         </div>
 
         <!-- No answer -->
         <div *ngIf="!answerByQuestion.has(question.id!)" class="text-sm text-gray-400 italic mt-2">
-          Aucune réponse sélectionnée
+          No answer selected
         </div>
       </div>
     </div>

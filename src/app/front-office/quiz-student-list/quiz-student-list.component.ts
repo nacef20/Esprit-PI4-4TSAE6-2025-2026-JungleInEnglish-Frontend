@@ -87,9 +87,9 @@ export class QuizStudentListComponent implements OnInit, OnDestroy {
   }
 
   getQuizBlockReason(quiz: Quiz): string {
-    if (quiz.status === 'CLOSED') return 'Quiz fermé';
+    if (quiz.status === 'CLOSED') return 'Quiz closed';
     const count = this.attemptCounts.get(quiz.id!) || 0;
-    if (count >= 1) return 'Déjà passé';
+    if (count >= 1) return 'Already taken';
     return '';
   }
 

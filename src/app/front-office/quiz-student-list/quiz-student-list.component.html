@@ -5,8 +5,8 @@
       <a routerLink="/front" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
       <div class="flex items-center gap-4">
         <a routerLink="/front/quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
-        <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Mes Tentatives</a>
-        <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Accueil</a>
+        <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
+        <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
       </div>
     </div>
   </nav>
@@ -16,8 +16,8 @@
 
     <!-- Header -->
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-2">Quiz disponibles</h1>
-      <p class="text-gray-500">Sélectionnez un quiz pour commencer</p>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Available Quizzes</h1>
+      <p class="text-gray-500">Select a quiz to get started</p>
     </div>
 
     <!-- Search bar -->
@@ -25,7 +25,7 @@
       <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" placeholder="Rechercher un quiz..." (input)="onSearch($event)"
+      <input type="text" placeholder="Search for a quiz..." (input)="onSearch($event)"
         class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
     </div>
 
@@ -34,22 +34,22 @@
       <button (click)="onFilter('all')"
         class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
         [ngClass]="activeFilter === 'all' ? 'bg-[#0ea37a] text-white border-[#0ea37a] shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
-        Tous
+        All
       </button>
       <button (click)="onFilter('open')"
         class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
         [ngClass]="activeFilter === 'open' ? 'bg-[#0ea37a] text-white border-[#0ea37a] shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
-        Ouvert
+        Open
       </button>
       <button (click)="onFilter('attempted')"
         class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
         [ngClass]="activeFilter === 'attempted' ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
-        Déjà passé
+        Already taken
       </button>
       <button (click)="onFilter('closed')"
         class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
         [ngClass]="activeFilter === 'closed' ? 'bg-red-500 text-white border-red-500 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
-        Fermé
+        Closed
       </button>
     </div>
 
@@ -58,7 +58,7 @@
       <svg class="mx-auto mb-4" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
       </svg>
-      <p class="text-lg">Aucun quiz publié pour le moment</p>
+      <p class="text-lg">No published quizzes at the moment</p>
     </div>
 
     <!-- Quiz grid -->
@@ -84,11 +84,11 @@
             </span>
             <span *ngIf="quiz.status === 'CLOSED'"
               class="text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-full">
-              Ferm&#233;
+              Closed
             </span>
             <span *ngIf="(attemptCounts.get(quiz.id!) || 0) >= 1"
               class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
-              Déjà passé
+              Already taken
             </span>
           </div>
 
@@ -100,7 +100,7 @@
           <!-- CTA or blocked message -->
           <button *ngIf="canTakeQuiz(quiz)"
             class="w-full py-2.5 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all group-hover:shadow-md">
-            Commencer le quiz
+            Start quiz
           </button>
           <div *ngIf="!canTakeQuiz(quiz)"
             class="w-full py-2.5 bg-gray-100 text-gray-500 rounded-lg font-medium text-center">
@@ -113,12 +113,12 @@
     <!-- Pagination -->
     <div *ngIf="totalPages > 1" class="flex items-center justify-between mt-12 bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 max-w-screen-xl mx-auto">
       <span class="text-sm text-gray-500">
-        Page {{ currentPage }} sur {{ totalPages }} — {{ totalElements }} quiz
+        Page {{ currentPage }} of {{ totalPages }} — {{ totalElements }} quiz(es)
       </span>
       <div class="flex items-center gap-1">
         <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
           class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          ← Précédent
+          ← Previous
         </button>
         <ng-container *ngFor="let page of getPageNumbers()">
           <button (click)="goToPage(page)"
@@ -129,7 +129,7 @@
         </ng-container>
         <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
           class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          Suivant →
+          Next →
         </button>
       </div>
     </div>

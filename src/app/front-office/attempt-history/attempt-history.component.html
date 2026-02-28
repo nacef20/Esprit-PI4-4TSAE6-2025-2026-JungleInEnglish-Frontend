@@ -5,8 +5,8 @@
       <a routerLink="/front" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
       <div class="flex items-center gap-4">
         <a routerLink="/front/quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
-        <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Mes Tentatives</a>
-        <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Accueil</a>
+        <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
+        <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
       </div>
     </div>
   </nav>
@@ -17,34 +17,34 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">Mes Résultats</h1>
-        <p class="text-gray-500 mt-1">Consultez vos performances de quiz</p>
+        <h1 class="text-3xl font-bold text-gray-900">My Results</h1>
+        <p class="text-gray-500 mt-1">View your quiz performance</p>
       </div>
       <button (click)="goToQuizzes()"
         class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all font-medium">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M15 19l-7-7 7-7"/>
         </svg>
-        Retour aux Quiz
+        Back to Quizzes
       </button>
     </div>
 
     <!-- Stats cards -->
     <div *ngIf="attempts.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Tentatives</div>
+        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Attempts</div>
         <div class="text-2xl font-bold text-gray-800">{{ totalAttempts }}</div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Score moyen</div>
+        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Average Score</div>
         <div class="text-2xl font-bold text-[#0ea37a]">{{ avgScore }}%</div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Meilleur score</div>
+        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Best Score</div>
         <div class="text-2xl font-bold text-blue-600">{{ bestScore }}%</div>
       </div>
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Taux de réussite</div>
+        <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Pass Rate</div>
         <div class="text-2xl font-bold" [ngClass]="passRate >= 50 ? 'text-green-600' : 'text-red-500'">{{ passRate }}%</div>
       </div>
     </div>
@@ -55,11 +55,11 @@
       <svg class="mx-auto mb-4 text-gray-300" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
-      <p class="text-xl text-gray-400 mb-2">Aucune tentative</p>
-      <p class="text-gray-400 mb-6">Passez un quiz pour voir vos résultats ici</p>
+      <p class="text-xl text-gray-400 mb-2">No attempts</p>
+      <p class="text-gray-400 mb-6">Take a quiz to see your results here</p>
       <button (click)="goToQuizzes()"
         class="px-5 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all font-medium">
-        Voir les Quiz disponibles
+        View available Quizzes
       </button>
     </div>
 
@@ -74,14 +74,14 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 flex-wrap">
               <h3 class="text-lg font-semibold text-gray-800">
-                {{ attempt.quiz?.title || 'Quiz inconnu' }}
+                {{ attempt.quiz?.title || 'Unknown quiz' }}
               </h3>
               <span *ngIf="attempt.totalPoints" class="text-xs font-medium px-2.5 py-1 rounded-full"
                 [ngClass]="getPassBadge(attempt)">
                 {{ getPassLabel(attempt) }}
               </span>
             </div>
-            <p class="text-sm text-gray-400 mt-1">Soumis le {{ formatDate(attempt.submittedAt) }}</p>
+            <p class="text-sm text-gray-400 mt-1">Submitted on {{ formatDate(attempt.submittedAt) }}</p>
 
             <!-- Progress bar -->
             <div *ngIf="attempt.totalPoints" class="mt-3">
@@ -118,12 +118,12 @@
     <!-- Pagination -->
     <div *ngIf="totalPages > 1" class="flex items-center justify-between mt-8 bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4">
       <span class="text-sm text-gray-500">
-        Page {{ currentPage }} sur {{ totalPages }} — {{ totalElements }} tentative(s)
+        Page {{ currentPage }} of {{ totalPages }} — {{ totalElements }} attempt(s)
       </span>
       <div class="flex items-center gap-1">
         <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
           class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          ← Précédent
+          ← Previous
         </button>
         <ng-container *ngFor="let page of getPageNumbers()">
           <button (click)="goToPage(page)"
@@ -134,7 +134,7 @@
         </ng-container>
         <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
           class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-          Suivant →
+          Next →
         </button>
       </div>
     </div>

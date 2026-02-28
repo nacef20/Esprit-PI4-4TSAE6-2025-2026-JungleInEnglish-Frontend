@@ -162,7 +162,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
     // Grade Distribution (doughnut)
     const gd = data.gradeDistribution;
     this.gradeChartData = {
-      labels: ['Excellent (≥80%)', 'Bien (60-79%)', 'Passable (50-59%)', 'Échoué (<50%)'],
+      labels: ['Excellent (≥80%)', 'Good (60-79%)', 'Average (50-59%)', 'Failed (<50%)'],
       datasets: [{
         data: [gd.excellent, gd.good, gd.average, gd.failed],
         backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
@@ -205,7 +205,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   }
 
   deleteAttempt(id: number): void {
-    if (confirm('Supprimer cette tentative ?')) {
+    if (confirm('Delete this attempt?')) {
       this.attemptService.delete(id).subscribe(() => {
         this.loadPage();
         this.loadDashboardStats();
@@ -228,7 +228,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   }
 
   getPassLabel(attempt: Attempt): string {
-    return this.getPercentage(attempt) >= 50 ? 'Réussi' : 'Échoué';
+    return this.getPercentage(attempt) >= 50 ? 'Passed' : 'Failed';
   }
 
   getPassBadgeClasses(attempt: Attempt): string {
@@ -240,7 +240,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   formatDate(dateStr?: string): string {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
-    return d.toLocaleDateString('fr-FR', {
+    return d.toLocaleDateString('en-US', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });

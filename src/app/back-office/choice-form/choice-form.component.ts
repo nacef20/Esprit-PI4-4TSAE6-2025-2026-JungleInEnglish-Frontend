@@ -14,6 +14,8 @@ export class ChoiceFormComponent implements OnInit {
   isEdit = false;
   questionId!: number;
   choiceId?: number;
+  serverErrors: { [key: string]: string } = {};
+  submitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -41,21 +43,27 @@ export class ChoiceFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.choiceForm.invalid) return;
+    this.serverErrors = {};
+    this.submitting = true;
 
     const choice = {
       ...this.choiceForm.value,
       question: { id: this.questionId }
     };
 
-    if (this.isEdit && this.choiceId) {
-      this.choiceService.update(this.choiceId, choice).subscribe(() =>
-        this.router.navigate(['/back/questions', this.questionId, 'choices'])
-      );
-    } else {
-      this.choiceService.create(choice).subscribe(() =>
-        this.router.navigate(['/back/questions', this.questionId, 'choices'])
-      );
-    }
+    const request = this.isEdit && this.choiceId
+      ? this.choiceService.update(this.choiceId, choice)
+      : this.choiceService.create(choice);
+
+    request.subscribe({
+      next: () => this.router.navigate(['/back/questions', this.questionId, 'choices']),
+      error: (err) => {
+        this.submitting = false;
+        if (err.error?.fieldErrors) {
+          this.serverErrors = err.error.fieldErrors;
+        }
+      }
+    });
   }
 
   cancel(): void {

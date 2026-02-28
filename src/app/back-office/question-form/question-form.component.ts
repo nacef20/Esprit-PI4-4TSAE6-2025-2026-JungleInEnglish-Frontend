@@ -14,6 +14,8 @@ export class QuestionFormComponent implements OnInit {
   isEdit = false;
   quizId!: number;
   questionId?: number;
+  serverErrors: { [key: string]: string } = {};
+  submitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -41,21 +43,27 @@ export class QuestionFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.questionForm.invalid) return;
+    this.serverErrors = {};
+    this.submitting = true;
 
     const question = {
       ...this.questionForm.value,
       quiz: { id: this.quizId }
     };
 
-    if (this.isEdit && this.questionId) {
-      this.questionService.update(this.questionId, question).subscribe(() =>
-        this.router.navigate(['/back/quizzes', this.quizId, 'questions'])
-      );
-    } else {
-      this.questionService.create(question).subscribe(() =>
-        this.router.navigate(['/back/quizzes', this.quizId, 'questions'])
-      );
-    }
+    const request = this.isEdit && this.questionId
+      ? this.questionService.update(this.questionId, question)
+      : this.questionService.create(question);
+
+    request.subscribe({
+      next: () => this.router.navigate(['/back/quizzes', this.quizId, 'questions']),
+      error: (err) => {
+        this.submitting = false;
+        if (err.error?.fieldErrors) {
+          this.serverErrors = err.error.fieldErrors;
+        }
+      }
+    });
   }
 
   cancel(): void {

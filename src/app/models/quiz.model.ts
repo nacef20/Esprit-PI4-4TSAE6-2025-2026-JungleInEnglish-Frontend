@@ -12,5 +12,4 @@ export interface Quiz {
   status: QuizStatus;
   teacherId?: number;
   courseId?: number;
-  maxAttempts?: number;
 }

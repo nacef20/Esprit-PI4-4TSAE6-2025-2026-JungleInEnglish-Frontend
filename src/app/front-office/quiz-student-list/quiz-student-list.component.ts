@@ -49,19 +49,14 @@ export class QuizStudentListComponent implements OnInit {
 
   canTakeQuiz(quiz: Quiz): boolean {
     if (quiz.status === 'CLOSED') return false;
-    if (quiz.maxAttempts && quiz.maxAttempts > 0) {
-      const count = this.attemptCounts.get(quiz.id!) || 0;
-      return count < quiz.maxAttempts;
-    }
-    return true;
+    const count = this.attemptCounts.get(quiz.id!) || 0;
+    return count < 1;
   }
 
   getQuizBlockReason(quiz: Quiz): string {
     if (quiz.status === 'CLOSED') return 'Quiz fermé';
-    if (quiz.maxAttempts && quiz.maxAttempts > 0) {
-      const count = this.attemptCounts.get(quiz.id!) || 0;
-      if (count >= quiz.maxAttempts) return 'Nombre max de tentatives atteint';
-    }
+    const count = this.attemptCounts.get(quiz.id!) || 0;
+    if (count >= 1) return 'Déjà passé';
     return '';
   }
 

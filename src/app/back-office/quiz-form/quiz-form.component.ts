@@ -30,8 +30,7 @@ export class QuizFormComponent implements OnInit {
       duration: [30, Validators.required],
       status: [QuizStatus.DRAFT, Validators.required],
       teacherId: [null],
-      courseId: [null],
-      maxAttempts: [null]
+      courseId: [null]
     });
 
     this.quizId = +this.route.snapshot.params['id'];

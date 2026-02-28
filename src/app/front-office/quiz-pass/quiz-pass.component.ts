@@ -53,20 +53,16 @@ export class QuizPassComponent implements OnInit {
         return;
       }
 
-      // Check max attempts
-      if (quiz.maxAttempts && quiz.maxAttempts > 0) {
-        this.attemptService.countByQuizAndStudent(quizId, studentId).subscribe(count => {
-          if (count >= quiz.maxAttempts!) {
-            this.blocked = true;
-            this.blockReason = `Vous avez atteint le nombre maximum de tentatives (${quiz.maxAttempts}).`;
-            this.loading = false;
-          } else {
-            this.loadQuestions(quizId);
-          }
-        });
-      } else {
-        this.loadQuestions(quizId);
-      }
+      // Check if already attempted (one attempt only)
+      this.attemptService.countByQuizAndStudent(quizId, studentId).subscribe(count => {
+        if (count >= 1) {
+          this.blocked = true;
+          this.blockReason = 'Vous avez déjà passé ce quiz.';
+          this.loading = false;
+        } else {
+          this.loadQuestions(quizId);
+        }
+      });
     });
   }
 

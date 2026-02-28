@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Quiz } from '../../models/quiz.model';
 import { Question } from '../../models/question.model';
@@ -7,7 +7,6 @@ import { QuizService } from '../../services/quiz.service';
 import { QuestionService } from '../../services/question.service';
 import { ChoiceService } from '../../services/choice.service';
 import { AttemptService } from '../../services/attempt.service';
-import { AttemptAnswerService } from '../../services/attempt-answer.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -15,32 +14,38 @@ import { forkJoin } from 'rxjs';
   templateUrl: './quiz-pass.component.html',
   styleUrls: ['./quiz-pass.component.scss']
 })
-export class QuizPassComponent implements OnInit {
+export class QuizPassComponent implements OnInit, OnDestroy {
 
   quiz?: Quiz;
   questions: Question[] = [];
   choicesByQuestion: Map<number, Choice[]> = new Map();
   selectedChoices: Map<number, number> = new Map(); // questionId -> choiceId
   submitted = false;
+  submitting = false;
   score = 0;
   totalPoints = 0;
   loading = true;
   blocked = false;
   blockReason = '';
+  timeExpiredOnSubmit = false;
+
+  // Timer state
+  attemptId: number | null = null;
+  remainingSeconds = 0;
+  timerInterval: any = null;
+  timerWarning = false; // true when < 60s
 
   constructor(
     private quizService: QuizService,
     private questionService: QuestionService,
     private choiceService: ChoiceService,
     private attemptService: AttemptService,
-    private attemptAnswerService: AttemptAnswerService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     const quizId = +this.route.snapshot.params['id'];
-    const studentId = 1; // placeholder — no auth
 
     this.quizService.getById(quizId).subscribe(quiz => {
       this.quiz = quiz;
@@ -53,17 +58,64 @@ export class QuizPassComponent implements OnInit {
         return;
       }
 
-      // Check if already attempted (one attempt only)
-      this.attemptService.countByQuizAndStudent(quizId, studentId).subscribe(count => {
-        if (count >= 1) {
-          this.blocked = true;
-          this.blockReason = 'You have already taken this quiz.';
-          this.loading = false;
-        } else {
+      // Start attempt on server (handles already-completed / resume logic)
+      this.attemptService.startAttempt(quizId, 1, 'Student 1').subscribe({
+        next: (res) => {
+          this.attemptId = res.attemptId;
+          this.remainingSeconds = res.remainingSeconds;
+          this.startTimer();
           this.loadQuestions(quizId);
+        },
+        error: (err) => {
+          const errorMsg = err.error?.error || '';
+          if (errorMsg === 'ALREADY_COMPLETED') {
+            this.blocked = true;
+            this.blockReason = 'You have already taken this quiz.';
+          } else if (errorMsg === 'QUIZ_CLOSED') {
+            this.blocked = true;
+            this.blockReason = 'This quiz is closed. You can no longer take it.';
+          } else {
+            this.blocked = true;
+            this.blockReason = 'Unable to start quiz. Please try again later.';
+          }
+          this.loading = false;
         }
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.clearTimer();
+  }
+
+  private startTimer(): void {
+    this.timerWarning = this.remainingSeconds <= 60;
+    this.timerInterval = setInterval(() => {
+      this.remainingSeconds--;
+      this.timerWarning = this.remainingSeconds <= 60;
+
+      if (this.remainingSeconds <= 0) {
+        this.remainingSeconds = 0;
+        this.clearTimer();
+        // Auto-submit when time runs out
+        if (!this.submitted && !this.submitting) {
+          this.submit(true);
+        }
+      }
+    }, 1000);
+  }
+
+  private clearTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  get timerDisplay(): string {
+    const m = Math.floor(this.remainingSeconds / 60);
+    const s = this.remainingSeconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   }
 
   private loadQuestions(quizId: number): void {
@@ -77,7 +129,6 @@ export class QuizPassComponent implements OnInit {
           return;
         }
 
-        // Load choices for each question using dedicated endpoints
         const choiceRequests = this.questions.map(q =>
           this.choiceService.getByQuestionId(q.id!)
         );
@@ -104,48 +155,31 @@ export class QuizPassComponent implements OnInit {
     return this.selectedChoices.get(questionId) === choiceId;
   }
 
-  submit(): void {
-    if (this.submitted) return;
+  submit(autoSubmitted = false): void {
+    if (this.submitted || this.submitting || !this.attemptId) return;
+    this.submitting = true;
+    this.clearTimer();
 
-    // Calculate score
-    this.score = 0;
-    this.questions.forEach(q => {
-      const selectedId = this.selectedChoices.get(q.id!);
-      if (selectedId) {
-        const choices = this.choicesByQuestion.get(q.id!) || [];
-        const selected = choices.find(c => c.id === selectedId);
-        if (selected?.isCorrect) {
-          this.score += q.points;
-        }
-      }
+    // Build answers array from selected choices
+    const answers: { questionId: number; choiceId: number }[] = [];
+    this.selectedChoices.forEach((choiceId, questionId) => {
+      answers.push({ questionId, choiceId });
     });
 
-    // Save attempt
-    const attempt = {
-      score: this.score,
-      totalPoints: this.totalPoints,
-      startedAt: new Date().toISOString(),
-      submittedAt: new Date().toISOString(),
-      quiz: { id: this.quiz?.id } as Quiz,
-      studentId: 1, // placeholder — no auth
-      studentName: 'Student 1' // placeholder — no auth
-    };
-
-    this.attemptService.create(attempt).subscribe(savedAttempt => {
-      // Save individual answers
-      const answers = this.questions
-        .filter(q => this.selectedChoices.has(q.id!))
-        .map(q => ({
-          attempt: { id: savedAttempt.id },
-          question: { id: q.id },
-          selectedChoice: { id: this.selectedChoices.get(q.id!) }
-        }));
-
-      if (answers.length > 0) {
-        this.attemptAnswerService.saveAll(answers as any).subscribe();
+    this.attemptService.submitAttempt(this.attemptId, answers).subscribe({
+      next: (res) => {
+        this.score = res.score;
+        this.totalPoints = res.totalPoints;
+        this.timeExpiredOnSubmit = res.timeExpired;
+        this.submitted = true;
+        this.submitting = false;
+      },
+      error: () => {
+        // If submit fails (already submitted), show as completed
+        this.submitted = true;
+        this.submitting = false;
       }
     });
-    this.submitted = true;
   }
 
   goBack(): void {

@@ -35,6 +35,22 @@ export class AttemptService {
     return this.http.get<number>(`${this.apiUrl}/count?quizId=${quizId}&studentId=${studentId}`);
   }
 
+  // ── Server-side quiz attempt flow ──
+
+  startAttempt(quizId: number, studentId: number, studentName: string): Observable<{ attemptId: number; startedAt: string; remainingSeconds: number }> {
+    return this.http.post<{ attemptId: number; startedAt: string; remainingSeconds: number }>(
+      `${this.apiUrl}/start?quizId=${quizId}&studentId=${studentId}&studentName=${encodeURIComponent(studentName)}`, {});
+  }
+
+  submitAttempt(attemptId: number, answers: { questionId: number; choiceId: number }[]): Observable<{ attemptId: number; score: number; totalPoints: number; percentage: number; timeExpired: boolean }> {
+    return this.http.post<{ attemptId: number; score: number; totalPoints: number; percentage: number; timeExpired: boolean }>(
+      `${this.apiUrl}/${attemptId}/submit`, { answers });
+  }
+
+  getRemainingTime(attemptId: number): Observable<{ remainingSeconds: number; expired: boolean }> {
+    return this.http.get<{ remainingSeconds: number; expired: boolean }>(`${this.apiUrl}/${attemptId}/remaining-time`);
+  }
+
   getAllPaginated(page: number, size: number, quizId?: number | null, studentName?: string, quizTitle?: string): Observable<Page<Attempt>> {
     let params = new HttpParams()
       .set('page', page.toString())

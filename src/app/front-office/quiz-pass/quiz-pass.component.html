@@ -4,6 +4,16 @@
     <div class="max-w-screen-xl mx-auto px-6 py-3 flex items-center justify-between">
       <a routerLink="/front" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
       <div class="flex items-center gap-4">
+        <!-- Countdown timer in nav -->
+        <div *ngIf="attemptId && !submitted && !blocked && !loading"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-sm font-bold transition-all"
+          [ngClass]="{
+            'bg-red-100 text-red-600 animate-pulse': timerWarning,
+            'bg-[#0ea37a]/10 text-[#0ea37a]': !timerWarning
+          }">
+          <span class="material-symbols-outlined text-base">timer</span>
+          {{ timerDisplay }}
+        </div>
         <a routerLink="/front/quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
         <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
         <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
@@ -34,7 +44,13 @@
         <span *ngIf="score >= totalPoints / 2" class="material-symbols-outlined text-4xl">check_circle</span>
         <span *ngIf="score < totalPoints / 2" class="material-symbols-outlined text-4xl">cancel</span>
       </div>
-      <h2 class="text-2xl font-bold text-gray-800 mb-1">Quiz completed!</h2>
+      <h2 class="text-2xl font-bold text-gray-800 mb-1">
+        {{ timeExpiredOnSubmit ? 'Time\'s up!' : 'Quiz completed!' }}
+      </h2>
+      <p *ngIf="timeExpiredOnSubmit" class="text-sm text-amber-600 mb-2">
+        <span class="material-symbols-outlined text-sm align-middle">warning</span>
+        Your quiz was auto-submitted because time expired.
+      </p>
       <p class="text-lg text-gray-600">
         Score: <span class="font-bold text-[#0ea37a]">{{ score }}</span> / {{ totalPoints }}
       </p>
@@ -60,6 +76,17 @@
         <span>{{ questions.length }} questions</span>
         <span>{{ totalPoints }} points</span>
       </div>
+
+      <!-- Large timer display (shown while quiz is active) -->
+      <div *ngIf="attemptId && !submitted && !loading"
+        class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-lg font-mono font-bold transition-all"
+        [ngClass]="{
+          'bg-red-50 text-red-600 border border-red-200': timerWarning,
+          'bg-gray-50 text-gray-700 border border-gray-200': !timerWarning
+        }">
+        <span class="material-symbols-outlined">timer</span>
+        Time remaining: {{ timerDisplay }}
+      </div>
     </div>
 
     <!-- Loading -->
@@ -83,8 +110,8 @@
         <!-- Choices -->
         <div class="space-y-2">
           <button *ngFor="let choice of choicesByQuestion.get(question.id!)"
-            (click)="!submitted && selectChoice(question.id!, choice.id!)"
-            [disabled]="submitted"
+            (click)="!submitted && !submitting && selectChoice(question.id!, choice.id!)"
+            [disabled]="submitted || submitting"
             class="w-full text-left px-4 py-3 rounded-lg border-2 transition-all flex items-center gap-3"
             [ngClass]="{
               'border-[#0ea37a] bg-[#0ea37a]/5': isSelected(question.id!, choice.id!) && !submitted,
@@ -116,8 +143,13 @@
     <!-- Submit button -->
     <div *ngIf="!submitted && !loading && !blocked && questions.length > 0" class="mt-8 text-center">
       <button (click)="submit()"
-        class="px-8 py-3 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all shadow-md hover:shadow-lg text-lg">
-        Submit quiz
+        [disabled]="submitting"
+        class="px-8 py-3 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all shadow-md hover:shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="!submitting">Submit quiz</span>
+        <span *ngIf="submitting" class="flex items-center gap-2">
+          <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+          Submitting...
+        </span>
       </button>
     </div>
   </div>

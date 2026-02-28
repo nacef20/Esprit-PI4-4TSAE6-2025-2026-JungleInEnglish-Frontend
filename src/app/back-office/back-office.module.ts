@@ -6,6 +6,7 @@ import { SidebarComponent } from './back-layout/sidebar/sidebar.component';
 import { HeaderComponent } from './back-layout/header/header.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BaseChartDirective } from 'ng2-charts';
 
 import { QuizListComponent } from './quiz-list/quiz-list.component';
 import { QuizFormComponent } from './quiz-form/quiz-form.component';
@@ -35,7 +36,8 @@ import { AttemptDetailComponent } from './attempt-detail/attempt-detail.componen
     CommonModule,
     BackOfficeRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BaseChartDirective
   ]
 })
 export class BackOfficeModule { }

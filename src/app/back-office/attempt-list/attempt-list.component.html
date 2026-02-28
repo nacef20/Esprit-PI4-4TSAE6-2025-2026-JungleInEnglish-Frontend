@@ -1,34 +1,184 @@
 <div class="space-y-6">
-  <!-- Header -->
+  <!-- ═══════════════════ Header ═══════════════════ -->
   <div class="flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-gray-800">Résultats des Étudiants</h1>
-      <p class="text-sm text-gray-400 mt-1">Consultez et filtrez les tentatives de quiz</p>
+      <h1 class="text-2xl font-bold text-gray-800">📈 Analyse & Statistiques</h1>
+      <p class="text-sm text-gray-400 mt-1">Dashboard enseignant — Données calculées côté serveur</p>
     </div>
     <span class="text-sm text-gray-400">{{ totalElements }} tentative(s)</span>
   </div>
 
-  <!-- Statistics cards -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Total tentatives</div>
-      <div class="text-2xl font-bold text-gray-800">{{ totalAttempts }}</div>
+  <!-- ═══════════════════ Global KPI Cards ═══════════════════ -->
+  <div *ngIf="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Total tentatives
+        </div>
+        <div class="text-3xl font-extrabold text-gray-800">{{ stats.totalAttempts }}</div>
+      </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Score moyen</div>
-      <div class="text-2xl font-bold text-[#0ea37a]">{{ avgScore }}%</div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m6 0h6m0 0v-10a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6"/></svg>
+          Score moyen
+        </div>
+        <div class="text-3xl font-extrabold text-[#0ea37a]">{{ stats.globalAvgScore }}%</div>
+      </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Taux de réussite</div>
-      <div class="text-2xl font-bold" [ngClass]="passRate >= 50 ? 'text-green-600' : 'text-red-500'">{{ passRate }}%</div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Taux de réussite
+        </div>
+        <div class="text-3xl font-extrabold" [ngClass]="stats.globalPassRate >= 50 ? 'text-green-600' : 'text-red-500'">{{ stats.globalPassRate }}%</div>
+      </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div class="text-xs text-gray-400 uppercase tracking-wider mb-1">Meilleur score</div>
-      <div class="text-2xl font-bold text-blue-600">{{ bestScore }}%</div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-amber-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Meilleur score
+        </div>
+        <div class="text-3xl font-extrabold text-blue-600">{{ stats.bestScore }}%</div>
+      </div>
     </div>
   </div>
 
-  <!-- Filters -->
+  <!-- ═══════════════════ Charts Row ═══════════════════ -->
+  <div *ngIf="stats" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- 📊 Moyenne des scores par quiz -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-lg">📊</span>
+        <h3 class="font-semibold text-gray-800">Moyenne des scores par quiz</h3>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="avgScoreChartData"
+          [options]="avgScoreChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- 📊 Taux de réussite par quiz -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-lg">📊</span>
+        <h3 class="font-semibold text-gray-800">Taux de réussite (%)</h3>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="passRateChartData"
+          [options]="passRateChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- 📊 Distribution des notes -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-lg">📊</span>
+        <h3 class="font-semibold text-gray-800">Distribution des notes</h3>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="gradeChartData"
+          [options]="gradeChartOptions"
+          type="doughnut">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Most Failed Questions ═══════════════════ -->
+  <div *ngIf="mostFailedQuestions.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-lg">❌</span>
+      <h3 class="font-semibold text-gray-800">Questions les plus échouées</h3>
+      <span class="ml-auto text-xs text-gray-400">Top 5 — Calculé côté serveur</span>
+    </div>
+    <div class="space-y-4">
+      <div *ngFor="let q of mostFailedQuestions; let i = index" class="flex items-center gap-4">
+        <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+          [ngClass]="q.failRate >= 70 ? 'bg-red-100 text-red-700' : q.failRate >= 40 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'">
+          {{ i + 1 }}
+        </span>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium text-gray-800 truncate">{{ q.questionContent }}</div>
+          <div class="text-xs text-gray-400">{{ q.quizTitle }} — {{ q.wrongAnswers }}/{{ q.totalAnswers }} mauvaises réponses</div>
+          <div class="mt-1 w-full bg-gray-100 rounded-full h-2">
+            <div class="h-2 rounded-full transition-all duration-500" [ngClass]="getFailBarColor(q.failRate)" [style.width]="getFailBarWidth(q.failRate)"></div>
+          </div>
+        </div>
+        <span class="flex-shrink-0 text-sm font-bold" [ngClass]="q.failRate >= 70 ? 'text-red-600' : q.failRate >= 40 ? 'text-yellow-600' : 'text-green-600'">
+          {{ q.failRate }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Quiz Stats Table ═══════════════════ -->
+  <div *ngIf="quizStatsList.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b border-gray-100">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">📋</span>
+        <h3 class="font-semibold text-gray-800">Statistiques détaillées par quiz</h3>
+      </div>
+    </div>
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+        <tr>
+          <th class="px-6 py-3">Quiz</th>
+          <th class="px-6 py-3 text-center">Tentatives</th>
+          <th class="px-6 py-3 text-center">Score moyen</th>
+          <th class="px-6 py-3 text-center">Taux de réussite</th>
+          <th class="px-6 py-3 text-center">Réussites</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let qs of quizStatsList" class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 font-medium text-gray-800">{{ qs.quizTitle }}</td>
+          <td class="px-6 py-4 text-center text-gray-600">{{ qs.totalAttempts }}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+              [ngClass]="qs.avgPercentage >= 80 ? 'bg-green-100 text-green-700' : qs.avgPercentage >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'">
+              {{ qs.avgPercentage }}%
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <div class="flex items-center gap-2 justify-center">
+              <div class="w-20 bg-gray-100 rounded-full h-2">
+                <div class="h-2 rounded-full transition-all" [style.width.%]="qs.passRate"
+                  [ngClass]="qs.passRate >= 70 ? 'bg-green-500' : qs.passRate >= 40 ? 'bg-yellow-500' : 'bg-red-500'"></div>
+              </div>
+              <span class="text-xs font-medium text-gray-600">{{ qs.passRate }}%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center text-gray-600">{{ qs.passedCount }} / {{ qs.totalAttempts }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Separator ═══════════════════ -->
+  <div class="flex items-center gap-4">
+    <div class="h-px flex-1 bg-gray-200"></div>
+    <span class="text-sm font-medium text-gray-400">Liste des tentatives</span>
+    <div class="h-px flex-1 bg-gray-200"></div>
+  </div>
+
+  <!-- ═══════════════════ Filters ═══════════════════ -->
   <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-4">
     <!-- Search by quiz name -->
     <div class="relative">
@@ -50,25 +200,25 @@
 
     <!-- Other filters row -->
     <div class="flex flex-wrap items-center gap-4">
-    <div class="flex items-center gap-2">
-      <svg class="text-gray-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-      </svg>
-      <span class="text-sm font-medium text-gray-600">Filtres :</span>
-    </div>
+      <div class="flex items-center gap-2">
+        <svg class="text-gray-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        <span class="text-sm font-medium text-gray-600">Filtres :</span>
+      </div>
 
-    <select [(ngModel)]="selectedQuizId" (ngModelChange)="applyFilters()"
-      class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none bg-white">
-      <option [ngValue]="null">Tous les quiz</option>
-      <option *ngFor="let q of quizzes" [ngValue]="q.id">{{ q.title }}</option>
-    </select>
+      <select [(ngModel)]="selectedQuizId" (ngModelChange)="applyFilters()"
+        class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none bg-white">
+        <option [ngValue]="null">Tous les quiz</option>
+        <option *ngFor="let q of quizzes" [ngValue]="q.id">{{ q.title }}</option>
+      </select>
 
-    <button *ngIf="selectedQuizId || searchStudentName || searchQuizTitle" (click)="resetFilters()"
-      class="text-sm text-gray-500 hover:text-gray-700 underline">Réinitialiser</button>
+      <button *ngIf="selectedQuizId || searchStudentName || searchQuizTitle" (click)="resetFilters()"
+        class="text-sm text-gray-500 hover:text-gray-700 underline">Réinitialiser</button>
     </div>
   </div>
 
-  <!-- Empty state -->
+  <!-- ═══════════════════ Empty state ═══════════════════ -->
   <div *ngIf="attempts.length === 0" class="text-center py-16 text-gray-400">
     <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
       <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -76,7 +226,7 @@
     <p class="text-lg">Aucune tentative trouvée</p>
   </div>
 
-  <!-- Table -->
+  <!-- ═══════════════════ Attempts Table ═══════════════════ -->
   <div *ngIf="attempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <table class="w-full text-sm text-left">
       <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
@@ -152,7 +302,7 @@
     </table>
   </div>
 
-  <!-- Pagination -->
+  <!-- ═══════════════════ Pagination ═══════════════════ -->
   <div *ngIf="totalPages > 1" class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4">
     <span class="text-sm text-gray-500">
       Page {{ currentPage }} sur {{ totalPages }} — {{ totalElements }} résultat(s)

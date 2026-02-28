@@ -4,8 +4,13 @@ import { Attempt } from '../../models/attempt.model';
 import { AttemptService } from '../../services/attempt.service';
 import { Quiz } from '../../models/quiz.model';
 import { QuizService } from '../../services/quiz.service';
+import { StatsService } from '../../services/stats.service';
+import { DashboardStats, QuizStats, FailedQuestion } from '../../models/dashboard-stats.model';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { ChartConfiguration, ChartData, Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-attempt-list',
@@ -24,26 +29,72 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   private studentSearchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
 
-  // Pagination (server-side)
+  // Pagination
   currentPage = 1;
   pageSize = 5;
   totalElements = 0;
   totalPages = 0;
 
-  // Stats
-  totalAttempts = 0;
-  avgScore = 0;
-  passRate = 0;
-  bestScore = 0;
+  // Dashboard stats (server-side)
+  stats: DashboardStats | null = null;
+  quizStatsList: QuizStats[] = [];
+  mostFailedQuestions: FailedQuestion[] = [];
+
+  // Chart data
+  avgScoreChartData: ChartData<'bar'> = { labels: [], datasets: [] };
+  avgScoreChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.parsed.y}%`
+        }
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, max: 100, ticks: { callback: (v) => v + '%' } }
+    }
+  };
+
+  passRateChartData: ChartData<'bar'> = { labels: [], datasets: [] };
+  passRateChartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.parsed.x}%`
+        }
+      }
+    },
+    scales: {
+      x: { beginAtZero: true, max: 100, ticks: { callback: (v) => v + '%' } }
+    }
+  };
+
+  gradeChartData: ChartData<'doughnut'> = { labels: [], datasets: [] };
+  gradeChartOptions: ChartConfiguration<'doughnut'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true } }
+    }
+  };
 
   constructor(
     private attemptService: AttemptService,
     private quizService: QuizService,
+    private statsService: StatsService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.quizService.getAll().subscribe(data => this.quizzes = data);
+    this.loadDashboardStats();
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -70,6 +121,58 @@ export class AttemptListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  loadDashboardStats(): void {
+    this.statsService.getDashboardStats().subscribe(data => {
+      this.stats = data;
+      this.quizStatsList = data.quizStats || [];
+      this.mostFailedQuestions = data.mostFailedQuestions || [];
+      this.buildCharts(data);
+    });
+  }
+
+  buildCharts(data: DashboardStats): void {
+    const quizLabels = data.quizStats.map(q => q.quizTitle.length > 15 ? q.quizTitle.substring(0, 15) + '…' : q.quizTitle);
+
+    // Average Score per Quiz (bar chart)
+    this.avgScoreChartData = {
+      labels: quizLabels,
+      datasets: [{
+        data: data.quizStats.map(q => q.avgPercentage),
+        backgroundColor: data.quizStats.map(q =>
+          q.avgPercentage >= 80 ? '#10b981' : q.avgPercentage >= 50 ? '#f59e0b' : '#ef4444'
+        ),
+        borderRadius: 6,
+        barThickness: 32
+      }]
+    };
+
+    // Pass Rate per Quiz (horizontal bar)
+    this.passRateChartData = {
+      labels: quizLabels,
+      datasets: [{
+        data: data.quizStats.map(q => q.passRate),
+        backgroundColor: data.quizStats.map(q =>
+          q.passRate >= 70 ? '#10b981' : q.passRate >= 40 ? '#f59e0b' : '#ef4444'
+        ),
+        borderRadius: 6,
+        barThickness: 24
+      }]
+    };
+
+    // Grade Distribution (doughnut)
+    const gd = data.gradeDistribution;
+    this.gradeChartData = {
+      labels: ['Excellent (≥80%)', 'Bien (60-79%)', 'Passable (50-59%)', 'Échoué (<50%)'],
+      datasets: [{
+        data: [gd.excellent, gd.good, gd.average, gd.failed],
+        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+        hoverOffset: 8,
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    };
+  }
+
   onSearchQuizTitle(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchSubject.next(value);
@@ -87,30 +190,12 @@ export class AttemptListComponent implements OnInit, OnDestroy {
       this.attempts = page.content;
       this.totalElements = page.totalElements;
       this.totalPages = page.totalPages;
-      this.computeStats();
     });
   }
 
   applyFilters(): void {
     this.currentPage = 1;
     this.loadPage();
-  }
-
-  computeStats(): void {
-    const attempts = this.attempts;
-    this.totalAttempts = this.totalElements;
-
-    if (attempts.length === 0) {
-      this.avgScore = 0;
-      this.passRate = 0;
-      this.bestScore = 0;
-      return;
-    }
-
-    const percentages = attempts.map(a => this.getPercentage(a));
-    this.avgScore = Math.round(percentages.reduce((s, p) => s + p, 0) / percentages.length);
-    this.passRate = Math.round((percentages.filter(p => p >= 50).length / percentages.length) * 100);
-    this.bestScore = Math.max(...percentages);
   }
 
   getPercentage(attempt: Attempt): number {
@@ -121,7 +206,10 @@ export class AttemptListComponent implements OnInit, OnDestroy {
 
   deleteAttempt(id: number): void {
     if (confirm('Supprimer cette tentative ?')) {
-      this.attemptService.delete(id).subscribe(() => this.loadPage());
+      this.attemptService.delete(id).subscribe(() => {
+        this.loadPage();
+        this.loadDashboardStats();
+      });
     }
   }
 
@@ -171,9 +259,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
 
   getPageNumbers(): number[] {
     const pages: number[] = [];
-    for (let i = 1; i <= this.totalPages; i++) {
-      pages.push(i);
-    }
+    for (let i = 1; i <= this.totalPages; i++) pages.push(i);
     return pages;
   }
 
@@ -182,5 +268,15 @@ export class AttemptListComponent implements OnInit, OnDestroy {
       this.currentPage = page;
       this.loadPage();
     }
+  }
+
+  getFailBarWidth(failRate: number): string {
+    return Math.min(failRate, 100) + '%';
+  }
+
+  getFailBarColor(failRate: number): string {
+    if (failRate >= 70) return 'bg-red-500';
+    if (failRate >= 40) return 'bg-yellow-500';
+    return 'bg-green-500';
   }
 }

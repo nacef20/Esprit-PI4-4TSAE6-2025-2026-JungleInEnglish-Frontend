@@ -40,6 +40,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   quizStatsList: QuizStats[] = [];
   mostFailedQuestions: FailedQuestion[] = [];
   exporting = false;
+  exportingExcel = false;
 
   // Chart data
   avgScoreChartData: ChartData<'bar'> = { labels: [], datasets: [] };
@@ -296,6 +297,25 @@ export class AttemptListComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.exporting = false;
+      }
+    });
+  }
+
+  exportExcel(): void {
+    if (this.exportingExcel) return;
+    this.exportingExcel = true;
+    this.attemptService.exportListExcel(this.selectedQuizId, this.searchQuizTitle, this.searchStudentName).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'attempts-report.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.exportingExcel = false;
+      },
+      error: () => {
+        this.exportingExcel = false;
       }
     });
   }

@@ -72,4 +72,12 @@ export class AttemptService {
     if (studentName && studentName.trim()) params = params.set('studentName', studentName.trim());
     return this.http.get(`${this.apiUrl}/export/pdf`, { params, responseType: 'blob' });
   }
+
+  exportListExcel(quizId?: number | null, quizTitle?: string, studentName?: string): Observable<Blob> {
+    let params = new HttpParams();
+    if (quizId) params = params.set('quizId', quizId.toString());
+    if (quizTitle && quizTitle.trim()) params = params.set('quizTitle', quizTitle.trim());
+    if (studentName && studentName.trim()) params = params.set('studentName', studentName.trim());
+    return this.http.get(`${this.apiUrl}/export/excel`, { params, responseType: 'blob' });
+  }
 }

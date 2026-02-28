@@ -250,6 +250,7 @@
           <th class="px-6 py-4">Student</th>
           <th class="px-6 py-4">Score</th>
           <th class="px-6 py-4">Result</th>
+          <th class="px-6 py-4">Certificate</th>
           <th class="px-6 py-4">Date</th>
           <th class="px-6 py-4 text-right">Actions</th>
         </tr>
@@ -290,6 +291,20 @@
               {{ getPassLabel(attempt) }}
             </span>
             <span *ngIf="!attempt.totalPoints" class="text-gray-400 text-xs">—</span>
+          </td>
+
+          <!-- Certificate -->
+          <td class="px-6 py-4">
+            <button *ngIf="hasCertificate(attempt.id!)" (click)="openCertificate(attempt.id!, $event)"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-medium hover:bg-amber-100 transition-all cursor-pointer"
+              title="View certificate">
+              <span class="material-symbols-outlined text-sm">workspace_premium</span>
+              {{ getCertificateGrade(attempt.id!) }}
+            </button>
+            <span *ngIf="!hasCertificate(attempt.id!)" class="text-gray-300 text-xs flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">remove</span>
+              None
+            </span>
           </td>
 
           <!-- Date -->

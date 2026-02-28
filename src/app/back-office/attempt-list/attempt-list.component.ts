@@ -42,6 +42,9 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   exporting = false;
   exportingExcel = false;
 
+  // Certificate status per attempt
+  certificateMap: Map<number, { exists: boolean; grade?: string; certificateId?: number }> = new Map();
+
   // Chart data
   avgScoreChartData: ChartData<'bar'> = { labels: [], datasets: [] };
   avgScoreChartOptions: ChartConfiguration<'bar'>['options'] = {
@@ -192,7 +195,45 @@ export class AttemptListComponent implements OnInit, OnDestroy {
       this.attempts = page.content;
       this.totalElements = page.totalElements;
       this.totalPages = page.totalPages;
+      this.loadCertificateStatuses();
     });
+  }
+
+  private loadCertificateStatuses(): void {
+    this.certificateMap.clear();
+    for (const attempt of this.attempts) {
+      if (attempt.id) {
+        this.attemptService.getCertificateStatus(attempt.id).subscribe({
+          next: (status) => {
+            this.certificateMap.set(attempt.id!, {
+              exists: status.exists,
+              grade: status.grade,
+              certificateId: status.certificateId
+            });
+          },
+          error: () => {
+            this.certificateMap.set(attempt.id!, { exists: false });
+          }
+        });
+      }
+    }
+  }
+
+  hasCertificate(attemptId: number): boolean {
+    return this.certificateMap.get(attemptId)?.exists === true;
+  }
+
+  getCertificateGrade(attemptId: number): string {
+    return this.certificateMap.get(attemptId)?.grade || '';
+  }
+
+  openCertificate(attemptId: number, event: Event): void {
+    event.stopPropagation();
+    const cert = this.certificateMap.get(attemptId);
+    if (cert?.certificateId) {
+      const url = this.attemptService.getCertificateViewUrl(cert.certificateId);
+      window.open(url, '_blank');
+    }
   }
 
   applyFilters(): void {

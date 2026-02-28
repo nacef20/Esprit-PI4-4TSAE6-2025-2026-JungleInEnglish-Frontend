@@ -127,7 +127,8 @@ export class QuizPassComponent implements OnInit {
       startedAt: new Date().toISOString(),
       submittedAt: new Date().toISOString(),
       quiz: { id: this.quiz?.id } as Quiz,
-      studentId: 1 // placeholder — no auth
+      studentId: 1, // placeholder — no auth
+      studentName: 'Étudiant 1' // placeholder — no auth
     };
 
     this.attemptService.create(attempt).subscribe(savedAttempt => {

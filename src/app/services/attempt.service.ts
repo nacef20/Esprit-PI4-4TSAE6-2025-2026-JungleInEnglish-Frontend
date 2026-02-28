@@ -35,15 +35,15 @@ export class AttemptService {
     return this.http.get<number>(`${this.apiUrl}/count?quizId=${quizId}&studentId=${studentId}`);
   }
 
-  getAllPaginated(page: number, size: number, quizId?: number | null, studentId?: string, quizTitle?: string): Observable<Page<Attempt>> {
+  getAllPaginated(page: number, size: number, quizId?: number | null, studentName?: string, quizTitle?: string): Observable<Page<Attempt>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
     if (quizId) {
       params = params.set('quizId', quizId.toString());
     }
-    if (studentId && studentId.trim()) {
-      params = params.set('studentId', studentId.trim());
+    if (studentName && studentName.trim()) {
+      params = params.set('studentName', studentName.trim());
     }
     if (quizTitle && quizTitle.trim()) {
       params = params.set('quizTitle', quizTitle.trim());

@@ -8,4 +8,5 @@ export interface Attempt {
   submittedAt?: string;
   quiz?: Quiz;
   studentId?: number;
+  studentName?: string;
 }

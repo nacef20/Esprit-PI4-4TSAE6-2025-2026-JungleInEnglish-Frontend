@@ -18,9 +18,10 @@ export class AttemptListComponent implements OnInit, OnDestroy {
   quizzes: Quiz[] = [];
 
   selectedQuizId: number | null = null;
-  searchStudentId = '';
+  searchStudentName = '';
   searchQuizTitle = '';
   private searchSubject = new Subject<string>();
+  private studentSearchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
 
   // Pagination (server-side)
@@ -52,6 +53,15 @@ export class AttemptListComponent implements OnInit, OnDestroy {
       this.currentPage = 1;
       this.loadPage();
     });
+    this.studentSearchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(term => {
+      this.searchStudentName = term;
+      this.currentPage = 1;
+      this.loadPage();
+    });
     this.loadPage();
   }
 
@@ -65,9 +75,14 @@ export class AttemptListComponent implements OnInit, OnDestroy {
     this.searchSubject.next(value);
   }
 
+  onSearchStudentName(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.studentSearchSubject.next(value);
+  }
+
   loadPage(): void {
     this.attemptService.getAllPaginated(
-      this.currentPage - 1, this.pageSize, this.selectedQuizId, this.searchStudentId, this.searchQuizTitle
+      this.currentPage - 1, this.pageSize, this.selectedQuizId, this.searchStudentName, this.searchQuizTitle
     ).subscribe(page => {
       this.attempts = page.content;
       this.totalElements = page.totalElements;
@@ -145,7 +160,7 @@ export class AttemptListComponent implements OnInit, OnDestroy {
 
   resetFilters(): void {
     this.selectedQuizId = null;
-    this.searchStudentId = '';
+    this.searchStudentName = '';
     this.searchQuizTitle = '';
     this.applyFilters();
   }

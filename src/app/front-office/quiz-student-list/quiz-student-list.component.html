@@ -15,9 +15,42 @@
     <div class="max-w-screen-xl mx-auto">
 
     <!-- Header -->
-    <div class="text-center mb-12">
+    <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-gray-800 mb-2">Quiz disponibles</h1>
       <p class="text-gray-500">Sélectionnez un quiz pour commencer</p>
+    </div>
+
+    <!-- Search bar -->
+    <div class="relative max-w-md mx-auto mb-6">
+      <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" placeholder="Rechercher un quiz..." (input)="onSearch($event)"
+        class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+    </div>
+
+    <!-- Filter buttons -->
+    <div class="flex items-center justify-center gap-2 mb-10">
+      <button (click)="onFilter('all')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'all' ? 'bg-[#0ea37a] text-white border-[#0ea37a] shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Tous
+      </button>
+      <button (click)="onFilter('open')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'open' ? 'bg-[#0ea37a] text-white border-[#0ea37a] shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Ouvert
+      </button>
+      <button (click)="onFilter('attempted')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'attempted' ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Déjà passé
+      </button>
+      <button (click)="onFilter('closed')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'closed' ? 'bg-red-500 text-white border-red-500 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Fermé
+      </button>
     </div>
 
     <!-- Empty state -->

@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Quiz, QuizStatus } from '../../models/quiz.model';
 import { QuizService } from '../../services/quiz.service';
 import { AttemptService } from '../../services/attempt.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-quiz-student-list',
   templateUrl: './quiz-student-list.component.html',
   styleUrls: ['./quiz-student-list.component.scss']
 })
-export class QuizStudentListComponent implements OnInit {
+export class QuizStudentListComponent implements OnInit, OnDestroy {
 
   quizzes: Quiz[] = [];
   attemptCounts: Map<number, number> = new Map();
   studentId = 1; // placeholder — no auth
+  searchTerm = '';
+  activeFilter = 'all';
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   // Pagination (server-side)
   currentPage = 1;
@@ -28,11 +34,38 @@ export class QuizStudentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 1;
+      this.loadPage();
+    });
+    this.loadPage();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
+  }
+
+  onFilter(filter: string): void {
+    this.activeFilter = filter;
+    this.currentPage = 1;
     this.loadPage();
   }
 
   loadPage(): void {
-    this.quizService.getAvailablePaginated(this.currentPage - 1, this.pageSize).subscribe(page => {
+    const title = this.searchTerm.trim() || undefined;
+    const filter = this.activeFilter !== 'all' ? this.activeFilter : undefined;
+    this.quizService.getAvailablePaginated(this.currentPage - 1, this.pageSize, title, filter, this.studentId).subscribe(page => {
       this.quizzes = page.content;
       this.totalElements = page.totalElements;
       this.totalPages = page.totalPages;

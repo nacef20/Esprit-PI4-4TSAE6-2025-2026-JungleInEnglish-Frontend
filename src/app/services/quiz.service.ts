@@ -38,11 +38,18 @@ export class QuizService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getAllPaginated(page: number, size: number): Observable<Page<Quiz>> {
-    return this.http.get<Page<Quiz>>(`${this.apiUrl}/page?page=${page}&size=${size}`);
+  getAllPaginated(page: number, size: number, status?: string, title?: string): Observable<Page<Quiz>> {
+    let url = `${this.apiUrl}/page?page=${page}&size=${size}`;
+    if (status) url += `&status=${status}`;
+    if (title) url += `&title=${encodeURIComponent(title)}`;
+    return this.http.get<Page<Quiz>>(url);
   }
 
-  getAvailablePaginated(page: number, size: number): Observable<Page<Quiz>> {
-    return this.http.get<Page<Quiz>>(`${this.apiUrl}/page/available?page=${page}&size=${size}`);
+  getAvailablePaginated(page: number, size: number, title?: string, filter?: string, studentId?: number): Observable<Page<Quiz>> {
+    let url = `${this.apiUrl}/page/available?page=${page}&size=${size}`;
+    if (title) url += `&title=${encodeURIComponent(title)}`;
+    if (filter) url += `&filter=${filter}`;
+    if (studentId) url += `&studentId=${studentId}`;
+    return this.http.get<Page<Quiz>>(url);
   }
 }

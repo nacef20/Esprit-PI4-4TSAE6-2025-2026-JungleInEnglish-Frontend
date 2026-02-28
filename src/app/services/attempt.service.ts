@@ -60,4 +60,8 @@ export class AttemptService {
     return this.http.get<{ totalAttempts: number; avgScore: number; bestScore: number; passRate: number }>(
       `${this.apiUrl}/stats/student/${studentId}`);
   }
+
+  downloadPdf(attemptId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${attemptId}/pdf`, { responseType: 'blob' });
+  }
 }

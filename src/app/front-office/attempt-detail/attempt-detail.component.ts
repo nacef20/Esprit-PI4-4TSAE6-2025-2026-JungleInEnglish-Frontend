@@ -23,6 +23,7 @@ export class AttemptDetailStudentComponent implements OnInit {
   choicesByQuestion: Map<number, Choice[]> = new Map();
   answerByQuestion: Map<number, AttemptAnswer> = new Map();
   loading = true;
+  downloading = false;
 
   constructor(
     private attemptService: AttemptService,
@@ -113,5 +114,24 @@ export class AttemptDetailStudentComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/front/my-attempts']);
+  }
+
+  downloadPdf(): void {
+    if (!this.attempt?.id || this.downloading) return;
+    this.downloading = true;
+    this.attemptService.downloadPdf(this.attempt.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `attempt-${this.attempt!.id}-report.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        this.downloading = false;
+      },
+      error: () => {
+        this.downloading = false;
+      }
+    });
   }
 }

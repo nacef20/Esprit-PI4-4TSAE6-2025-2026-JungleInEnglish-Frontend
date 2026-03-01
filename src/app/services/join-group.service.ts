@@ -5,9 +5,10 @@ import { Observable } from 'rxjs';
 
 export interface JoinGroupDTO {
   idJoinGroup?: number;
-  
+  userId: string;
   requestedAt?: string;
   groupChatId: number;
+  status?: 'ATTENTE' | 'ACCEPTE' | 'REFUSE';
 }
 
 @Injectable({
@@ -29,25 +30,27 @@ export class JoinGroupService {
     return this.http.get<JoinGroupDTO[]>(`${this.apiUrl}/all`);
   }
 
-  // Récupérer une demande par id
-  getById(id: number): Observable<JoinGroupDTO> {
-    return this.http.get<JoinGroupDTO>(`${this.apiUrl}/${id}`);
-  }
-
-  // Mettre à jour une demande (ex: accepter/refuser)
-  update(id: number, dto: JoinGroupDTO): Observable<JoinGroupDTO> {
-    return this.http.put<JoinGroupDTO>(`${this.apiUrl}/update/${id}`, dto);
-  }
-
-  // Supprimer une demande
-  delete(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.apiUrl}/delete/${id}`);
-  }
 
   getStatus(userId: number, groupChatId: number): Observable<string> {
   return this.http.get<string>(`${this.apiUrl}/status`, {
     params: { userId, groupChatId }
   });
+
 }
+
+
+getAllByGroup(groupChatId: number): Observable<JoinGroupDTO[]> {
+    return this.http.get<JoinGroupDTO[]>(`${this.apiUrl}/group/${groupChatId}`);
+  }
+
+
+  accepterDemande(id: number): Observable<void> {
+  return this.http.put<void>(`${this.apiUrl}/accept/${id}`, {});
+}
+
+refuserDemande(id: number): Observable<void> {
+  return this.http.put<void>(`${this.apiUrl}/reject/${id}`, {});
+}
+
 
 }

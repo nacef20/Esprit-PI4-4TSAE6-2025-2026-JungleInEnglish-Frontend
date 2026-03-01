@@ -3,6 +3,9 @@ import { MessageGroupService } from '../../services/message-group.service';
 import { JoinGroupService ,JoinGroupDTO } from '../../services/join-group.service';
 import { Component, HostListener } from '@angular/core'; 
 import { GroupData } from './create-group/create-group.component';
+import { AuthService } from '../../auth/auth.service';
+
+import { KeycloakUserService } from '../../services/keycloak-user.service';
 
 interface Group {
   id: number;
@@ -23,11 +26,21 @@ interface Message {
   time: string;
    showDelete?: boolean;  
   deleted?: boolean;    
+   senderInfo?: any; 
+}
+
+interface MessageGroup {
+  id: number;
+  sender: number;
+  content: string;
+  groupChatId: number;
+  time?: string;
+  deleted?: boolean;
 }
 
 @Component({
   selector: 'app-gestionchatprive',
-  templateUrl: './gestionchatprive.component.html',
+  templateUrl:'./gestionchatprive.component.html',
   styleUrl: './gestionchatprive.component.scss'
 })
 export class GestionchatpriveComponent {
@@ -36,22 +49,27 @@ export class GestionchatpriveComponent {
   openMenuId: number | null = null;
   isEditMode: boolean = false;
   selectedGroupToEdit: GroupData | null = null;  
-  currentUserId: number = 1; 
+  currentUserId: any = null; 
   groups: Group[] = [];
   messages: Message[] = [];
   statusMap: { [groupChatId: number]: string | null } = {};
   emojis: any[] = [];   
   showEmojis = false;   
-
+ currentUser: any = null;
   selectedGroup: Group | null = null;
   searchQuery: string = '';
   newMessage: string = '';
-
+private stompSubscription: any;
+showJoinGroupModal = false;
+ showJoinGroup = false;
   constructor(private groupService: GroupService, private messageGroupService: MessageGroupService,
-    private joinGroupService: JoinGroupService
+    private joinGroupService: JoinGroupService ,private authService: AuthService ,private userService: KeycloakUserService
   ) { }
 
 ngOnInit(): void {
+
+   this.currentUser = this.authService.getUserInfo();
+    this.currentUserId = this.currentUser?.id;
   this.groupService.getAllGroups().subscribe((data: any[]) => {
     this.groups = data.map(g => ({
       id: g.id,
@@ -237,57 +255,84 @@ joinGroup(group: Group): void {
     );
   }
 
+  userCache: { [id: string]: any } = {};
+
 selectGroup(group: Group): void {
   this.selectedGroup = group;
   group.unread = 0;
 
-this.messageGroupService.getMessagesByGroupId(group.id).subscribe({
-  next: (messages: any[]) => {
-    this.messages = messages.map(msg => ({
-      id: msg.idMessageChat || 0,
+  // 1️⃣ Déconnecter l'ancien groupe si nécessaire
+  this.messageGroupService.disconnect();
+  this.stompSubscription?.unsubscribe();
+
+  // 2️⃣ Charger l'historique depuis la DB
+  this.messageGroupService.loadHistory(group.id);
+
+  // 3️⃣ Connecter au WebSocket du groupe
+  this.messageGroupService.connect(group.id);
+
+  // 4️⃣ S'abonner aux messages reçus en temps réel
+  this.stompSubscription = this.messageGroupService.messages$.subscribe(msgs => {
+    this.messages = msgs.map(msg => ({
+      id: msg.id,                  // correspond à MessageGroup.id
       sender: msg.sender,
       content: msg.content,
-       deleted: msg.deleted ,
-      groupChatId: msg.groupChat?.id ?? group.id, // fallback si backend ne renvoie pas groupChat
-      time: msg.dateSend
-        ? new Date(msg.dateSend).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-        : '' 
+      groupChatId: msg.groupChatId, // correspond à MessageGroup.groupChatId
+      time: msg.time || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      deleted: msg.deleted || false,
+      showDelete: false,
+       senderInfo: this.userCache[msg.sender] || null
     }));
-    setTimeout(() => this.scrollToBottom(), 100);
-  },
-  error: (err) => console.error('Erreur chargement messages', err)
+
+ const uniqueSenders = [...new Set(msgs.map(m => m.sender))];
+  uniqueSenders.forEach(senderId => {
+    if (!this.userCache[senderId]) {
+      this.userService.getUserById(senderId.toString()).subscribe({
+        next: (user) => {
+          this.userCache[senderId] = user;
+          this.messages = this.messages.map(m =>
+            m.sender === senderId ? { ...m, senderInfo: user } : m
+          );
+        },
+        error: (err) => console.error('Erreur user:', err)
+      });
+    }
+  });
+
+  setTimeout(() => this.scrollToBottom(), 100);
 });
 
+  // 5️⃣ Charger le statut de l'utilisateur pour ce groupe
+  this.getStatusForGroup(group.id);
 }
 
 
 
-  sendMessage(): void {
+
+sendMessage(): void {
   if (!this.newMessage.trim() || !this.selectedGroup) return;
 
   const messageObj = {
-    sender: this.currentUserId,
+    sender: this.currentUserId, // number
     content: this.newMessage,
-    groupChatId: this.selectedGroup.id 
+    groupChatId: this.selectedGroup.id,
+    time: new Date().toISOString(), // toujours défini
+    deleted: false
   };
 
-  this.messageGroupService.addMessage(messageObj).subscribe({
-    next: (response: any) => {
-      // Utiliser l'id réel du backend
-      this.messages.push({
-        id: response.idMessageChat,  // ← ID réel
-        sender: response.sender,
-        content: response.content,
-        time: new Date(response.dateSend).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        groupChatId: response.groupChatId,
-        deleted: response.deleted
-      });
-      this.newMessage = '';
-      setTimeout(() => this.scrollToBottom(), 100);
+  // Sauvegarde dans la DB et envoi WebSocket après
+  this.messageGroupService.addMessage(messageObj as any).subscribe({
+    next: (savedMessage) => {
+      this.messageGroupService.sendMessage(savedMessage);
+      this.messages = [...this.messages, savedMessage];
     },
-    error: (err) => console.error('Erreur lors de l’envoi du message', err)
+    error: (err) => console.error('Erreur en envoyant le message :', err)
   });
+
+  this.newMessage = '';
 }
+
+
 
 
 deleteMessage(msg: Message): void {
@@ -367,6 +412,12 @@ addEmoji(emoji: string) {
   this.showEmojis = false;
 }
 
+selectedGroupId!: number;
+openJoinRequests(groupId: number) {
+  this.openMenuId = null; // ferme le dropdown
+  this.showJoinGroup = true;
+   this.selectedGroupId = groupId;
+}
 
 
   

@@ -1,21 +1,38 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import {  BehaviorSubject } from 'rxjs';
 // Même structure que ton DTO côté backend
 export interface MessageGroup {
-  id?: number;
-  sender: number; // ou string si tu stockes le nom
+  id: number;
+  sender: number;
   content: string;
-  dateSend?: string; // ou Date
+  groupChatId: number;
+  time: string;
+  showDelete?: boolean;  
+  deleted?: boolean;
 }
 @Injectable({
   providedIn: 'root'
 })
 export class MessageGroupService {
 
-   private apiUrl = 'http://localhost:8222/messageGroup';
 
+
+
+
+
+
+
+
+
+   private apiUrl = 'http://localhost:8222/messageGroup';
+  private wsUrl  = 'http://localhost:7070/ws';
+
+    private messagesSubject = new BehaviorSubject<MessageGroup[]>([]);
+  public messages$ = this.messagesSubject.asObservable();
   constructor(private http: HttpClient) { }
 
   // Ajouter un message
@@ -54,6 +71,66 @@ export class MessageGroupService {
       'https://emojihub.yurace.pro/api/all/category/smileys-and-people'
     );
   }
+
+
+stompClient!: Client;
+
+ connect(groupId: number): void {
+    this.stompClient = new Client({
+      webSocketFactory: () => new SockJS(this.wsUrl),
+      reconnectDelay: 5000,
+
+      onConnect: () => {
+        console.log('✅ WebSocket connecté — groupe', groupId);
+
+        this.stompClient.subscribe(`/topic/group/${groupId}`, (frame) => {
+          const msg: MessageGroup = JSON.parse(frame.body);
+
+          // Ajoute le message reçu à la liste
+          const current = this.messagesSubject.getValue();
+          this.messagesSubject.next([...current, msg]);
+        });
+      },
+
+      onStompError: (frame) => {
+        console.error('❌ Erreur STOMP :', frame.headers['message']);
+      },
+
+      onDisconnect: () => {
+        console.log('🔌 WebSocket déconnecté');
+      }
+    });
+
+    this.stompClient.activate();
+  }
+
+  // ✅ Méthode manquante dans ton service original
+  sendMessage(message: MessageGroup): void {
+    if (!this.stompClient?.connected) {
+      console.warn('⚠️ STOMP non connecté, impossible d\'envoyer');
+      return;
+    }
+
+    this.stompClient.publish({
+      destination: '/app/chat.sendMessage',
+      body: JSON.stringify(message)
+    });
+  }
+
+  // Charge l'historique depuis la DB et initialise le BehaviorSubject
+  loadHistory(groupId: number): void {
+    this.getMessagesByGroupId(groupId).subscribe({
+      next: (msgs) => this.messagesSubject.next(msgs),
+      error: (err) => console.error('Erreur chargement historique :', err)
+    });
+  }
+
+  disconnect(): void {
+    this.stompClient?.deactivate();
+    this.messagesSubject.next([]);
+  }
+
+
  
 
 }

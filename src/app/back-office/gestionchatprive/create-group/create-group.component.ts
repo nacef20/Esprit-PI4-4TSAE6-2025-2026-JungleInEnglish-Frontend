@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Output, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { GroupService } from '../../../services/group.service';
-
+import { AuthService } from '../../../auth/auth.service';
 export interface GroupData {
   id?: number;       // facultatif pour create
   name: string;
   image: string;
-  ownerId?: number;  // facultatif
+  ownerId?: string;  // facultatif
 }
 
 @Component({
@@ -15,22 +15,34 @@ export interface GroupData {
 })
 export class CreateGroupComponent implements OnChanges {
 
-  // ── Données du formulaire ──────────────────
-   private currentUserId: number = 1; // ID de l'utilisateur actuel (à remplacer par une vraie gestion d'authentification)
+
+
+
   groupName: string = '';
   selectedFile?: File;
   previewUrl: string = '';
-
+currentUser: any = null;
+currentUserId: string | undefined = undefined;
   // ── Entrées et sorties ────────────────────
-@Input() editGroupData: GroupData | null = null;
+  @Input() editGroupData: GroupData | null = null;
   @Input() isEditMode: boolean = false;
   @Output() groupCreated = new EventEmitter<GroupData>();
   @Output() cancelled = new EventEmitter<void>();
 
-  constructor(private groupService: GroupService) {}
+  constructor(private groupService: GroupService ,private authService: AuthService) {}
+
+
+  
+
+
 
   // ── Mise à jour du formulaire si édition ──
   ngOnChanges(changes: SimpleChanges): void {
+ this.currentUser = this.authService.getUserInfo();
+    this.currentUserId = this.currentUser?.id;
+    console.log('Current User ID:', this.currentUserId);
+    console.log('role:', this.currentUser?.roles);
+
     if (this.isEditMode && this.editGroupData) {
       this.groupName = this.editGroupData.name;
       this.previewUrl = 'http://localhost:8222/uploads/images/' + this.editGroupData.image;

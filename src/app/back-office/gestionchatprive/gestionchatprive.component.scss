@@ -337,7 +337,9 @@ body {
 
 // Menu 3 points
 .dropdown-menu {
-  position: relative;
+ position: relative;
+  z-index: 200;          
+  isolation: isolate
 }
 
 .btn-menu {
@@ -373,6 +375,7 @@ body {
   z-index: 100;
   overflow: hidden;
   animation: dropdownIn 0.2s ease;
+  z-index: 300;  
 }
 
 @keyframes dropdownIn {
@@ -824,5 +827,39 @@ body {
   p {
     font-size: 15px;
     color: var(--text-sub);
+  }
+}
+
+
+// =============================================
+// BOUTON "VOIR TOUTES LES DEMANDES"
+// =============================================
+
+
+// =============================================
+// BOUTON "VOIR TOUTES LES DEMANDES"
+// =============================================
+.btn-join-group {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: var(--white);
+  color: var(--green-dark);
+  font-size: 13px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+  border-top: 2px solid var(--border);
+
+  i { font-size: 12px; color: var(--green); }
+
+  &:hover {
+    background: var(--green-light);
+    color: var(--green-dark);
   }
 }

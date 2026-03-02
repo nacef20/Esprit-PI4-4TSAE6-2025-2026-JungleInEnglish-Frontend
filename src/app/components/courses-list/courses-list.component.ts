@@ -6,7 +6,7 @@ import { Course, CourseLevel } from '../../models/course.model';
 @Component({
   selector: 'app-courses-list',
   templateUrl: './courses-list.component.html',
-  styleUrls: ['./courses-list.component.css']
+  styleUrls: ['./courses-list.component.scss']
 })
 export class CoursesListComponent implements OnInit {
   courses: Course[] = [];
@@ -25,7 +25,7 @@ export class CoursesListComponent implements OnInit {
   loadCourses(): void {
     this.loading = true;
     this.error = null;
-    
+
     this.coursesService.getAllCourses().subscribe({
       next: (data) => {
         console.log('Courses loaded:', data);
@@ -34,15 +34,24 @@ export class CoursesListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading courses:', err);
-        this.error = 'Failed to load courses. Please check if the backend is running.';
+
+        // Try to extract a useful message from backend
+        const msg =
+          err?.error?.message ||
+          err?.error?.error ||
+          (typeof err?.error === 'string' ? err.error : null) ||
+          err?.message ||
+          `Request failed (${err?.status || 'unknown'})`;
+
+        this.error = msg;
         this.loading = false;
       }
     });
   }
-openCourseDetails(course: Course) {
-  this.selectedCourse = course;
-  this.showCourseOverlay = true;
-}
+  openCourseDetails(course: Course) {
+    this.selectedCourse = course;
+    this.showCourseOverlay = true;
+  }
 
   closeCourseDetails(): void {
     this.showCourseOverlay = false;
@@ -50,7 +59,7 @@ openCourseDetails(course: Course) {
   }
 
   getLevelBadgeClass(level: CourseLevel): string {
-    switch(level) {
+    switch (level) {
       case CourseLevel.BEGINNER:
         return 'badge-beginner';
       case CourseLevel.INTERMEDIATE:
@@ -61,9 +70,9 @@ openCourseDetails(course: Course) {
         return 'badge-default';
     }
   }
-debugClick(course: any) {
-  console.log('clicked', course);
-}
+  debugClick(course: any) {
+    console.log('clicked', course);
+  }
   getDefaultImage(): string {
     return 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800';
   }

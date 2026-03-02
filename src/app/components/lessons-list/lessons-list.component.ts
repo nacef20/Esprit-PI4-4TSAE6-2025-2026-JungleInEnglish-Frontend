@@ -44,6 +44,13 @@ export class LessonsListComponent implements OnChanges {
   courseProgressPercent = 0;
   unlockedOrderIndexMax = 1;
 
+lessonDifficulty = new Map<number, {
+  difficulty: 'HARD' | 'MEDIUM' | 'EASY';
+  completionRate: number;
+  avgTimeSeconds: number;
+}>();
+difficultyLoading = false;
+
   // to prevent multiple “complete” calls
   private completedLessonSent = new Set<number>();
 
@@ -79,14 +86,46 @@ loadLessons(): void {
           this.unlockedOrderIndexMax = 1;
         }
       });
+
+      // ✅ difficulty analytics
+      this.difficultyLoading = true;
+      this.lessonDifficulty.clear();
+
+      this.lessonsService.getLessonDifficulty(this.courseId).subscribe({
+        next: (rows) => {
+          (rows || []).forEach(r => {
+            this.lessonDifficulty.set(r.lessonId, {
+              difficulty: r.difficulty,
+              completionRate: r.completionRate ?? 0,
+              avgTimeSeconds: r.avgTimeSeconds ?? 0
+            });
+          });
+          this.difficultyLoading = false;
+        },
+        error: () => {
+          this.difficultyLoading = false;
+        }
+      });
     },
     error: (err) => {
       console.error('Error loading lessons:', err);
       this.error = err?.error?.message || 'Failed to load lessons for this course.';
       this.lessons = [];
-      this.lessonsLoading = false;  // ✅ CRITICAL
+      this.lessonsLoading = false;
+      this.difficultyLoading = false;
     }
   });
+}
+getDifficultyLabel(lessonId?: number): 'HARD' | 'MEDIUM' | 'EASY' | null {
+  if (!lessonId) return null;
+return this.lessonDifficulty.get(lessonId)?.difficulty ?? null;
+}
+
+getDifficultyClass(label: string | null): string {
+  if (label === 'HARD') return 'diff-hard';
+  if (label === 'MEDIUM') return 'diff-medium';
+  if (label === 'EASY') return 'diff-easy';
+  return '';
 }
   isLessonLocked(lesson: Lesson): boolean {
     if (!lesson.orderIndex) return false;
@@ -224,9 +263,15 @@ markAttachmentDone(attachmentId: number): void {
       },
       error: (err) => {
         console.error('Error saving lesson:', err);
-        this.error = 'Failed to save lesson.';
-        this.saving = false;
-        this.showToast('Operation failed ❌', 'error');
+
+const msg =
+  err?.error?.message ||
+  err?.error?.error ||
+  err?.message ||
+  'Failed to save lesson.';
+
+this.error = msg;
+this.showToast(msg, 'error');
       }
     });
   }
@@ -275,32 +320,42 @@ markAttachmentDone(attachmentId: number): void {
 
   uploadAttachmentForCurrentLesson(): void {
     const lessonId = this.currentLesson?.id;
+
+    this.uploadMessage = null;
+    this.uploadError = null;
+
     if (!lessonId) {
       this.uploadError = 'Save the lesson first, then upload files.';
       return;
     }
+
     if (!this.selectedFile) {
       this.uploadError = 'Please choose a file.';
       return;
     }
 
-    this.uploading = true;
-    this.uploadMessage = null;
-    this.uploadError = null;
+if (!this.isTypeMatchingFile(this.selectedType, this.selectedFile)) {
+  this.uploadError = 'Select the correct type for the uploaded file.';
+  return;
+}
 
-    this.lessonsService.uploadLessonAttachment(lessonId, this.selectedType, this.selectedFile).subscribe({
-      next: () => {
-        this.uploading = false;
-        this.uploadMessage = 'Uploaded ✅';
-        this.selectedFile = null;
-        this.loadAttachments(lessonId);
-      },
-      error: (err) => {
-        console.error(err);
-        this.uploading = false;
-        this.uploadError = err?.error?.message || 'Upload failed.';
-      }
-    });
+    this.uploading = true;
+
+    this.lessonsService
+      .uploadLessonAttachment(lessonId, this.selectedType, this.selectedFile)
+      .subscribe({
+        next: () => {
+          this.uploading = false;
+          this.uploadMessage = 'Uploaded ✅';
+          this.selectedFile = null;
+          this.loadAttachments(lessonId);
+        },
+        error: (err) => {
+          console.error(err);
+          this.uploading = false;
+          this.uploadError = err?.error?.message || 'Upload failed.';
+        }
+      });
   }
 
   attachmentUrl(attachmentId: number): string {
@@ -318,6 +373,38 @@ markAttachmentDone(attachmentId: number): void {
   get otherFiles(): LessonAttachment[] {
     return this.attachments.filter(a => a.type !== 'VIDEO' && a.type !== 'PDF');
   }
+
+  private isTypeMatchingFile(type: AttachmentType, file: File): boolean {
+  if (!file) return false;
+
+  const mimeType = (file.type || '').toLowerCase();
+  const fileName = (file.name || '').toLowerCase();
+
+  switch (type) {
+    case 'PDF':
+      return mimeType === 'application/pdf' || fileName.endsWith('.pdf');
+
+    case 'WORD':
+      return fileName.endsWith('.doc') ||
+             fileName.endsWith('.docx') ||
+             mimeType.includes('msword') ||
+             mimeType.includes('officedocument.wordprocessingml');
+
+    case 'PPT':
+      return fileName.endsWith('.ppt') ||
+             fileName.endsWith('.pptx') ||
+             mimeType.includes('ms-powerpoint') ||
+             mimeType.includes('officedocument.presentationml');
+
+    case 'VIDEO':
+      return mimeType.startsWith('video/') ||
+             /\.(mp4|webm|ogg|mov|mkv)$/.test(fileName);
+
+    case 'OTHER':
+    default:
+      return true;
+  }
+}
 
   private resetAttachmentsUI(): void {
     this.attachments = [];

@@ -57,10 +57,17 @@
   <div *ngIf="!lessonsLoading && !error && lessons.length > 0" class="lessons-list">
     <div class="lesson-card" *ngFor="let lesson of lessons">
       <div class="lesson-main">
-        <div class="lesson-badges">
-          <span class="badge">#{{ lesson.orderIndex }}</span>
-          <span class="duration" *ngIf="lesson.duration">⏱ {{ lesson.duration }}</span>
-        </div>
+<div class="lesson-badges">
+  <span class="badge">#{{ lesson.orderIndex }}</span>
+  <span class="duration" *ngIf="lesson.duration">⏱ {{ lesson.duration }}</span>
+
+  <span
+    *ngIf="getDifficultyLabel(lesson.id) as d"
+    class="diff-pill"
+    [ngClass]="getDifficultyClass(d)">
+    {{ d }}
+  </span>
+</div>
 
         <h4 class="lesson-title">{{ lesson.title }}</h4>
 
@@ -170,12 +177,13 @@
       </div>
     </div>
 
-    <div class="modal-footer">
-      <button class="btn-secondary" (click)="closeModal()">Close</button>
-      <button class="btn-primary" [disabled]="saving" (click)="save()">
+   <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="closeModal()">Close</button>
+      <button type="button" class="btn-primary" [disabled]="saving" (click)="save()">
         {{ saving ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
       </button>
     </div>
+
   </div>
 </div>
 

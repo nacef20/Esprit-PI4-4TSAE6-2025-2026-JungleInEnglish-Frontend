@@ -15,20 +15,20 @@ export class CoursesManagementComponent implements OnInit {
   filteredCourses: Course[] = [];
   loading = true;
   error: string | null = null;
-  
+
   // Modal
   showModal = false;
   isEditMode = false;
   saving = false;
-  
+
   // Filters
   searchTerm = '';
   filterLevel = '';
-  
+
   // Current course being edited/created
   currentCourse: Course = this.getEmptyCourse();
 
-  constructor(private coursesService: CoursesService) {}
+  constructor(private coursesService: CoursesService) { }
 
   ngOnInit(): void {
     this.loadCourses();
@@ -37,7 +37,7 @@ export class CoursesManagementComponent implements OnInit {
   loadCourses(): void {
     this.loading = true;
     this.error = null;
-    
+
     this.coursesService.getAllCourses().subscribe({
       next: (data) => {
         this.courses = data;
@@ -45,21 +45,21 @@ export class CoursesManagementComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Erreur lors du chargement des cours';
-        this.loading = false;
         console.error(err);
+        this.error = this.extractErrorMessage(err, 'Erreur lors du chargement des cours');
+        this.loading = false;
       }
     });
   }
 
   filterCourses(): void {
     this.filteredCourses = this.courses.filter(course => {
-      const matchesSearch = !this.searchTerm || 
+      const matchesSearch = !this.searchTerm ||
         course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         course.description.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
+
       const matchesLevel = !this.filterLevel || course.level === this.filterLevel;
-      
+
       return matchesSearch && matchesLevel;
     });
   }
@@ -86,8 +86,8 @@ export class CoursesManagementComponent implements OnInit {
   }
 
   saveCourse(): void {
-    if (!this.currentCourse.name || !this.currentCourse.description || 
-        !this.currentCourse.duration || !this.currentCourse.level) {
+    if (!this.currentCourse.name || !this.currentCourse.description ||
+      !this.currentCourse.duration || !this.currentCourse.level) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
@@ -106,9 +106,11 @@ export class CoursesManagementComponent implements OnInit {
         alert(this.isEditMode ? 'Cours mis à jour!' : 'Cours créé!');
       },
       error: (err) => {
-        this.saving = false;
-        alert('Erreur lors de l\'enregistrement');
         console.error(err);
+        this.saving = false;
+
+        const msg = this.extractErrorMessage(err, 'Erreur lors de l\'enregistrement');
+        alert(msg);
       }
     });
   }
@@ -124,14 +126,14 @@ export class CoursesManagementComponent implements OnInit {
         alert('Cours supprimé!');
       },
       error: (err) => {
-        alert('Erreur lors de la suppression');
         console.error(err);
+        alert(this.extractErrorMessage(err, 'Erreur lors de la suppression'));
       }
     });
   }
 
   getLevelClass(level: CourseLevel): string {
-    switch(level) {
+    switch (level) {
       case CourseLevel.BEGINNER:
         return 'level-beginner';
       case CourseLevel.INTERMEDIATE:
@@ -144,7 +146,7 @@ export class CoursesManagementComponent implements OnInit {
   }
 
   getLevelLabel(level: CourseLevel): string {
-    switch(level) {
+    switch (level) {
       case CourseLevel.BEGINNER:
         return 'Débutant';
       case CourseLevel.INTERMEDIATE:
@@ -168,5 +170,16 @@ export class CoursesManagementComponent implements OnInit {
       level: CourseLevel.BEGINNER,
       imageUrl: ''
     };
+  }
+
+  private extractErrorMessage(err: any, fallback: string): string {
+    // backend might return {message: "..."} or plain text or nested error
+    return (
+      err?.error?.message ||
+      err?.error?.error ||
+      (typeof err?.error === 'string' ? err.error : null) ||
+      err?.message ||
+      fallback
+    );
   }
 }

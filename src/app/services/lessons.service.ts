@@ -14,6 +14,14 @@ export interface CourseProgressSummary {
   unlockedOrderIndexMax: number;
 }
 
+export interface LessonDifficultyDTO {
+  lessonId: number;
+  startedCount: number;
+  completedCount: number;
+  completionRate: number;
+  avgTimeSeconds: number;
+  difficulty: 'HARD' | 'MEDIUM' | 'EASY';
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -66,6 +74,38 @@ export class LessonsService {
     return `${this.apiUrl}/attachments/${attachmentId}`;
   }
 
+  private getExt(fileName: string): string {
+    const i = fileName.lastIndexOf('.');
+    return i >= 0 ? fileName.slice(i + 1).toLowerCase() : '';
+  }
+
+  private isTypeMatchingFile(type: AttachmentType, file: File): boolean {
+    const ext = this.getExt(file.name);
+    const ct = (file.type || '').toLowerCase();
+
+    switch (type) {
+      case 'PDF':
+        return ext === 'pdf' || ct === 'application/pdf';
+
+      case 'WORD':
+        return ['doc', 'docx'].includes(ext)
+          || ct.includes('msword')
+          || ct.includes('officedocument.wordprocessingml');
+
+      case 'PPT':
+        return ['ppt', 'pptx'].includes(ext)
+          || ct.includes('ms-powerpoint')
+          || ct.includes('officedocument.presentationml');
+
+      case 'VIDEO':
+        return ['mp4', 'webm', 'mov', 'mkv'].includes(ext) || ct.startsWith('video/');
+
+      case 'OTHER':
+      default:
+        return true;
+    }
+  }
+  
   // =========================
   // ✅ Progress (NEW)
   // =========================
@@ -105,7 +145,16 @@ getLearnerKey(): string {
     const learnerKey = this.getLearnerKey();
     return this.http.get<CourseProgressSummary>(`${this.apiUrl}/progress/course/${courseId}/summary?learnerKey=${learnerKey}`);
   }
+
+  getLessonDifficulty(courseId: number) {
+  return this.http.get<LessonDifficultyDTO[]>(
+    `${this.apiUrl}/progress/course/${courseId}/difficulty`
+  );
+}
+  
   deleteLessonAttachment(attachmentId: number): Observable<void> {
   return this.http.delete<void>(`${this.apiUrl}/attachments/${attachmentId}`);
 }
+
+
 }

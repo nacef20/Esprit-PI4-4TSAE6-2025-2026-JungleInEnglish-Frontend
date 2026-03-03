@@ -11,6 +11,14 @@ export interface Page<T> {
   number: number;
 }
 
+export interface AiQuizRequest {
+  prompt?: string;
+  numberOfQuestions: number;
+  difficulty: string;
+  teacherId?: number;
+  courseId?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class QuizService {
 
@@ -51,5 +59,14 @@ export class QuizService {
     if (filter) url += `&filter=${filter}`;
     if (studentId) url += `&studentId=${studentId}`;
     return this.http.get<Page<Quiz>>(url);
+  }
+
+  generateWithAi(file: File | null, request: AiQuizRequest): Observable<Quiz> {
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+    formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+    return this.http.post<Quiz>(`${this.apiUrl}/ai/generate`, formData);
   }
 }

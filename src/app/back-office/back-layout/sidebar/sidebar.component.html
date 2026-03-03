@@ -67,6 +67,22 @@
         </a>
       </li>
 
+      <!-- AI Quiz Generator -->
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          [routerLink]="['quizzes/ai-generate']"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">auto_awesome</span>
+          </div>
+          <span class="nav-link__text">AI Generator</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
       <!-- Attempts History -->
       <li class="nav-item">
         <a

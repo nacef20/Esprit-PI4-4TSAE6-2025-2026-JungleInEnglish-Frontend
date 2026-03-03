@@ -9,6 +9,7 @@ import { ChoiceListComponent } from './choice-list/choice-list.component';
 import { ChoiceFormComponent } from './choice-form/choice-form.component';
 import { AttemptListComponent } from './attempt-list/attempt-list.component';
 import { AttemptDetailComponent } from './attempt-detail/attempt-detail.component';
+import { AiQuizGeneratorComponent } from './ai-quiz-generator/ai-quiz-generator.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,8 @@ const routes: Routes = [
       { path: 'questions/:questionId/choices', component: ChoiceListComponent },
       { path: 'questions/:questionId/choices/new', component: ChoiceFormComponent },
       { path: 'questions/:questionId/choices/edit/:choiceId', component: ChoiceFormComponent },
+      // AI Quiz Generator
+      { path: 'quizzes/ai-generate', component: AiQuizGeneratorComponent },
       // Attempts
       { path: 'attempts', component: AttemptListComponent },
       { path: 'attempts/:attemptId', component: AttemptDetailComponent },

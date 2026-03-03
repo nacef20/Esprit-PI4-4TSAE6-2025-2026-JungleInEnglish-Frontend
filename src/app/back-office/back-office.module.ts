@@ -16,6 +16,7 @@ import { ChoiceListComponent } from './choice-list/choice-list.component';
 import { ChoiceFormComponent } from './choice-form/choice-form.component';
 import { AttemptListComponent } from './attempt-list/attempt-list.component';
 import { AttemptDetailComponent } from './attempt-detail/attempt-detail.component';
+import { AiQuizGeneratorComponent } from './ai-quiz-generator/ai-quiz-generator.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { AttemptDetailComponent } from './attempt-detail/attempt-detail.componen
     ChoiceFormComponent,
     AttemptListComponent,
     AttemptDetailComponent,
+    AiQuizGeneratorComponent,
   ],
   imports: [
     CommonModule,

@@ -1,30 +1,10 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule, Routes } from '@angular/router';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
-// Import services
-import { CoursesService } from './services/courses.service';
-import { LessonsService } from './services/lessons.service';
-
-// Define routes
-const routes: Routes = [
-  {
-    path: '',
-    loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule)
-  },
-  {
-    path: 'admin',
-    loadChildren: () => import('./back-office/back-office.module').then(m => m.BackOfficeModule)
-  },
-  {
-    path: '**',
-    redirectTo: ''
-  }
-];
 
 @NgModule({
   declarations: [
@@ -32,14 +12,14 @@ const routes: Routes = [
   ],
   imports: [
     BrowserModule,
-    CommonModule,
+    AppRoutingModule,
     HttpClientModule,
-    RouterModule.forRoot(routes)
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
-  providers: [
-    CoursesService,
-    LessonsService
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

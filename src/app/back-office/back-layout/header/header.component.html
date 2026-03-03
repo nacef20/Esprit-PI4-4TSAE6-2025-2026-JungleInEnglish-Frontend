@@ -63,8 +63,8 @@
   (error)="userAvatar = 'assets/utilisateur.png'"
 />
           <div class="user-menu__info">
-            <span class="user-menu__name">{{ userName }}</span>
-            <span class="user-menu__role">{{ userRole }}</span>
+            <span class="user-menu__name" *ngIf="currentUser">{{currentUser.firstName}}</span>
+            <span class="user-menu__role" *ngIf="currentUser">{{currentUser.lastName}}</span>
           </div>
           <svg class="user-menu__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <polyline points="6 9 12 15 18 9"/>
@@ -88,7 +88,7 @@
             <span>Paramètres</span>
           </a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item dropdown-item--danger" (click)="logout()">
+       <a class="dropdown-item dropdown-item--danger" (click)="logout()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>

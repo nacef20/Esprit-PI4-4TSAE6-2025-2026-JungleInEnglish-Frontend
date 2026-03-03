@@ -26,7 +26,7 @@ export interface LessonDifficultyDTO {
   providedIn: 'root'
 })
 export class LessonsService {
-  private apiUrl = `${environment.apiUrl}/lessons`;
+private apiUrl = `${environment.apiUrl}/api/lessons`;
 
   constructor(private http: HttpClient) { }
 

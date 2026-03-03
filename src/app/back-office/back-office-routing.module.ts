@@ -17,6 +17,14 @@ const routes: Routes = [
         path: 'lessons',
         component: LessonsManagementComponent
       },
+
+      {
+        path: 'gestionchatprive',
+        loadChildren: () =>
+          import('./gestionchatprive/gestionchatprive.module')
+            .then(m => m.GestionchatpriveModule)
+      },
+
       {
         path: '',
         redirectTo: 'courses',

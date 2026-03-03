@@ -1,11 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './auth/AuthGuard';
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule) },
-  { path: 'courses', loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule) }, // ✅ add this
-  { path: 'admin', loadChildren: () => import('./back-office/back-office.module').then(m => m.BackOfficeModule) },
-  { path: 'front-office', loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule) },
+  // ✅ Front Office — public, sans login
+  {
+    path: '',
+    loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule)
+  },
+  {
+    path: 'front-office',
+    loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule)
+  },
+
+    // courses should also open the FrontOffice module
+  {
+    path: 'courses',
+    loadChildren: () => import('./front-office/front-office.module').then(m => m.FrontOfficeModule)
+  },
+  // 🔒 Back Office — protégé par Keycloak
+  {
+    path: 'admin',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./back-office/back-office.module').then(m => m.BackOfficeModule)
+  },
+
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
@@ -13,3 +33,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
+

@@ -34,35 +34,41 @@ export class CoursesManagementComponent implements OnInit {
     this.loadCourses();
   }
 
-  loadCourses(): void {
-    this.loading = true;
-    this.error = null;
+loadCourses(): void {
+  this.loading = true;
+  this.error = null;
 
-    this.coursesService.getAllCourses().subscribe({
-      next: (data) => {
-        this.courses = data;
-        this.filteredCourses = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.error = this.extractErrorMessage(err, 'Erreur lors du chargement des cours');
-        this.loading = false;
-      }
-    });
-  }
+  this.coursesService.getAllCourses().subscribe({
+    next: (data) => {
+      this.courses = data;
+      this.filteredCourses = data;   // ✅
+      this.loading = false;
+    },
+    error: (err) => {
+      this.error = 'Erreur lors du chargement des cours';
+      this.loading = false;
+      console.error(err);
+    }
+  });
+}
 
-  filterCourses(): void {
-    this.filteredCourses = this.courses.filter(course => {
-      const matchesSearch = !this.searchTerm ||
-        course.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        course.description.toLowerCase().includes(this.searchTerm.toLowerCase());
+filterCourses(): void {
+  this.loading = true;
+  this.error = null;
 
-      const matchesLevel = !this.filterLevel || course.level === this.filterLevel;
-
-      return matchesSearch && matchesLevel;
-    });
-  }
+  this.coursesService.getAllCourses(this.searchTerm, this.filterLevel).subscribe({
+    next: (data) => {
+      this.courses = data;
+      this.filteredCourses = data;   // ✅ THIS makes the table update
+      this.loading = false;
+    },
+    error: (err) => {
+      this.error = 'Erreur lors du chargement des cours';
+      this.loading = false;
+      console.error(err);
+    }
+  });
+}
 
   getCountByLevel(level: string): number {
     return this.courses.filter(c => c.level === level).length;
@@ -182,4 +188,5 @@ export class CoursesManagementComponent implements OnInit {
       fallback
     );
   }
+  
 }

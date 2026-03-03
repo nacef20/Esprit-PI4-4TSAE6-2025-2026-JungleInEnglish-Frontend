@@ -5,11 +5,10 @@ import { environment } from '../../environments/environment';
 import { Course } from '../models/course.model';
 
 @Injectable({
-  providedIn: 'root'  // This is fine, keep it
+  providedIn: 'root'  
 })
 export class CoursesService {
-  private apiUrl = `${environment.apiUrl}/courses`;
-
+private apiUrl = `${environment.apiUrl}/api/courses`;
   constructor(private http: HttpClient) { }
 
   createCourse(course: Course): Observable<Course> {
@@ -20,9 +19,14 @@ export class CoursesService {
     return this.http.get<Course>(`${this.apiUrl}/getCourse/${id}`);
   }
 
-  getAllCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.apiUrl}/getAllcourses`);
-  }
+getAllCourses(search?: string, level?: string): Observable<Course[]> {
+  const params: any = {};
+  if (search && search.trim()) params.search = search.trim();
+  if (level) params.level = level;
+
+  return this.http.get<Course[]>(`${this.apiUrl}/getAllcourses`, { params });
+}
+
 
   updateCourse(id: number, course: Course): Observable<Course> {
     return this.http.put<Course>(`${this.apiUrl}/updateEntreprise/${id}`, course);

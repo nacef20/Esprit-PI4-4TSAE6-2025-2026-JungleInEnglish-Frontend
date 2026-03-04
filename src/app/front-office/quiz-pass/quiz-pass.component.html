@@ -2,7 +2,7 @@
   <!-- Navigation bar -->
   <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
     <div class="max-w-screen-xl mx-auto px-6 py-3 flex items-center justify-between">
-      <a routerLink="/front" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
+      <a routerLink="/back" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
       <div class="flex items-center gap-4">
         <!-- Countdown timer in nav -->
         <div *ngIf="attemptId && !submitted && !blocked && !loading"
@@ -14,9 +14,9 @@
           <span class="material-symbols-outlined text-base">timer</span>
           {{ timerDisplay }}
         </div>
-        <a routerLink="/front/quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
-        <a routerLink="/front/my-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
-        <a routerLink="/front" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
+        <a routerLink="/back/student-quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
+        <a routerLink="/back/student-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
+        <a routerLink="/back" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
       </div>
     </div>
   </nav>

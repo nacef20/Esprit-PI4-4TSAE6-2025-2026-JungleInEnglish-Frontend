@@ -136,7 +136,7 @@ export class AttemptDetailStudentComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/front/my-attempts']);
+    this.router.navigate(['/back/student-attempts']);
   }
 
   downloadPdf(): void {

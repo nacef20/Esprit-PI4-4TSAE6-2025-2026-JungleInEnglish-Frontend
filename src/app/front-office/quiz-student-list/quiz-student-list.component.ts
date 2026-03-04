@@ -95,7 +95,7 @@ export class QuizStudentListComponent implements OnInit, OnDestroy {
 
   startQuiz(quiz: Quiz): void {
     if (!this.canTakeQuiz(quiz)) return;
-    this.router.navigate(['/front/quiz', quiz.id]);
+    this.router.navigate(['/back/student-quizzes/pass', quiz.id]);
   }
 
   getPageNumbers(): number[] {

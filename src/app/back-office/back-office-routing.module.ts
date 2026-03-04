@@ -12,6 +12,10 @@ import { QuestionListComponent } from './question-list/question-list.component';
 import { QuestionFormComponent } from './question-form/question-form.component';
 import { ChoiceListComponent } from './choice-list/choice-list.component';
 import { ChoiceFormComponent } from './choice-form/choice-form.component';
+import { QuizStudentListComponent } from '../front-office/quiz-student-list/quiz-student-list.component';
+import { QuizPassComponent } from '../front-office/quiz-pass/quiz-pass.component';
+import { AttemptHistoryComponent } from '../front-office/attempt-history/attempt-history.component';
+import { AttemptDetailStudentComponent } from '../front-office/attempt-detail/attempt-detail.component';
 
 const routes: Routes = [
   {
@@ -75,6 +79,22 @@ const routes: Routes = [
         component: ChoiceFormComponent
       },
 
+      {
+        path: 'student-quizzes',
+        component: QuizStudentListComponent
+      },
+      {
+        path: 'student-quizzes/pass/:id',
+        component: QuizPassComponent
+      },
+      {
+        path: 'student-attempts',
+        component: AttemptHistoryComponent
+      },
+      {
+        path: 'student-attempts/:attemptId',
+        component: AttemptDetailStudentComponent
+      },
       {
         path: 'gestionchatprive',
         loadChildren: () =>

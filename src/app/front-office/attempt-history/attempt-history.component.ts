@@ -100,11 +100,11 @@ export class AttemptHistoryComponent implements OnInit {
   }
 
   viewDetail(attemptId: number): void {
-    this.router.navigate(['/front/my-attempts', attemptId]);
+    this.router.navigate(['/back/student-attempts', attemptId]);
   }
 
   goToQuizzes(): void {
-    this.router.navigate(['/front/quizzes']);
+    this.router.navigate(['/back/student-quizzes']);
   }
 
   getPageNumbers(): number[] {

@@ -183,7 +183,7 @@ export class QuizPassComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/front/quizzes']);
+    this.router.navigate(['/back/student-quizzes']);
   }
 
   isCorrectChoice(questionId: number, choiceId: number): boolean {

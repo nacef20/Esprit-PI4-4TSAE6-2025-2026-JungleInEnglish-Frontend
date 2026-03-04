@@ -21,6 +21,11 @@ import { QuestionFormComponent } from './question-form/question-form.component';
 import { ChoiceListComponent } from './choice-list/choice-list.component';
 import { ChoiceFormComponent } from './choice-form/choice-form.component';
 
+import { QuizStudentListComponent } from '../front-office/quiz-student-list/quiz-student-list.component';
+import { QuizPassComponent } from '../front-office/quiz-pass/quiz-pass.component';
+import { AttemptHistoryComponent } from '../front-office/attempt-history/attempt-history.component';
+import { AttemptDetailStudentComponent } from '../front-office/attempt-detail/attempt-detail.component';
+
 import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
@@ -39,7 +44,11 @@ import { NgChartsModule } from 'ng2-charts';
     QuestionListComponent,
     QuestionFormComponent,
     ChoiceListComponent,
-    ChoiceFormComponent
+    ChoiceFormComponent,
+    QuizStudentListComponent,
+    QuizPassComponent,
+    AttemptHistoryComponent,
+    AttemptDetailStudentComponent
   ],
   imports: [
     CommonModule,

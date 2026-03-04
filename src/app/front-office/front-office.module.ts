@@ -25,11 +25,6 @@ import { CoursesListComponent } from '../components/courses-list/courses-list.co
 import { LessonsPublicComponent } from './pages/lessons-public/lessons-public.component'; // adjust path
 import { CoursesPageComponent } from '../back-office/pages/courses-page/courses-page.component';
 
-import { QuizStudentListComponent } from './quiz-student-list/quiz-student-list.component';
-import { QuizPassComponent } from './quiz-pass/quiz-pass.component';
-import { AttemptHistoryComponent } from './attempt-history/attempt-history.component';
-import { AttemptDetailStudentComponent } from './attempt-detail/attempt-detail.component';
-
 
 @NgModule({
   declarations: [
@@ -47,11 +42,7 @@ import { AttemptDetailStudentComponent } from './attempt-detail/attempt-detail.c
     FirstloginComponent,
     CoursesListComponent,
     LessonsPublicComponent,
-    CoursesPageComponent,
-    QuizStudentListComponent,
-    QuizPassComponent,
-    AttemptHistoryComponent,
-    AttemptDetailStudentComponent
+    CoursesPageComponent
   ],
   imports: [
     CommonModule,

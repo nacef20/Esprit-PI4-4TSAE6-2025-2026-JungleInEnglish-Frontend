@@ -58,15 +58,6 @@ export class AiQuizGeneratorComponent {
   }
 
   private setFile(file: File): void {
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      this.error = 'Only PDF and image files (JPG, PNG) are accepted.';
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      this.error = 'File size must not exceed 10 MB.';
-      return;
-    }
     this.selectedFile = file;
     this.fileName = file.name;
     this.error = '';
@@ -105,11 +96,11 @@ export class AiQuizGeneratorComponent {
   // ── Generation ──
 
   canGenerate(): boolean {
-    return !this.loading && (!!this.selectedFile || this.prompt.trim().length > 0);
+    return !this.loading;
   }
 
   generate(): void {
-    if (!this.canGenerate()) return;
+    if (this.loading) return;
 
     this.loading = true;
     this.error = '';

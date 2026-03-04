@@ -114,6 +114,84 @@
       box-shadow: 0 6px 18px rgba(237, 137, 54, 0.45);
     }
   }
+
+  &.btn-replicate {
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+
+    &:hover {
+      box-shadow: 0 6px 18px rgba(72, 187, 120, 0.45);
+    }
+  }
+}
+
+// PDF Download group
+.pdf-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pdf-date-input {
+  padding: 0.65rem 0.85rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #2d3748;
+  background: #f7fafc;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #2e7d32;
+    background: white;
+  }
+}
+
+.btn-pdf {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35);
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background-color: #1b5e20;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(46, 125, 50, 0.45);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.spinner-pdf {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin-pdf 0.7s linear infinite;
+}
+
+@keyframes spin-pdf {
+  to { transform: rotate(360deg); }
 }
 
 .btn-danger {
@@ -315,6 +393,12 @@
             border-color: #fc8181;
             background: #fff5f5;
             color: #fc8181;
+          }
+
+          &.pdf-btn:hover {
+            border-color: #2e7d32;
+            background: #f0fdf4;
+            color: #2e7d32;
           }
         }
       }

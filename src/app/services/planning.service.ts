@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Planning, PlanningGeneratorRequest, GenerationResult, WeeklyLoadReport } from '../models/planning.model';
+import { Planning, PlanningGeneratorRequest, GenerationResult, WeeklyLoadReport, SemesterReplicationRequest, SemesterReplicationResult } from '../models/planning.model';
 
 @Injectable({
     providedIn: 'root'
@@ -123,6 +123,16 @@ export class PlanningService {
     analyzeWeeklyLoad(date: string): Observable<WeeklyLoadReport> {
         const url = `${this.baseApiUrl}/plannings/advanced/weekly-load?date=${date}`;
         return this.http.get<WeeklyLoadReport>(url)
+            .pipe(catchError(this.handleError));
+    }
+
+    /**
+     * POST /plannings/advanced/replicate-semester
+     * Réplique le planning d'une semaine de référence sur tout le semestre.
+     */
+    replicatePlanningSemester(request: SemesterReplicationRequest): Observable<SemesterReplicationResult> {
+        const url = `${this.baseApiUrl}/plannings/advanced/replicate-semester`;
+        return this.http.post<SemesterReplicationResult>(url, request, this.httpOptions)
             .pipe(catchError(this.handleError));
     }
 

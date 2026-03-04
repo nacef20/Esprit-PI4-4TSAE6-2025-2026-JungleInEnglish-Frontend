@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Planning, PlanningStatus, PlanningType } from '../../../models/planning.model';
 import { PlanningService } from '../../../services/planning.service';
@@ -25,13 +26,65 @@ export class PlanningListComponent implements OnInit {
     planningStatuses = Object.values(PlanningStatus);
     planningTypes = Object.values(PlanningType);
 
+    // PDF download
+    pdfDate: string = '';
+    isPdfLoading: boolean = false;
+
     constructor(
         private planningService: PlanningService,
-        private router: Router
+        private router: Router,
+        private http: HttpClient
     ) { }
 
     ngOnInit(): void {
         this.loadPlannings();
+        this.pdfDate = this.todayString();
+    }
+
+    private todayString(): string {
+        const d = new Date();
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    /**
+     * Télécharger le PDF de l'emploi du temps.
+     * @param date  YYYY-MM-DD. Si omis, utilise la date du sélecteur dans le header.
+     */
+    downloadPdf(date?: string | Date): void {
+        const dateStr = date
+            ? this.toYYYYMMDD(date)
+            : this.pdfDate;
+        if (!dateStr) return;
+
+        this.isPdfLoading = true;
+        const url = `http://localhost:8089/pi/plannings/advanced/pdf?date=${dateStr}`;
+
+        this.http.get(url, { responseType: 'blob' }).subscribe({
+            next: (blob) => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `emploi_du_temps_${dateStr}.pdf`;
+                link.click();
+                URL.revokeObjectURL(link.href);
+                this.isPdfLoading = false;
+            },
+            error: () => {
+                console.error('Erreur lors du téléchargement du PDF');
+                this.isPdfLoading = false;
+            }
+        });
+    }
+
+    private toYYYYMMDD(date: string | Date): string {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return String(date);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
     }
 
     /**

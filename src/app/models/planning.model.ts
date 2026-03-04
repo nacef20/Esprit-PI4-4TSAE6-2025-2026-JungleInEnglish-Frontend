@@ -82,3 +82,37 @@ export interface WeeklyLoadReport {
   tauxOccupationParSalle: { [salleId: number]: number };
   alertes: string[];
 }
+
+// =====================================================================
+// SEMESTER REPLICATION MODELS
+// =====================================================================
+
+export interface SemesterReplicationRequest {
+  /** Lundi de la semaine de référence (YYYY-MM-DD) */
+  semaineReference: string;
+  /** Début du semestre (YYYY-MM-DD) */
+  debutSemestre: string;
+  /** Fin du semestre (YYYY-MM-DD) */
+  finSemestre: string;
+  /** Dates des jours fériés à exclure (YYYY-MM-DD) */
+  joursFeries: string[];
+  /** Lundis des semaines d'examens à bloquer (YYYY-MM-DD) */
+  semainesExamens: string[];
+}
+
+export interface SemesterReplicationResult {
+  /** Nombre total de semaines traitées */
+  totalSemainesTraitees: number;
+  /** Nombre de semaines bloquées (examens) */
+  totalSemainesBloques: number;
+  /** Total sessions créées avec succès */
+  totalSessionsCrees: number;
+  /** Total sessions ignorées (conflit ou jour férié) */
+  totalSessionsIgnorees: number;
+  /** Détail par semaine : date (lundi) → liste de sessions créées */
+  sessionsParSemaine: { [lundDate: string]: Planning[] };
+  /** Détail des ignorées : date (lundi) → liste de raisons */
+  raisonsIgnoreesParSemaine: { [lundDate: string]: string[] };
+  /** Semaines complètement bloquées (examens) */
+  semainesBloques: string[];
+}

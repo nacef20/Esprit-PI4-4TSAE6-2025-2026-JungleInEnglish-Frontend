@@ -7,16 +7,15 @@ import { AppComponent } from './app.component';
 import { FrontOfficeComponent } from './front-office/front-office.component';
 import { BackOfficeComponent } from './back-office/back-office.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
-
 @NgModule({
   declarations: [
     AppComponent,
-   
+
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-     HttpClientModule ,
+    HttpClientModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable

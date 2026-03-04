@@ -1,11 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import { BackOfficeRoutingModule } from './back-office-routing.module';
 import { BackOfficeComponent } from './back-office.component';
+
 import { SidebarComponent } from './back-layout/sidebar/sidebar.component';
 import { HeaderComponent } from './back-layout/header/header.component';
+import { SalleModule } from './salle/salle.module';
 
-import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -14,13 +17,14 @@ import { FormsModule } from '@angular/forms';
     SidebarComponent,
     HeaderComponent,
 
+
+
   ],
   imports: [
     CommonModule,
     BackOfficeRoutingModule,
-     FormsModule
-   
-    
+    FormsModule,
+    SalleModule
   ]
 })
 export class BackOfficeModule { }

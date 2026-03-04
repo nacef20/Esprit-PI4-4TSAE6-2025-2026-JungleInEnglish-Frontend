@@ -4,18 +4,20 @@ import { BackOfficeComponent } from './back-office.component';
 
 const routes: Routes = [
   {
-    path: '',                    
+    path: '',
     component: BackOfficeComponent,
-    children: [                   // toutes les routes s'affichent DANS le layout
+    children: [
       {
-        path: 'gestionchatprive',
-        loadChildren: () => import('./gestionchatprive/gestionchatprive.module')
-          .then(m => m.GestionchatpriveModule)
+        path: 'planning',
+        loadChildren: () => import('./planning/planning.module').then(m => m.PlanningModule)
       },
       {
-        path: '',                  // optionnel : redirection vers chat par défaut
-        redirectTo: 'gestionchatprive',
-        pathMatch: 'full'
+        path: 'salle',
+        loadChildren: () => import('./salle/salle.module').then(m => m.SalleModule)
+      },
+      {
+        path: 'groupe',
+        loadChildren: () => import('./groupe/groupe.module').then(m => m.GroupeModule)
       }
     ]
   }
@@ -25,4 +27,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class BackOfficeRoutingModule {}
+export class BackOfficeRoutingModule { }

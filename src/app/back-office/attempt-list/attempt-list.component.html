@@ -1,0 +1,350 @@
+<div class="space-y-6">
+  <!-- ═══════════════════ Header ═══════════════════ -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">monitoring</span>
+        Analytics & Statistics
+      </h1>
+      <p class="text-sm text-gray-400 mt-1">Teacher Dashboard — Server-side computed data</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-gray-400">{{ totalElements }} attempt(s)</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Global KPI Cards ═══════════════════ -->
+  <div *ngIf="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <span class="material-symbols-outlined text-base">timer</span>
+          Total Attempts
+        </div>
+        <div class="text-3xl font-extrabold text-gray-800">{{ stats.totalAttempts }}</div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <span class="material-symbols-outlined text-base">bar_chart</span>
+          Average Score
+        </div>
+        <div class="text-3xl font-extrabold text-[#0ea37a]">{{ stats.globalAvgScore }}%</div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <span class="material-symbols-outlined text-base">check_circle</span>
+          Pass Rate
+        </div>
+        <div class="text-3xl font-extrabold" [ngClass]="stats.globalPassRate >= 50 ? 'text-green-600' : 'text-red-500'">{{ stats.globalPassRate }}%</div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-amber-50 rounded-bl-full opacity-60"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-wider mb-1">
+          <span class="material-symbols-outlined text-base">emoji_events</span>
+          Best Score
+        </div>
+        <div class="text-3xl font-extrabold text-blue-600">{{ stats.bestScore }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Charts Row ═══════════════════ -->
+  <div *ngIf="stats" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Average Score per Quiz chart -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-[#0ea37a]">insert_chart</span>
+        <h3 class="font-semibold text-gray-800">Average Score per Quiz</h3>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="avgScoreChartData"
+          [options]="avgScoreChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Pass Rate per Quiz chart -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-blue-600">trending_up</span>
+        <h3 class="font-semibold text-gray-800">Pass Rate (%)</h3>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="passRateChartData"
+          [options]="passRateChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Grade Distribution chart -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="material-symbols-outlined text-amber-500">donut_large</span>
+        <h3 class="font-semibold text-gray-800">Grade Distribution</h3>
+      </div>
+      <div class="h-64">
+        <canvas baseChart
+          [data]="gradeChartData"
+          [options]="gradeChartOptions"
+          type="doughnut">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Most Failed Questions ═══════════════════ -->
+  <div *ngIf="mostFailedQuestions.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-red-500">error</span>
+      <h3 class="font-semibold text-gray-800">Most Failed Questions</h3>
+      <span class="ml-auto text-xs text-gray-400">Top 5 — Server-side computed</span>
+    </div>
+    <div class="space-y-4">
+      <div *ngFor="let q of mostFailedQuestions; let i = index" class="flex items-center gap-4">
+        <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
+          [ngClass]="q.failRate >= 70 ? 'bg-red-100 text-red-700' : q.failRate >= 40 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'">
+          {{ i + 1 }}
+        </span>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium text-gray-800 truncate">{{ q.questionContent }}</div>
+          <div class="text-xs text-gray-400">{{ q.quizTitle }} — {{ q.wrongAnswers }}/{{ q.totalAnswers }} wrong answers</div>
+          <div class="mt-1 w-full bg-gray-100 rounded-full h-2">
+            <div class="h-2 rounded-full transition-all duration-500" [ngClass]="getFailBarColor(q.failRate)" [style.width]="getFailBarWidth(q.failRate)"></div>
+          </div>
+        </div>
+        <span class="flex-shrink-0 text-sm font-bold" [ngClass]="q.failRate >= 70 ? 'text-red-600' : q.failRate >= 40 ? 'text-yellow-600' : 'text-green-600'">
+          {{ q.failRate }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Quiz Stats Table ═══════════════════ -->
+  <div *ngIf="quizStatsList.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="p-6 border-b border-gray-100">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-indigo-600">table_chart</span>
+        <h3 class="font-semibold text-gray-800">Detailed Statistics per Quiz</h3>
+      </div>
+    </div>
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+        <tr>
+          <th class="px-6 py-3">Quiz</th>
+          <th class="px-6 py-3 text-center">Attempts</th>
+          <th class="px-6 py-3 text-center">Avg Score</th>
+          <th class="px-6 py-3 text-center">Pass Rate</th>
+          <th class="px-6 py-3 text-center">Passed</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let qs of quizStatsList" class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 font-medium text-gray-800">{{ qs.quizTitle }}</td>
+          <td class="px-6 py-4 text-center text-gray-600">{{ qs.totalAttempts }}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+              [ngClass]="qs.avgPercentage >= 80 ? 'bg-green-100 text-green-700' : qs.avgPercentage >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'">
+              {{ qs.avgPercentage }}%
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <div class="flex items-center gap-2 justify-center">
+              <div class="w-20 bg-gray-100 rounded-full h-2">
+                <div class="h-2 rounded-full transition-all" [style.width.%]="qs.passRate"
+                  [ngClass]="qs.passRate >= 70 ? 'bg-green-500' : qs.passRate >= 40 ? 'bg-yellow-500' : 'bg-red-500'"></div>
+              </div>
+              <span class="text-xs font-medium text-gray-600">{{ qs.passRate }}%</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center text-gray-600">{{ qs.passedCount }} / {{ qs.totalAttempts }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Separator ═══════════════════ -->
+  <div class="flex items-center gap-4">
+    <div class="h-px flex-1 bg-gray-200"></div>
+    <span class="text-sm font-medium text-gray-400">Attempts List</span>
+    <div class="h-px flex-1 bg-gray-200"></div>
+  </div>
+
+  <!-- ═══════════════════ Filters ═══════════════════ -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-4">
+    <!-- Search by quiz name -->
+    <div class="relative">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+      <input type="text" placeholder="Search by quiz name..." (input)="onSearchQuizTitle($event)"
+        class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+    </div>
+
+    <!-- Search by student name -->
+    <div class="relative">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">person_search</span>
+      <input type="text" placeholder="Search by student name..." (input)="onSearchStudentName($event)"
+        class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+    </div>
+
+    <!-- Other filters row -->
+    <div class="flex flex-wrap items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-gray-400 text-lg">filter_list</span>
+        <span class="text-sm font-medium text-gray-600">Filters:</span>
+      </div>
+
+      <select [(ngModel)]="selectedQuizId" (ngModelChange)="applyFilters()"
+        class="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none bg-white">
+        <option [ngValue]="null">All quizzes</option>
+        <option *ngFor="let q of quizzes" [ngValue]="q.id">{{ q.title }}</option>
+      </select>
+
+      <button *ngIf="selectedQuizId || searchStudentName || searchQuizTitle" (click)="resetFilters()"
+        class="text-sm text-gray-500 hover:text-gray-700 underline">Reset</button>
+
+      <!-- Export buttons -->
+      <div class="ml-auto flex items-center gap-2">
+        <button (click)="exportExcel()"
+          [disabled]="exportingExcel"
+          class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!exportingExcel" class="material-symbols-outlined text-lg">table_view</span>
+          <span *ngIf="exportingExcel" class="material-symbols-outlined text-lg animate-spin">progress_activity</span>
+          {{ exportingExcel ? 'Generating...' : 'Export Excel' }}
+        </button>
+        <button (click)="exportPdf()"
+          [disabled]="exporting"
+          class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] hover:bg-[#0c8d6a] text-white font-medium rounded-lg shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!exporting" class="material-symbols-outlined text-lg">picture_as_pdf</span>
+          <span *ngIf="exporting" class="material-symbols-outlined text-lg animate-spin">progress_activity</span>
+          {{ exporting ? 'Generating...' : 'Export PDF' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ Empty state ═══════════════════ -->
+  <div *ngIf="attempts.length === 0" class="text-center py-16 text-gray-400">
+    <span class="material-symbols-outlined text-5xl mb-4 block">hourglass_empty</span>
+    <p class="text-lg">No attempts found</p>
+  </div>
+
+  <!-- ═══════════════════ Attempts Table ═══════════════════ -->
+  <div *ngIf="attempts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <table class="w-full text-sm text-left">
+      <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
+        <tr>
+          <th class="px-6 py-4">Quiz</th>
+          <th class="px-6 py-4">Student</th>
+          <th class="px-6 py-4">Score</th>
+          <th class="px-6 py-4">Result</th>
+          <th class="px-6 py-4">Certificate</th>
+          <th class="px-6 py-4">Date</th>
+          <th class="px-6 py-4 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let attempt of attempts" class="hover:bg-gray-50 transition-colors cursor-pointer" (click)="viewDetail(attempt.id!)">
+          <!-- Quiz title -->
+          <td class="px-6 py-4">
+            <div class="font-medium text-gray-800">{{ attempt.quiz?.title || 'Unknown Quiz' }}</div>
+            <div class="text-xs text-gray-400 mt-0.5">ID: {{ attempt.quiz?.id }}</div>
+          </td>
+
+          <!-- Student -->
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
+              <span class="material-symbols-outlined text-sm">person</span>
+              {{ attempt.studentName || ('Student #' + attempt.studentId) }}
+            </span>
+          </td>
+
+          <!-- Score -->
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <span class="text-lg font-bold" [ngClass]="getScoreColor(attempt)">
+                {{ attempt.score ?? 0 }}<span *ngIf="attempt.totalPoints" class="text-sm font-normal text-gray-400">/{{ attempt.totalPoints }}</span>
+              </span>
+              <span *ngIf="attempt.totalPoints" class="text-xs px-2 py-0.5 rounded-full"
+                [ngClass]="getScoreBadgeBg(attempt)" [class]="getScoreColor(attempt)">
+                {{ getPercentage(attempt) }}%
+              </span>
+            </div>
+          </td>
+
+          <!-- Pass/Fail -->
+          <td class="px-6 py-4">
+            <span *ngIf="attempt.totalPoints" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium"
+              [ngClass]="getPassBadgeClasses(attempt)">
+              {{ getPassLabel(attempt) }}
+            </span>
+            <span *ngIf="!attempt.totalPoints" class="text-gray-400 text-xs">—</span>
+          </td>
+
+          <!-- Certificate -->
+          <td class="px-6 py-4">
+            <button *ngIf="hasCertificate(attempt.id!)" (click)="openCertificate(attempt.id!, $event)"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-medium hover:bg-amber-100 transition-all cursor-pointer"
+              title="View certificate">
+              <span class="material-symbols-outlined text-sm">workspace_premium</span>
+              {{ getCertificateGrade(attempt.id!) }}
+            </button>
+            <span *ngIf="!hasCertificate(attempt.id!)" class="text-gray-300 text-xs flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">remove</span>
+              None
+            </span>
+          </td>
+
+          <!-- Date -->
+          <td class="px-6 py-4 text-gray-500 text-xs">
+            <div>{{ formatDate(attempt.submittedAt) }}</div>
+          </td>
+
+          <!-- Actions -->
+          <td class="px-6 py-4 text-right" (click)="$event.stopPropagation()">
+            <button (click)="deleteAttempt(attempt.id!)"
+              class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete">
+              <span class="material-symbols-outlined text-xl">delete</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════ Pagination ═══════════════════ -->
+  <div *ngIf="totalPages > 1" class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4">
+    <span class="text-sm text-gray-500">
+      Page {{ currentPage }} of {{ totalPages }} — {{ totalElements }} result(s)
+    </span>
+    <div class="flex items-center gap-1">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        ← Previous
+      </button>
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button (click)="goToPage(page)"
+          class="w-9 h-9 text-sm rounded-lg border transition-all"
+          [ngClass]="page === currentPage ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 hover:bg-gray-50'">
+          {{ page }}
+        </button>
+      </ng-container>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        Next →
+      </button>
+    </div>
+  </div>
+</div>

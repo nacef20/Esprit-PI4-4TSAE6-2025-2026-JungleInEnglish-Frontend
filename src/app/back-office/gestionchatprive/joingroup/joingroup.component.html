@@ -1,0 +1,68 @@
+<div class="modal-overlay" (click)="fermerModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <h2>
+        <span class="bar"></span>
+        Join Group Requests
+        <span class="request-count">{{ demandes.length }}</span>
+      </h2>
+      <button class="btn-close" type="button" (click)="fermerModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <div *ngIf="demandes.length > 0; else noRequests" class="requests-list">
+        <div class="request-card" *ngFor="let demande of demandes">
+
+          <div class="member-avatar">
+            {{ demande.firstName | slice:0:1 }}{{ demande.lastName | slice:0:1 }}
+          </div>
+
+          <div class="member-info">
+            <span class="member-name">{{ demande.firstName || 'Loading...' }} {{ demande.lastName || '' }}</span>
+            <span class="member-sub">
+              <i class="fa-regular fa-clock"></i>
+              {{ demande.requestedAt || '-' }}
+            </span>
+          </div>
+
+          <div class="request-status" [ngClass]="{
+            'status-pending':  demande.status === 'ATTENTE' || !demande.status,
+            'status-accepted': demande.status === 'ACCEPTE',
+            'status-rejected': demande.status === 'REFUSE'
+          }">
+            {{ demande.status || 'ATTENTE' }}
+          </div>
+
+          <div class="request-actions">
+            <button class="btn-accept"
+              (click)="accepterDemande(demande)"
+              [disabled]="demande.status === 'ACCEPTE'"
+              title="Accept">
+              <i class="fa-solid fa-check"></i>
+            </button>
+            <button class="btn-reject"
+              (click)="refuserDemande(demande)"
+              [disabled]="demande.status === 'REFUSE' || demande.status === 'ACCEPTE'"
+              title="Reject">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <ng-template #noRequests>
+        <div class="no-requests">
+          <i class="fa-solid fa-inbox"></i>
+          <p>No requests at the moment.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+</div>

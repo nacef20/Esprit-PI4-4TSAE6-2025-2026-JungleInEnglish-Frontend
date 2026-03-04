@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+/* Custom range input thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0ea37a;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(14, 163, 122, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0ea37a;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(14, 163, 122, 0.3);
+}
+
+/* Textarea custom scrollbar */
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

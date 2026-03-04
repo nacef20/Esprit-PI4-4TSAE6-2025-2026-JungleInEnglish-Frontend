@@ -1,0 +1,44 @@
+<div
+  class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto"
+  id="feature"
+>
+  <div class="grid grid-flow-row sm:grid-flow-col grid-cols-1 sm:grid-cols-2 gap-8 py-8 my-12">
+
+    <!-- IMAGE SECTION -->
+    <app-scroll-animation className="flex w-full justify-end">
+      <div class="h-full w-full p-4">
+        <img
+          src="assets/Illustration2.png"
+          alt="VPN Illustration"
+          class="w-full h-auto"
+        />
+      </div>
+    </app-scroll-animation>
+
+    <!-- TEXT SECTION -->
+    <app-scroll-animation>
+      <div class="flex flex-col items-end justify-center ml-auto w-full lg:w-9/12">
+
+        <h3 class="text-3xl lg:text-4xl font-medium leading-relaxed text-black-600">
+          We Provide Many Features You Can Use
+        </h3>
+
+        <p class="my-2 text-black-500">
+          You can explore the features that we provide with fun and have their
+          own functions each feature.
+        </p>
+
+        <ul class="text-black-500 self-start list-inside ml-8">
+          <li
+            *ngFor="let feature of features; let i = index"
+            class="relative custom-list my-2 hover:scale-110 transition duration-200 cursor-pointer"
+          >
+            {{ feature }}
+          </li>
+        </ul>
+
+      </div>
+    </app-scroll-animation>
+
+  </div>
+</div>

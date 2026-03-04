@@ -1,0 +1,46 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="jungle-card shadow-lg" style="width: 100%; max-width: 450px; background-color: var(--card-bg);">
+    <div class="text-center mb-5">
+      <div class="brand justify-content-center mb-2" style="font-size: 2.5rem;">
+        <i class="fas fa-leaf text-success me-2"></i> Jungle In English
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.95rem;">Premium Task Management</p>
+    </div>
+
+    <h3 class="mb-4 text-center" style="font-weight: 700; color: var(--text-primary);">Login</h3>
+
+    <form (ngSubmit)="login()">
+      <div class="mb-3">
+        <label class="form-label small fw-bold" style="color: var(--text-secondary);">EMAIL ADDRESS</label>
+        <input type="email" [(ngModel)]="email" name="email" class="form-control jungle-input"
+          placeholder="name@example.com" required />
+      </div>
+      <div class="mb-4">
+        <label class="form-label small fw-bold" style="color: var(--text-secondary);">PASSWORD</label>
+        <input type="password" [(ngModel)]="password" name="password" class="form-control jungle-input"
+          placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="jungle-btn jungle-btn-primary w-100" [disabled]="loading">
+        <span *ngIf="!loading">Sign In</span>
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+        <span *ngIf="loading">Logging in...</span>
+      </button>
+    </form>
+
+    <div *ngIf="error" class="alert alert-danger mt-4 border-0 py-3" role="alert"
+      style="background-color: rgba(239, 68, 68, 0.12); color: #fef2f2;">
+      <div class="d-flex align-items-start">
+        <i class="fas fa-exclamation-circle me-2 mt-1" style="font-size: 1.1rem;"></i>
+        <div>
+          <strong class="d-block mb-1" style="color: #fca5a5;">Login failed</strong>
+          <span style="font-size: 0.95rem;">{{ error }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-5 pt-3" style="border-top: 1px solid var(--border-color);">
+      <span style="color: var(--text-secondary);">Don't have an account?</span>
+      <a routerLink="/signup" class="jungle-link ms-2">Create Account</a>
+    </div>
+  </div>
+</div>

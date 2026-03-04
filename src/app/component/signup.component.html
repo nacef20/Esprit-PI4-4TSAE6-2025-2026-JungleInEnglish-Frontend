@@ -1,0 +1,45 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="jungle-card shadow-lg" style="width: 100%; max-width: 450px; background-color: var(--card-bg);">
+    <div class="text-center mb-5">
+      <div class="brand justify-content-center mb-2" style="font-size: 2.5rem;">
+        <i class="fas fa-leaf text-success me-2"></i> Jungle
+      </div>
+      <p style="color: var(--text-secondary); font-size: 0.95rem;">Join our community today.</p>
+    </div>
+
+    <h3 class="mb-4 text-center" style="font-weight: 700; color: var(--text-primary);">Create Account</h3>
+
+    <form (ngSubmit)="signup()">
+      <div class="mb-3">
+        <label class="form-label small fw-bold" style="color: var(--text-secondary);">FULL NAME</label>
+        <input type="text" [(ngModel)]="name" name="name" class="form-control jungle-input" placeholder="John Doe"
+          required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label small fw-bold" style="color: var(--text-secondary);">EMAIL ADDRESS</label>
+        <input type="email" [(ngModel)]="email" name="email" class="form-control jungle-input"
+          placeholder="name@example.com" required />
+      </div>
+      <div class="mb-4">
+        <label class="form-label small fw-bold" style="color: var(--text-secondary);">PASSWORD</label>
+        <input type="password" [(ngModel)]="password" name="password" class="form-control jungle-input"
+          placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="jungle-btn jungle-btn-primary w-100">Join Jungle In English</button>
+    </form>
+
+    <div *ngIf="error" class="alert alert-danger mt-4 border-0 py-2 small"
+      style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444;">
+      <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
+    </div>
+    <div *ngIf="success" class="alert alert-success mt-4 border-0 py-2 small"
+      style="background-color: rgba(16, 185, 129, 0.1); color: #10b981;">
+      <i class="fas fa-check-circle me-2"></i> {{ success }}
+    </div>
+
+    <div class="text-center mt-5 pt-3" style="border-top: 1px solid var(--border-color);">
+      <span style="color: var(--text-secondary);">Already have an account?</span>
+      <a routerLink="/login" class="jungle-link ms-2">Login here</a>
+    </div>
+  </div>
+</div>

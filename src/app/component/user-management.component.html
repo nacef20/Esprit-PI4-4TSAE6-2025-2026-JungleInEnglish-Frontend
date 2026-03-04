@@ -1,0 +1,96 @@
+<app-navbar></app-navbar>
+
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h1 style="font-weight: 800; font-size: 2.5rem;">User Management</h1>
+    <button class="jungle-btn jungle-btn-primary" (click)="cancelEdit()">
+      <i class="fas fa-plus"></i> New User
+    </button>
+  </div>
+
+  <div class="jungle-card mb-5">
+    <h4 class="mb-4" style="font-weight: 700;">{{ editingUserId ? 'Edit User' : 'Create New User' }}</h4>
+    <form (ngSubmit)="editingUserId ? updateUser() : createUser()" class="row g-4">
+      <div class="col-md-4">
+        <label class="form-label text-secondary small fw-bold">FULL NAME</label>
+        <input type="text" [(ngModel)]="userForm.name" name="name" class="form-control jungle-input" placeholder="Name"
+          required />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label text-secondary small fw-bold">EMAIL ADDRESS</label>
+        <input type="email" [(ngModel)]="userForm.email" name="email" class="form-control jungle-input"
+          placeholder="Email" required />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label text-secondary small fw-bold">PASSWORD</label>
+        <input type="password" [(ngModel)]="userForm.password" name="password" class="form-control jungle-input"
+          placeholder="Password" [required]="!editingUserId" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label text-secondary small fw-bold">ROLE</label>
+        <select [(ngModel)]="userForm.role" name="role" class="form-select jungle-input" required>
+          <option *ngFor="let r of roles" [ngValue]="r">{{ r }}</option>
+        </select>
+      </div>
+      <div class="col-12 d-flex gap-3 mt-4">
+        <button type="submit" class="jungle-btn jungle-btn-primary col-3">
+          {{ editingUserId ? 'Update User' : 'Create User' }}
+        </button>
+        <button type="button" *ngIf="editingUserId" class="jungle-btn jungle-btn-secondary"
+          (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+    <div *ngIf="error" class="alert alert-danger mt-4 border-0 py-2 small"
+      style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444;">{{ error }}</div>
+    <div *ngIf="success" class="alert alert-success mt-4 border-0 py-2 small"
+      style="background-color: rgba(16, 185, 129, 0.1); color: #10b981;">{{ success }}</div>
+  </div>
+
+  <div class="jungle-card p-0 overflow-hidden">
+    <div
+      class="px-4 py-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center"
+      style="background: rgba(255,255,255,0.02);">
+      <h5 class="mb-0 fw-bold">All Registered Users</h5>
+      <span class="badge bg-secondary opacity-75">{{ users.length }} Total</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover mb-0" style="--bs-table-bg: transparent;">
+        <thead class="text-secondary small fw-bold">
+          <tr>
+            <th class="px-4 py-3">ID</th>
+            <th class="px-4 py-3">NAME</th>
+            <th class="px-4 py-3">EMAIL</th>
+            <th class="px-4 py-3">ROLE</th>
+            <th class="px-4 py-3 text-end">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users" class="align-middle">
+            <td class="px-4 py-3 text-secondary">#{{ user.id }}</td>
+            <td class="px-4 py-3 fw-medium">{{ user.name }}</td>
+            <td class="px-4 py-3 text-secondary">{{ user.email }}</td>
+            <td class="px-4 py-3">
+              <span class="badge" [ngClass]="{
+                'bg-info text-dark': user.role === 'ADMIN',
+                'bg-primary': user.role === 'EMPLOYER',
+                'bg-secondary': user.role === 'CANDIDATE'
+              }">{{ user.role }}</span>
+            </td>
+            <td class="px-4 py-3 text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <button class="jungle-btn p-2" (click)="editUser(user)"
+                  style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                  <i class="fas fa-edit small"></i>
+                </button>
+                <button class="jungle-btn p-2" (click)="deleteUser(user.id!)"
+                  style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                  <i class="fas fa-trash small"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

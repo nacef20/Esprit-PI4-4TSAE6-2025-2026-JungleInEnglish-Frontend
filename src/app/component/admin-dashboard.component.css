@@ -1,0 +1,40 @@
+/* Admin Dashboard Base Styles */
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.modal.show {
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.list-group-item-action:hover {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  color: var(--primary-color) !important;
+}
+
+.list-group-item-action.active {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

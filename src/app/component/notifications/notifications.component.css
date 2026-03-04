@@ -1,0 +1,129 @@
+:host {
+    display: block;
+    padding: 2rem 0;
+}
+
+.notifications-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.notification-list-card {
+    background: var(--surface-color);
+    border-radius: 1.25rem;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.notification-row {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-row:last-child {
+    border-bottom: none;
+}
+
+.notification-row:hover {
+    background: rgba(16, 185, 129, 0.03);
+}
+
+.notification-row.unread {
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.notification-row.unread::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--primary-color);
+}
+
+.notification-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 1.05rem;
+}
+
+.notification-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.match-badge {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    padding: 0.1rem 0.6rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.notification-actions {
+    margin-left: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.notification-row:hover .notification-actions {
+    opacity: 1;
+}
+
+.btn-mark-read {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-mark-read:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.empty-state {
+    padding: 5rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.3;
+}

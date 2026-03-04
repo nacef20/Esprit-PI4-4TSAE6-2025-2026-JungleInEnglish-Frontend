@@ -1,0 +1,29 @@
+<div class="courses-management">
+  <div class="page-header">
+    <div class="page-header__title">
+      <h1>Gestion des Leçons</h1>
+      <p class="subtitle">Créer, modifier et gérer toutes vos leçons</p>
+    </div>
+  </div>
+
+  <!-- Pick a course, then show lessons CRUD -->
+  <div class="filters-section">
+    <div class="search-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+      <select class="filter-select" [(ngModel)]="selectedCourseId" (change)="onCourseChange()">
+        <option [ngValue]="null">Sélectionner un cours...</option>
+        <option *ngFor="let c of courses" [ngValue]="c.id">{{ c.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="selectedCourseId as cid">
+    <app-lessons-list [courseId]="+cid" [adminMode]="true"></app-lessons-list>
+
+  <div *ngIf="!selectedCourseId" class="empty-state">
+    <p>Choisissez un cours pour gérer ses leçons.</p>
+  </div>
+</div>

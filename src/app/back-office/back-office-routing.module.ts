@@ -106,6 +106,18 @@ const routes: Routes = [
         path: '',
         redirectTo: 'courses',
         pathMatch: 'full'
+      },
+      {
+        path: 'planning',
+        loadChildren: () => import('./planning/planning.module').then(m => m.PlanningModule)
+      },
+      {
+        path: 'salle',
+        loadChildren: () => import('./salle/salle.module').then(m => m.SalleModule)
+      },
+      {
+        path: 'groupe',
+        loadChildren: () => import('./groupe/groupe.module').then(m => m.GroupeModule)
       }
     ]
   }

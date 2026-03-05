@@ -78,8 +78,6 @@ selectedGroupId!: number;
 
 ngOnInit(): void {
 
-
-
    this.currentUser = this.authService.getUserInfo();
     this.currentUserId = this.currentUser?.id;
   this.groupService.getAllGroups().subscribe((data: any[]) => {

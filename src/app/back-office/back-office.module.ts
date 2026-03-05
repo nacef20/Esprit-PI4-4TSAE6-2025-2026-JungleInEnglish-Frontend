@@ -27,6 +27,7 @@ import { AttemptHistoryComponent } from '../front-office/attempt-history/attempt
 import { AttemptDetailStudentComponent } from '../front-office/attempt-detail/attempt-detail.component';
 
 import { NgChartsModule } from 'ng2-charts';
+import { SalleModule } from './salle/salle.module';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { NgChartsModule } from 'ng2-charts';
     FormsModule,
     ReactiveFormsModule,
     BackOfficeRoutingModule,
-    NgChartsModule
+    NgChartsModule,
+    SalleModule
   ]
 })
 export class BackOfficeModule { }

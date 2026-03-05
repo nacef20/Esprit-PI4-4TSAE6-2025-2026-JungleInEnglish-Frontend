@@ -9,7 +9,6 @@ import { AuthService } from '../../../auth/auth.service';
 })
 export class HeaderComponent {
 
-
 userName: string = 'Jean Dupont';
   userRole: string = 'Administrateur';
   userAvatar: string = 'assets/avatar.jpg'; // Chemin vers votre image

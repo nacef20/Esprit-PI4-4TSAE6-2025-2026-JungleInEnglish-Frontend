@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-backoffice-layout',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   template: `
     <div class="layout">
       <nav class="nav">
@@ -20,6 +22,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <a routerLink="/admin/todos" routerLinkActive="active">Todos</a>
           <a routerLink="/admin/events" routerLinkActive="active">Events</a>
         </div>
+        
+        <div class="user-info">
+          <span>{{ currentUser()?.username }}</span>
+          <button (click)="logout()" class="logout-btn">Logout</button>
+        </div>
+
         <a routerLink="/" class="nav-back">← Frontoffice</a>
       </nav>
       <main class="main">
@@ -78,8 +86,29 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       color: #fff;
     }
 
-    .nav-back {
+    .user-info {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-back {
       background: rgba(255, 255, 255, 0.12);
     }
 
@@ -97,5 +126,15 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     }
   `,
 })
-export class BackofficeLayoutComponent {}
+export class BackofficeLayoutComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  currentUser = this.authService.currentUser;
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+}
 

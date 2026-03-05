@@ -2,8 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import type { Todo } from '../models/todo.model';
-import type { TodoStatus } from '../models/todo.model';
+import type { Todo, TodoStatus, TodoStats } from '../models/todo.model';
 
 @Injectable({ providedIn: 'root' })
 export class TodoService {
@@ -26,11 +25,16 @@ export class TodoService {
     return this.http.post<Todo>(`${this.baseUrl}/add`, todo);
   }
 
+  /** PUT /api/todos/{id} - send full todo body including ischecked */
   update(id: number, todo: Todo): Observable<Todo> {
-    return this.http.put<Todo>(`${this.baseUrl}/update?id=${id}`, todo);
+    return this.http.put<Todo>(`${this.baseUrl}/${id}`, todo);
   }
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete?id=${id}`);
+  }
+
+  getStats(): Observable<TodoStats> {
+    return this.http.get<TodoStats>(`${this.baseUrl}/stats`);
   }
 }

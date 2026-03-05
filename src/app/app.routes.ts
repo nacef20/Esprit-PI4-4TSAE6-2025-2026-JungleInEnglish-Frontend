@@ -1,8 +1,35 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
+import { rootRedirectGuard } from './core/guards/root-redirect.guard';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then(
+        (m) => m.LoginComponent
+      ),
+  },
+  {
+    path: 'signup',
+    loadComponent: () =>
+      import('./features/auth/signup/signup.component').then(
+        (m) => m.SignupComponent
+      ),
+  },
+  {
     path: '',
+    pathMatch: 'full',
+    canActivate: [rootRedirectGuard],
+    loadComponent: () =>
+      import('./features/landing/landing/landing.component').then(
+        (m) => m.LandingComponent
+      ),
+  },
+  {
+    path: '',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./layouts/frontoffice-layout/frontoffice-layout.component').then(
         (m) => m.FrontofficeLayoutComponent
@@ -10,8 +37,15 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'todos',
+        redirectTo: 'home',
         pathMatch: 'full',
+      },
+      {
+        path: 'home',
+        loadComponent: () =>
+          import('./features/landing/landing/landing.component').then(
+            (m) => m.LandingComponent
+          ),
       },
       {
         path: 'todos',
@@ -26,6 +60,13 @@ export const routes: Routes = [
           import(
             './features/todos/components/todo-detail/todo-detail.component'
           ).then((m) => m.TodoDetailComponent),
+      },
+      {
+        path: 'todos/stats',
+        loadComponent: () =>
+          import(
+            './features/admin/todo-stats/todo-stats.component'
+          ).then((m) => m.TodoStatsComponent),
       },
       {
         path: 'events',
@@ -45,6 +86,8 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    canActivate: [authGuard, roleGuard],
+    data: { role: 'ROLE_TEACHER' },
     loadComponent: () =>
       import('./layouts/backoffice-layout/backoffice-layout.component').then(
         (m) => m.BackofficeLayoutComponent
@@ -61,6 +104,13 @@ export const routes: Routes = [
           import(
             './features/admin/todos-admin/todos-admin.component'
           ).then((m) => m.TodosAdminComponent),
+      },
+      {
+        path: 'todos/stats',
+        loadComponent: () =>
+          import(
+            './features/admin/todo-stats/todo-stats.component'
+          ).then((m) => m.TodoStatsComponent),
       },
       {
         path: 'events',

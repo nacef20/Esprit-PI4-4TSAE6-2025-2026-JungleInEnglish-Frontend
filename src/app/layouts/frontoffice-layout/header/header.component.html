@@ -1,0 +1,56 @@
+<header
+  class="site-header fixed top-0 left-0 right-0 w-full z-30 bg-white/95 backdrop-blur border-b border-gray-100 transition-all"
+  [ngClass]="{'shadow-sm': scrollActive}">
+  <nav class="max-w-screen-xl mx-auto px-6 sm:px-8 lg:px-16 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3 min-w-[220px]">
+      <div class="h-9 w-9 rounded-full bg-school-primary flex items-center justify-center text-white font-bold text-sm">
+        P</div>
+      <h1 class="text-base font-extrabold tracking-tight text-gray-900 leading-none">Piang</h1>
+    </div>
+
+    <ul class="hidden lg:flex items-center gap-8 font-semibold text-gray-700">
+      <li (click)="scrollTo('about')" [ngClass]="activeLink === 'about' ? 'menu-active' : ''" class="menu-link">
+        About
+      </li>
+      <li (click)="scrollTo('feature')" [ngClass]="activeLink === 'feature' ? 'menu-active' : ''" class="menu-link">
+        Feature
+      </li>
+      <li (click)="scrollTo('pricing')" [ngClass]="activeLink === 'pricing' ? 'menu-active' : ''" class="menu-link">
+        Pricing
+      </li>
+      <li (click)="scrollTo('testimonials')" [ngClass]="activeLink === 'testimonials' ? 'menu-active' : ''"
+        class="menu-link">
+        Testimonials
+      </li>
+      <li>
+        <a routerLink="/todos" routerLinkActive="menu-active" class="menu-link">Todos</a>
+      </li>
+      <li>
+        <a routerLink="/todos/stats" routerLinkActive="menu-active" class="menu-link">Stats</a>
+      </li>
+      <li>
+        <a routerLink="/events" routerLinkActive="menu-active" class="menu-link">Events</a>
+      </li>
+    </ul>
+
+    <div class="flex items-center justify-end min-w-[160px] gap-4">
+      @if (currentUser()) {
+      <div class="flex items-center gap-3">
+        <span class="text-sm font-medium text-gray-700 hidden sm:inline-block">Hi, {{ currentUser()?.username }}</span>
+        @if (isTeacherRole()) {
+        <a routerLink="/admin" class="backoffice-link">Back Office</a>
+        }
+        <button (click)="logout()"
+          class="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-100 transition-all">
+          Logout
+        </button>
+      </div>
+      } @else {
+      <a routerLink="/login"
+        class="px-6 py-2 bg-school-primary text-white rounded-lg text-sm font-bold hover:bg-indigo-700 transition-all">
+        Login
+      </a>
+      }
+    </div>
+  </nav>
+</header>

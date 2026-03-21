@@ -1,20 +1,48 @@
 import { HttpRequest, HttpHandlerFn } from '@angular/common/http';
-import { inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { inject } from '@angular/core';
+import { from, Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
+import { environment } from '../../../environments/environment';
 
-const AUTH_HEADER = 'Authorization';
-const TOKEN_KEY = 'accessToken';
+export function jwtInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<any> {
+  const authService = inject(AuthService);
 
-export function jwtInterceptor(
-  req: HttpRequest<unknown>,
-  next: HttpHandlerFn
-) {
-  const platformId = inject(PLATFORM_ID);
-  const token = isPlatformBrowser(platformId) ? localStorage.getItem(TOKEN_KEY) : null;
+  // Exclude external calls
+  if (!req.url.startsWith(environment.apiBaseUrl)) {
+    return next(req);
+  }
 
-  if (!token) return next(req);
-  const cloned = req.clone({
-    setHeaders: { [AUTH_HEADER]: `Bearer ${token}` },
-  });
-  return next(cloned);
+  // 1. MOCK MODE Headers
+  if (environment.mockMode) {
+    const user = authService.currentUser();
+    if (user) {
+      const cloned = req.clone({
+        setHeaders: {
+          'X-Mock-User-Id': user.id,
+          'X-Mock-User-Email': user.email,
+          'X-Mock-User-Role': user.roles[0] || 'ROLE_USER'
+        }
+      });
+      return next(cloned);
+    }
+    return next(req);
+  }
+
+  // 2. PRODUCTION / KEYCLOAK MODE
+  // We wrap in from(Promise) because updateToken is async for Keycloak
+  return from(authService.updateToken(30)).pipe(
+    mergeMap(() => {
+      const token = authService.getToken();
+      if (token) {
+        const cloned = req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        return next(cloned);
+      }
+      return next(req);
+    })
+  );
 }

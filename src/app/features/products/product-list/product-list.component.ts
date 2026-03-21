@@ -79,9 +79,8 @@ export class ProductListComponent implements OnInit {
     }
 
     addToCart(product: Product): void {
-        const user = this.auth.currentUser();
-        if (!user) { this.msg.error('Veuillez vous connecter'); return; }
-        this.cartService.add(product.id, user.id).subscribe({
+        if (!this.auth.isLoggedIn()) { this.msg.error('Veuillez vous connecter'); return; }
+        this.cartService.add(product.id).subscribe({
             next: () => this.msg.success(`"${product.title}" ajouté au panier`),
         });
     }

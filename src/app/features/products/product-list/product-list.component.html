@@ -59,7 +59,11 @@
                 <a [routerLink]="['/products', p.id]" class="btn btn-sm btn-outline">Détails</a>
                 @if (auth.isLoggedIn()) {
                 <div class="flex gap-1 mt-2">
+                    @if (p.stock > 0) {
                     <button class="btn btn-sm btn-primary flex-1" (click)="addToCart(p)">+ Panier</button>
+                    } @else {
+                    <button class="btn btn-sm btn-secondary flex-1" disabled>Indisponible</button>
+                    }
                     <a [routerLink]="['/products', p.id, 'edit']" class="btn btn-sm btn-secondary">✏️</a>
                     <button class="btn btn-sm btn-danger" (click)="deleteProduct(p)">🗑️</button>
                 </div>

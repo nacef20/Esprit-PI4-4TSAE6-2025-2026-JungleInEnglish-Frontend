@@ -7,7 +7,7 @@ export const routes: Routes = [
 
   // Auth
   { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
-  { path: 'signup', loadComponent: () => import('./features/auth/signup/signup.component').then(m => m.SignupComponent) },
+  { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
 
   // Public — Products
   { path: 'products', loadComponent: () => import('./features/products/product-list/product-list.component').then(m => m.ProductListComponent) },
@@ -33,14 +33,9 @@ export const routes: Routes = [
       { path: '', loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
       { path: 'products', loadComponent: () => import('./features/admin/admin-product-list/admin-product-list.component').then(m => m.AdminProductListComponent) },
       { path: 'orders', loadComponent: () => import('./features/orders/order-admin/order-admin.component').then(m => m.OrderAdminComponent) },
-      { path: 'users', loadComponent: () => import('./features/admin/admin-users/admin-users.component').then(m => m.AdminUsersComponent) },
+      { path: 'inventory', loadComponent: () => import('./features/admin/inventory-dashboard/inventory-dashboard.component').then(m => m.InventoryDashboardComponent) },
     ]
   },
-
-  // Legacy users routes
-  { path: 'users', loadComponent: () => import('./features/users/user-list/user-list.component').then(m => m.UserListComponent) },
-  { path: 'users/create', loadComponent: () => import('./features/users/user-form/user-form.component').then(m => m.UserFormComponent) },
-  { path: 'users/:id/edit', loadComponent: () => import('./features/users/user-form/user-form.component').then(m => m.UserFormComponent) },
 
   { path: '**', redirectTo: '/products' },
 ];

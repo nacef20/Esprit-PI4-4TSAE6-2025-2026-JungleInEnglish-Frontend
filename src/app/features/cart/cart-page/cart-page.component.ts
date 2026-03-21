@@ -59,7 +59,11 @@ import type { Cart } from '../../../shared/models/cart.model';
             <h3>Résumé</h3>
             <div class="summary-row"><span>Articles</span><span>{{ items().length }}</span></div>
             <div class="summary-row total"><span>Total</span><span class="price">{{ total() | number:'1.2-2' }} TND</span></div>
-            <a routerLink="/checkout" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:1rem;">Passer la commande</a>
+            @if (hasInsufficientStock()) {
+              <button class="btn btn-secondary btn-lg" disabled style="width:100%;justify-content:center;margin-top:1rem;">❌ Stock insuffisant</button>
+            } @else {
+              <a routerLink="/checkout" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:1rem;">Passer la commande</a>
+            }
           </div>
         </div>
       }
@@ -87,13 +91,16 @@ export class CartPageComponent implements OnInit {
   readonly items = signal<Cart[]>([]);
   readonly loading = signal(true);
   readonly total = computed(() => this.items().reduce((sum, i) => sum + (i.product.discountPrice ?? i.product.price) * i.quantity, 0));
+  readonly hasInsufficientStock = computed(() => this.items().some(i => i.quantity > i.product.stock));
 
   ngOnInit(): void { this.load(); }
 
   load(): void {
-    const user = this.auth.currentUser();
-    if (!user) { this.loading.set(false); return; }
-    this.cartService.getByUser(user.id).subscribe({
+    if (!this.auth.isLoggedIn()) {
+      this.loading.set(false);
+      return;
+    }
+    this.cartService.getMyCart().subscribe({
       next: items => { this.items.set(items); this.loading.set(false); },
       error: () => this.loading.set(false),
     });

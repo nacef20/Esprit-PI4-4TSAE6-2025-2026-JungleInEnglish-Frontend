@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { OrderService } from '../../../core/services/order.service';
 import { MessageService } from '../../../core/services/message.service';
+import { ValidationService } from '../../../core/services/validation.service';
 import type { ProductOrder, OrderStatusEnum } from '../../../shared/models/order.model';
 
 @Component({
@@ -63,8 +64,9 @@ import type { ProductOrder, OrderStatusEnum } from '../../../shared/models/order
                 <input id="email" type="email" class="form-control" formControlName="email" />
               </div>
               <div class="form-group">
-                <label for="mobileNo">Téléphone</label>
-                <input id="mobileNo" class="form-control" formControlName="mobileNo" />
+                <label for="telephone">Téléphone</label>
+                <input id="telephone" class="form-control" formControlName="telephone" [class.is-invalid]="vs.getErrorMessage(form.controls.orderAddress, 'telephone')" />
+                @if (vs.getErrorMessage(form.controls.orderAddress, 'telephone'); as msg) { <span class="form-error">{{ msg }}</span> }
               </div>
               <div class="form-group full-width">
                 <label for="address">Adresse</label>
@@ -79,8 +81,9 @@ import type { ProductOrder, OrderStatusEnum } from '../../../shared/models/order
                 <input id="state" class="form-control" formControlName="state" />
               </div>
               <div class="form-group">
-                <label for="pincode">Code Postal</label>
-                <input id="pincode" class="form-control" formControlName="pincode" />
+                <label for="postalCode">Code Postal</label>
+                <input id="postalCode" class="form-control" formControlName="postalCode" [class.is-invalid]="vs.getErrorMessage(form.controls.orderAddress, 'postalCode')" />
+                @if (vs.getErrorMessage(form.controls.orderAddress, 'postalCode'); as msg) { <span class="form-error">{{ msg }}</span> }
               </div>
             </div>
           </div>
@@ -109,6 +112,7 @@ export class OrderFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly orderService = inject(OrderService);
   private readonly msg = inject(MessageService);
+  protected readonly vs = inject(ValidationService);
 
   readonly loading = signal(true);
   readonly orderId = signal('');
@@ -124,11 +128,11 @@ export class OrderFormComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      mobileNo: ['', Validators.required],
+      telephone: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
       address: ['', Validators.required],
       city: ['', Validators.required],
       state: ['', Validators.required],
-      pincode: ['', Validators.required],
+      postalCode: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
     }),
   });
 
@@ -161,11 +165,11 @@ export class OrderFormComponent implements OnInit {
             firstName: order.orderAddress?.firstName,
             lastName: order.orderAddress?.lastName,
             email: order.orderAddress?.email,
-            mobileNo: order.orderAddress?.mobileNo,
+            telephone: order.orderAddress?.telephone,
             address: order.orderAddress?.address,
             city: order.orderAddress?.city,
             state: order.orderAddress?.state,
-            pincode: order.orderAddress?.pincode,
+            postalCode: order.orderAddress?.postalCode,
           },
         });
         this.loading.set(false);
@@ -185,7 +189,12 @@ export class OrderFormComponent implements OnInit {
         this.msg.success('Commande mise à jour');
         this.router.navigate(['/my-orders']);
       },
-      error: () => this.msg.error('Erreur lors de la mise à jour'),
+      error: (err) => {
+        this.vs.handleBackendErrors(this.form.controls.orderAddress, err);
+        if (!err.error?.fieldErrors) {
+          this.msg.error('Erreur lors de la mise à jour');
+        }
+      }
     });
   }
 

@@ -1,16 +1,15 @@
 import type { Product } from './product.model';
-import type { User } from './user.model';
 
 export interface OrderAddress {
     id?: number;
     firstName: string;
     lastName: string;
     email: string;
-    mobileNo: string;
+    telephone: string;
     address: string;
     city: string;
     state: string;
-    pincode: string;
+    postalCode: string;
 }
 
 export interface ProductOrder {
@@ -20,22 +19,21 @@ export interface ProductOrder {
     product: Product;
     price: number;
     quantity: number;
-    user?: User;
+    userId?: string;
     status: string;
     paymentType: string;
     orderAddress?: OrderAddress;
 }
 
 export interface PlaceOrderRequest {
-    userId: number;
     firstName: string;
     lastName: string;
     email: string;
-    mobileNo: string;
+    telephone: string;
     address: string;
     city: string;
     state: string;
-    pincode: string;
+    postalCode: string;
     paymentType: string;
 }
 

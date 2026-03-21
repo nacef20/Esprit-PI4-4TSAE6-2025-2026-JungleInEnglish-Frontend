@@ -36,8 +36,12 @@ import type { Product } from '../../../shared/models/product.model';
             <p class="mt-1" [class.text-success]="p.stock > 0" [class.text-danger]="p.stock <= 0">
               {{ p.stock > 0 ? 'En stock (' + p.stock + ' disponibles)' : 'Rupture de stock' }}
             </p>
-            @if (auth.isLoggedIn() && p.stock > 0) {
-              <button class="btn btn-primary btn-lg mt-3" (click)="addToCart(p)">🛒 Ajouter au panier</button>
+            @if (auth.isLoggedIn()) {
+              @if (p.stock > 0) {
+                <button class="btn btn-primary btn-lg mt-3" (click)="addToCart(p)">🛒 Ajouter au panier</button>
+              } @else {
+                <button class="btn btn-secondary btn-lg mt-3" disabled>Indisponible</button>
+              }
             }
           </div>
         </div>
@@ -74,9 +78,8 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart(p: Product): void {
-    const user = this.auth.currentUser();
-    if (!user) return;
-    this.cartService.add(p.id, user.id).subscribe({
+    if (!this.auth.isLoggedIn()) return;
+    this.cartService.add(p.id).subscribe({
       next: () => this.msg.success(`"${p.title}" ajouté au panier`),
     });
   }

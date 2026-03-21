@@ -3,10 +3,10 @@ import { RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
-    selector: 'app-admin-dashboard',
-    standalone: true,
-    imports: [RouterLink],
-    template: `
+  selector: 'app-admin-dashboard',
+  standalone: true,
+  imports: [RouterLink],
+  template: `
     <div class="container">
       <div class="page-header">
         <h1>🏠 Tableau de bord</h1>
@@ -29,10 +29,7 @@ import { AdminService } from '../../../core/services/admin.service';
             <span class="stat-card__label">Commandes</span>
             <span class="stat-card__value">{{ stats().totalOrders }}</span>
           </div>
-          <div class="stat-card">
-            <span class="stat-card__label">Utilisateurs</span>
-            <span class="stat-card__value">{{ stats().totalUsers }}</span>
-          </div>
+
         </div>
 
         <h2 class="mt-4 mb-2" style="font-size:1.2rem;">Accès rapide</h2>
@@ -58,31 +55,32 @@ import { AdminService } from '../../../core/services/admin.service';
               <p class="card__text">Suivre les commandes</p>
             </div>
           </a>
-          <a routerLink="/admin/users" class="quick-link card">
+          <a routerLink="/admin/inventory" class="quick-link card" style="border-color: #0dcaf0;">
             <div class="card__body">
-              <div style="font-size:2rem;margin-bottom:.5rem;">👥</div>
-              <div class="card__title">Utilisateurs</div>
-              <p class="card__text">Gérer les comptes</p>
+              <div style="font-size:2rem;margin-bottom:.5rem;">📈</div>
+              <div class="card__title">Inventaire</div>
+              <p class="card__text">Analyse de stock et réassort</p>
             </div>
           </a>
+
         </div>
       }
     </div>
   `,
-    styles: `
+  styles: `
     :host { display: block; padding-bottom: 3rem; }
     .quick-link { text-decoration: none; color: inherit; }
   `,
 })
 export class AdminDashboardComponent implements OnInit {
-    private readonly adminService = inject(AdminService);
-    readonly stats = signal({ totalProducts: 0, totalCategories: 0, totalOrders: 0, totalUsers: 0 });
-    readonly loading = signal(true);
+  private readonly adminService = inject(AdminService);
+  readonly stats = signal({ totalProducts: 0, totalCategories: 0, totalOrders: 0 });
+  readonly loading = signal(true);
 
-    ngOnInit(): void {
-        this.adminService.getDashboard().subscribe({
-            next: s => { this.stats.set(s); this.loading.set(false); },
-            error: () => this.loading.set(false),
-        });
-    }
+  ngOnInit(): void {
+    this.adminService.getDashboard().subscribe({
+      next: s => { this.stats.set(s); this.loading.set(false); },
+      error: () => this.loading.set(false),
+    });
+  }
 }

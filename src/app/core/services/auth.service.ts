@@ -1,92 +1,158 @@
-import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, computed, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
-import { API_CONFIG } from '../constants/api.constants';
-import type { User } from '../../shared/models/user.model';
+import Keycloak from 'keycloak-js';
+import { environment } from '../../../environments/environment';
 
-const AUTH_URL = `${API_CONFIG.apiUrl}/auth`;
-const TOKEN_KEY = 'accessToken';
-const USER_KEY = 'user';
-
-export interface LoginRequest {
+export interface UserContext {
+  id: string;
   email: string;
-  password: string;
-}
-
-export interface SignupRequest {
   name: string;
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  token?: string;
-  user?: User;
+  roles: string[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
 
-  private readonly token = signal<string | null>(this.getStoredToken());
-  private readonly user = signal<User | null>(this.getStoredUser());
+  private keycloak: Keycloak | null = null;
 
-  readonly isLoggedIn = computed(() => !!this.token());
-  readonly currentUser = computed(() => this.user());
+  // State
+  private readonly userCtx = signal<UserContext | null>(null);
+  private readonly mockToken = signal<string | null>(null);
+
+  // Computed
+  readonly isLoggedIn = computed(() => !!this.userCtx());
+  readonly currentUser = computed(() => this.userCtx());
   readonly isAdmin = computed(() => {
-    const role = this.user()?.role?.toUpperCase();
-    return role === 'ADMIN' || role === 'ROLE_ADMIN';
+    const roles = this.userCtx()?.roles || [];
+    return roles.some(r => r.toUpperCase() === 'ROLE_ADMIN' || r.toUpperCase() === 'ADMIN');
   });
 
-  private getStoredToken(): string | null {
-    if (!isPlatformBrowser(this.platformId)) return null;
-    return localStorage.getItem(TOKEN_KEY);
+  constructor() {
+    if (isPlatformBrowser(this.platformId) && !environment.mockMode) {
+      this.initKeycloak();
+    } else if (environment.mockMode) {
+      this.initMockMode();
+    }
   }
 
-  private getStoredUser(): User | null {
-    if (!isPlatformBrowser(this.platformId)) return null;
+  private async initKeycloak() {
+    this.keycloak = new Keycloak({
+      url: environment.keycloak.url,
+      realm: environment.keycloak.realm,
+      clientId: environment.keycloak.clientId
+    });
+
     try {
-      const raw = localStorage.getItem(USER_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
+      const authenticated = await this.keycloak.init({
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
+        checkLoginIframe: false
+      });
+
+      if (authenticated) {
+        this.updateUserContext(this.keycloak);
+      }
+    } catch (error) {
+      console.error('Keycloak init failed', error);
     }
   }
 
-  login(credentials: LoginRequest) {
-    return this.http.post<AuthResponse>(`${AUTH_URL}/login`, credentials).pipe(
-      tap((res) => this.handleAuthSuccess(res.accessToken ?? (res as { token?: string }).token, res.user))
-    );
-  }
-
-  signup(data: SignupRequest) {
-    return this.http.post<AuthResponse>(`${AUTH_URL}/register`, data).pipe(
-      tap((res) => this.handleAuthSuccess(res.accessToken ?? (res as { token?: string }).token, res.user))
-    );
-  }
-
-  private handleAuthSuccess(token: string | undefined, user?: User | null): void {
-    if (!token) return;
+  private initMockMode() {
+    // In mock mode, we check localStorage just to optionally remember a mock login during development
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(TOKEN_KEY, token);
-      if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+      try {
+        const stored = localStorage.getItem('mockUserCtx');
+        if (stored) {
+          this.userCtx.set(JSON.parse(stored));
+          this.mockToken.set('mock-jwt-token');
+        }
+      } catch (e) {
+        console.error('Failed to parse mock stored user', e);
+      }
     }
-    this.token.set(token);
-    this.user.set(user ?? null);
   }
 
-  logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
+  private updateUserContext(kc: Keycloak) {
+    if (!kc.tokenParsed) return;
+
+    let roles: string[] = [];
+    const realmAccess = kc.tokenParsed['realm_access'] as any;
+    if (realmAccess && Array.isArray(realmAccess.roles)) {
+      roles = realmAccess.roles;
     }
-    this.token.set(null);
-    this.user.set(null);
-    this.router.navigate(['/login']);
+
+    this.userCtx.set({
+      id: kc.subject || '',
+      email: kc.tokenParsed['email'] || '',
+      name: kc.tokenParsed['preferred_username'] || '',
+      roles: roles
+    });
+  }
+
+  getToken(): string | null {
+    if (environment.mockMode) return this.mockToken();
+    return this.keycloak?.token || null;
+  }
+
+  async login(mockCredentials?: { email: string; role: string }) {
+    if (environment.mockMode) {
+      // Create a mock user context based on credentials
+      const role = mockCredentials?.role || 'user';
+      const ctx: UserContext = {
+        id: 'mock-user-' + Math.floor(Math.random() * 10000),
+        email: mockCredentials?.email || 'mock@example.com',
+        name: 'Mock User',
+        roles: role === 'admin' ? ['ROLE_ADMIN'] : ['ROLE_USER']
+      };
+
+      this.userCtx.set(ctx);
+      this.mockToken.set('mock-jwt-token');
+
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('mockUserCtx', JSON.stringify(ctx));
+      }
+      return this.router.navigate(['/']);
+    }
+
+    // Keycloak login
+    if (this.keycloak) {
+      return this.keycloak.login({
+        redirectUri: window.location.origin + '/'
+      });
+    }
+    return Promise.resolve();
+  }
+
+  logout() {
+    if (environment.mockMode) {
+      this.userCtx.set(null);
+      this.mockToken.set(null);
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.removeItem('mockUserCtx');
+      }
+      this.router.navigate(['/login']);
+    } else {
+      if (this.keycloak) {
+        this.keycloak.logout({
+          redirectUri: window.location.origin + '/'
+        });
+      }
+    }
+  }
+
+  // Used by interceptor to automatically refresh tokens
+  async updateToken(minValidity = 20): Promise<boolean> {
+    if (environment.mockMode) return true;
+    if (!this.keycloak || !this.keycloak.authenticated) return false;
+
+    try {
+      return await this.keycloak.updateToken(minValidity);
+    } catch (error) {
+      await this.keycloak.login();
+      return false;
+    }
   }
 }

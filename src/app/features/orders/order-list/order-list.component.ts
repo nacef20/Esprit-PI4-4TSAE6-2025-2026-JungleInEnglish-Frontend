@@ -35,7 +35,7 @@ import type { ProductOrder } from '../../../shared/models/order.model';
                   <td>{{ o.product?.title }}</td>
                   <td>{{ o.orderDate }}</td>
                   <td>{{ o.quantity }}</td>
-                  <td class="price">{{ o.price | number:'1.2-2' }} TND</td>
+                  <td class="price">{{ (o.price * o.quantity) | number:'1.2-2' }} TND</td>
                   <td><span class="badge" [class]="getStatusClass(o.status)">{{ o.status }}</span></td>
                   <td class="flex gap-1">
                     <button class="btn btn-sm btn-info" (click)="viewOrder(o)" title="Voir détails">👁️</button>
@@ -71,10 +71,12 @@ export class OrderListComponent implements OnInit {
   }
 
   refresh(): void {
-    const user = this.auth.currentUser();
-    if (!user) { this.loading.set(false); return; }
+    if (!this.auth.isLoggedIn()) {
+      this.loading.set(false);
+      return;
+    }
     this.loading.set(true);
-    this.orderService.getByUser(user.id).subscribe({
+    this.orderService.getMyOrders().subscribe({
       next: o => { this.orders.set(o); this.loading.set(false); },
       error: () => this.loading.set(false),
     });

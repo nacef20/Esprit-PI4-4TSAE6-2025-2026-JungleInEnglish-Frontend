@@ -1,0 +1,146 @@
+<div class="container">
+    <div class="page-header">
+        <h1>Inventory Analyst Dashboard</h1>
+        <button class="btn btn-secondary" style="background: var(--color-surface-elevated); color: var(--color-text);"
+            (click)="refreshAll()">Refresh Data</button>
+    </div>
+
+    <!-- Alerts Section -->
+    <div class="dashboard-card">
+        <h3>Low Stock Alerts</h3>
+
+        <div *ngIf="isLoadingAlerts" style="padding: 2rem; text-align: center; color: var(--color-text-muted);">
+            <p>Loading alerts...</p>
+        </div>
+        <div *ngIf="!isLoadingAlerts && alerts.length === 0"
+            style="padding: 1rem; color: var(--color-text); font-size: 0.95rem;">
+            All products are currently above their minimum stock thresholds!
+        </div>
+
+        <div class="table-wrap" *ngIf="!isLoadingAlerts && alerts.length > 0">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Stock</th>
+                        <th>Min Level</th>
+                        <th>Deficit</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let alert of alerts">
+                        <td><strong>{{ alert.productTitle }}</strong> <span class="badge-id">ID: {{ alert.productId
+                                }}</span></td>
+                        <td class="text-danger fw-bold">{{ alert.currentStock }} ↓</td>
+                        <td>{{ alert.minStockLevel }}</td>
+                        <td class="text-warning fw-bold">-{{ alert.deficit }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm"
+                                (click)="openRestockModal(alert.productId)">Restock</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Top Sellers -->
+    <div class="dashboard-card">
+        <h3>Top Selling Products</h3>
+
+        <div *ngIf="isLoadingTop" style="padding: 2rem; text-align: center; color: var(--color-text-muted);">
+            <p>Loading data...</p>
+        </div>
+        <div class="table-wrap" *ngIf="!isLoadingTop && topProducts.length > 0">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Product</th>
+                        <th>Quantity Sold</th>
+                        <th>Generated Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let prod of topProducts; let i = index">
+                        <td>#{{ i + 1 }}</td>
+                        <td>{{ prod.productTitle }}</td>
+                        <td>{{ prod.totalQuantitySold }} units</td>
+                        <td class="text-success">{{ prod.totalRevenue | number:'1.2-2' }} TND</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Complete Inventory Report -->
+    <div class="dashboard-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin-bottom: 0;">Comprehensive Inventory Report</h3>
+            <span style="font-size: 0.85rem; font-weight: 600;" class="text-muted" *ngIf="report">Last Generated: {{
+                report.generatedAt | date:'short' }}</span>
+        </div>
+
+        <div *ngIf="isLoadingReport" style="padding: 2rem; text-align: center; color: var(--color-text-muted);">
+            <p>Generating report...</p>
+        </div>
+
+        <div class="report-grid" *ngIf="!isLoadingReport && report">
+            <!-- Fast Moving -->
+            <div class="report-section">
+                <h4 class="text-success">Fast Moving (Above Median)</h4>
+                <div>
+                    <div class="report-item" *ngFor="let item of report.fastMovingProducts">
+                        <span>{{ item.productTitle }}</span>
+                        <strong>{{ item.totalQuantitySold }} sold</strong>
+                    </div>
+                    <div class="report-item text-muted" *ngIf="report.fastMovingProducts.length === 0">No data</div>
+                </div>
+            </div>
+
+            <!-- Slow Moving -->
+            <div class="report-section">
+                <h4 class="text-warning">Slow Moving (Below Median)</h4>
+                <div>
+                    <div class="report-item" *ngFor="let item of report.slowMovingProducts">
+                        <span>{{ item.productTitle }}</span>
+                        <strong>{{ item.totalQuantitySold }} sold</strong>
+                    </div>
+                    <div class="report-item text-muted" *ngIf="report.slowMovingProducts.length === 0">No data</div>
+                </div>
+            </div>
+
+            <!-- Out of Stock -->
+            <div class="report-section">
+                <h4 class="text-danger">Purely Out of Stock Tracker</h4>
+                <div>
+                    <div class="report-item" *ngFor="let out of report.outOfStockProducts">
+                        <span>{{ out.productTitle }}</span>
+                        <button class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;"
+                            (click)="openRestockModal(out.productId)">Restock</button>
+                    </div>
+                    <div class="report-item text-muted" *ngIf="report.outOfStockProducts.length === 0">Congrats, no
+                        items out of stock!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Restock Modal -->
+<div class="custom-modal-backdrop" [class.show]="showRestockModal">
+    <div class="custom-modal">
+        <h3>Restocker le produit</h3>
+        <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem;">Entrez la quantité à restocker (Laissez
+            vide pour le calcul automatique) :</p>
+        <div style="margin-bottom: 0.5rem;">
+            <input type="number" class="form-control" [(ngModel)]="restockQuantity" min="1" placeholder="Ex: 50"
+                (keyup.enter)="confirmRestock()">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" (click)="closeRestockModal()">Annuler</button>
+            <button class="btn btn-primary" (click)="confirmRestock()">Confirmer</button>
+        </div>
+    </div>
+</div>

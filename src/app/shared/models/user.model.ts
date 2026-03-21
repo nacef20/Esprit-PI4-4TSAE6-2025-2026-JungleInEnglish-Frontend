@@ -9,7 +9,7 @@ export interface User {
   address?: string;
   city?: string;
   state?: string;
-  pincode?: string;
+  postalCode?: string;
   profileImage?: string;
   role?: string;
   isEnable?: boolean;

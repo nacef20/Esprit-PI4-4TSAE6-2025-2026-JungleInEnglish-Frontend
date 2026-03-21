@@ -34,9 +34,9 @@ import type { ProductOrder } from '../../../shared/models/order.model';
                 <tr>
                   <td><code>{{ o.orderId }}</code></td>
                   <td>{{ o.product?.title }}</td>
-                  <td>{{ o.user?.name ?? o.user?.email }}</td>
+                  <td>{{ o.userId }}</td>
                   <td>{{ o.orderDate }}</td>
-                  <td class="price">{{ o.price | number:'1.2-2' }} TND</td>
+                  <td class="price">{{ (o.price * o.quantity) | number:'1.2-2' }} TND</td>
                   <td><span class="badge" [class]="getStatusClass(o.status)">{{ o.status }}</span></td>
                   <td>
                     <select class="form-control" style="width:auto;padding:.375rem .5rem;font-size:.8rem;" (change)="updateStatus(o.id, $event)">

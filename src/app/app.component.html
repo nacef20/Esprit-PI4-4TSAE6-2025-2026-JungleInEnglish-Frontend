@@ -1,28 +1,61 @@
-<nav class="nav">
-  <a routerLink="/products" class="nav__brand">🌿 Jungle</a>
-  <a routerLink="/products" routerLinkActive="nav__link--active" [routerLinkActiveOptions]="{ exact: true }"
-    class="nav__link">Produits</a>
-  <a routerLink="/categories" routerLinkActive="nav__link--active" class="nav__link">📂 Catégories</a>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar__header">
+      <a routerLink="/products" class="sidebar__brand">🌿 Jungle</a>
+      <button class="theme-toggle" (click)="themeService.toggleTheme()"
+        [title]="themeService.theme() === 'dark' ? 'Mode Clair' : 'Mode Sombre'">
+        {{ themeService.theme() === 'dark' ? '☀️' : '🌙' }}
+      </button>
+    </div>
 
-  @if (auth.isLoggedIn()) {
-  <a routerLink="/cart" routerLinkActive="nav__link--active" class="nav__link">🛒 Panier</a>
-  <a routerLink="/my-orders" routerLinkActive="nav__link--active" class="nav__link">Commandes</a>
-  <a routerLink="/products/create" routerLinkActive="nav__link--active" class="nav__link">+ Nouveau Produit</a>
+    <nav class="sidebar__nav">
+      <div class="sidebar__section">
+        <span class="sidebar__label">Navigation</span>
+        <a routerLink="/products" routerLinkActive="sidebar__link--active" [routerLinkActiveOptions]="{ exact: true }"
+          class="sidebar__link">📦 Produits</a>
+        <a routerLink="/categories" routerLinkActive="sidebar__link--active" class="sidebar__link">📂 Categoríes</a>
+      </div>
 
-  @if (auth.isAdmin()) {
-  <a routerLink="/admin" routerLinkActive="nav__link--active" class="nav__link nav__link--admin">⚙ Admin</a>
-  }
+      @if (auth.isLoggedIn()) {
+      <div class="sidebar__section">
+        <span class="sidebar__label">Personnel</span>
+        <a routerLink="/cart" routerLinkActive="sidebar__link--active" class="sidebar__link">🛒 Panier</a>
+        <a routerLink="/my-orders" routerLinkActive="sidebar__link--active" class="sidebar__link">📋 Commandes</a>
+        <a routerLink="/products/create" routerLinkActive="sidebar__link--active" class="sidebar__link">✨ Nouveau
+          Produit</a>
+      </div>
 
-  <span class="nav__spacer"></span>
-  <span class="nav__user">{{ auth.currentUser()?.name ?? auth.currentUser()?.email }}</span>
-  <button type="button" class="nav__link nav__btn" (click)="auth.logout()">Déconnexion</button>
-  } @else {
-  <span class="nav__spacer"></span>
-  <a routerLink="/login" routerLinkActive="nav__link--active" class="nav__link">Connexion</a>
-  <a routerLink="/signup" routerLinkActive="nav__link--active" class="nav__link nav__link--cta">Inscription</a>
-  }
-</nav>
-<main class="main">
-  <router-outlet />
-</main>
+      @if (auth.isAdmin()) {
+      <div class="sidebar__section">
+        <span class="sidebar__label">Admin</span>
+        <a routerLink="/admin" routerLinkActive="sidebar__link--active" class="sidebar__link sidebar__link--admin">⚙
+          Dashboard Admin</a>
+      </div>
+      }
+      }
+    </nav>
+
+    <div class="sidebar__footer">
+      @if (auth.isLoggedIn()) {
+      <div class="sidebar__profile">
+        <div class="sidebar__user-info">
+          <span class="sidebar__user-name">{{ auth.currentUser()?.name || 'Utilisateur' }}</span>
+          <span class="sidebar__user-email">{{ auth.currentUser()?.email }}</span>
+        </div>
+        <button type="button" class="sidebar__logout" (click)="auth.logout()" title="Déconnexion">👋</button>
+      </div>
+      } @else {
+      <div class="sidebar__auth-actions">
+        <a routerLink="/login" class="btn btn-secondary btn-sm w-100 mb-2">Connexion</a>
+        <a routerLink="/signup" class="btn btn-primary btn-sm w-100">Sign Up</a>
+      </div>
+      }
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>
+
 <app-message-toast />

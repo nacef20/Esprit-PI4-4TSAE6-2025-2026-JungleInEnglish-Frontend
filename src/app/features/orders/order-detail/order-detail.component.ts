@@ -6,15 +6,14 @@ import { MessageService } from '../../../core/services/message.service';
 import type { ProductOrder } from '../../../shared/models/order.model';
 
 @Component({
-    selector: 'app-order-detail',
-    standalone: true,
-    imports: [DecimalPipe],
-    template: `
+  selector: 'app-order-detail',
+  standalone: true,
+  imports: [DecimalPipe],
+  template: `
     <div class="container container--narrow">
       <div class="page-header flex-between">
         <div>
           <h1>📄 Détails de la commande</h1>
-          <p class="text-muted">#{{ order()?.orderId }}</p>
         </div>
         <button class="btn btn-secondary" (click)="goBack()">Retour</button>
       </div>
@@ -60,21 +59,22 @@ import type { ProductOrder } from '../../../shared/models/order.model';
             <div class="address-box">
               <p><strong>{{ o.orderAddress?.firstName }} {{ o.orderAddress?.lastName }}</strong></p>
               <p>{{ o.orderAddress?.address }}</p>
-              <p>{{ o.orderAddress?.city }}, {{ o.orderAddress?.state }} {{ o.orderAddress?.pincode }}</p>
-              <p class="mt-1">📞 {{ o.orderAddress?.mobileNo }}</p>
+              <p>{{ o.orderAddress?.city }}, {{ o.orderAddress?.state }} {{ o.orderAddress?.postalCode }}</p>
+              <p class="mt-1">📞 {{ o.orderAddress?.telephone }}</p>
               <p>✉️ {{ o.orderAddress?.email }}</p>
             </div>
           </div>
 
           <div class="flex gap-1 mt-2">
             <button class="btn btn-primary" (click)="editOrder(o)">✏️ Modifier</button>
+            <button class="btn btn-info" style="background:#17a2b8;color:white;border:none;" (click)="openMap(o.id)">🗺️ Suivre la commande</button>
           </div>
         </div>
       }
     }
   </div>
   `,
-    styles: `
+  styles: `
     :host { display: block; padding-bottom: 3rem; }
     .container--narrow { max-width: 600px; }
     .detail-grid { display: grid; gap: 1.5rem; }
@@ -88,51 +88,55 @@ import type { ProductOrder } from '../../../shared/models/order.model';
   `,
 })
 export class OrderDetailComponent implements OnInit {
-    private readonly route = inject(ActivatedRoute);
-    private readonly router = inject(Router);
-    private readonly orderService = inject(OrderService);
-    private readonly msg = inject(MessageService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly orderService = inject(OrderService);
+  private readonly msg = inject(MessageService);
 
-    readonly order = signal<ProductOrder | null>(null);
-    readonly loading = signal(true);
+  readonly order = signal<ProductOrder | null>(null);
+  readonly loading = signal(true);
 
-    ngOnInit(): void {
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
-            this.loadOrder(+id);
-        } else {
-            this.router.navigate(['/my-orders']);
-        }
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.loadOrder(+id);
+    } else {
+      this.router.navigate(['/my-orders']);
     }
+  }
 
-    loadOrder(id: number): void {
-        this.loading.set(true);
-        this.orderService.getById(id).subscribe({
-            next: (o) => {
-                this.order.set(o);
-                this.loading.set(false);
-            },
-            error: () => {
-                this.msg.error('Commande introuvable');
-                this.router.navigate(['/my-orders']);
-            },
-        });
-    }
-
-    getStatusClass(status: string): string {
-        switch (status) {
-            case 'Delivered': return 'badge-success';
-            case 'Cancelled': return 'badge-danger';
-            case 'Shipped': case 'In Progress': return 'badge-info';
-            default: return 'badge-warning';
-        }
-    }
-
-    editOrder(order: ProductOrder): void {
-        this.router.navigate(['/my-orders', order.id, 'edit']);
-    }
-
-    goBack(): void {
+  loadOrder(id: number): void {
+    this.loading.set(true);
+    this.orderService.getById(id).subscribe({
+      next: (o) => {
+        this.order.set(o);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.msg.error('Commande introuvable');
         this.router.navigate(['/my-orders']);
+      },
+    });
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Delivered': return 'badge-success';
+      case 'Cancelled': return 'badge-danger';
+      case 'Shipped': case 'In Progress': return 'badge-info';
+      default: return 'badge-warning';
     }
+  }
+
+  editOrder(order: ProductOrder): void {
+    this.router.navigate(['/my-orders', order.id, 'edit']);
+  }
+
+  openMap(orderId: number): void {
+    window.open(`/order-tracking-example.html?orderId=${orderId}`, '_blank');
+  }
+
+  goBack(): void {
+    this.router.navigate(['/my-orders']);
+  }
 }

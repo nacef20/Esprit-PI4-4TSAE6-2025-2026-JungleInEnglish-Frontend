@@ -1,5 +1,5 @@
 import type { Product } from './product.model';
-import type { User } from './user.model';
+
 
 export interface Cart {
     id: number;
@@ -7,5 +7,5 @@ export interface Cart {
     quantity: number;
     totalPrice?: number;
     totalOrderPrice?: number;
-    user?: User;
+    userId?: string;
 }

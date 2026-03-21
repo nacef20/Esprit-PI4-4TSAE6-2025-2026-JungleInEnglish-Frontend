@@ -1,0 +1,9 @@
+﻿src/app/app.component.spec.ts(20,16): error TS2339: Property 'title' does not exist on type 'AppComponent'.
+src/app/features/admin/admin-dashboard/admin-dashboard.component.ts(84,41): error TS2345: Argument of type '{ totalProducts: number; totalCategories: number; totalOrders: number; }' is not assignable to parameter of type '{ totalProducts: number; totalCategories: number; totalOrders: number; totalUsers: number; }'.
+  Property 'totalUsers' is missing in type '{ totalProducts: number; totalCategories: number; totalOrders: number; }' but required in type '{ totalProducts: number; totalCategories: number; totalOrders: number; totalUsers: number; }'.
+src/app/features/admin/admin-users/admin-users.component.ts(72,27): error TS2339: Property 'getUsers' does not exist on type 'AdminService'.
+src/app/features/admin/admin-users/admin-users.component.ts(73,19): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/app/features/admin/admin-users/admin-users.component.ts(79,27): error TS2339: Property 'updateAccountStatus' does not exist on type 'AdminService'.
+src/app/features/auth/signup/signup.component.ts(42,15): error TS2339: Property 'signup' does not exist on type 'AuthService'.
+src/app/features/products/product-detail/product-detail.component.ts(79,32): error TS2554: Expected 1 arguments, but got 2.
+src/app/features/products/product-list/product-list.component.ts(84,42): error TS2554: Expected 1 arguments, but got 2.

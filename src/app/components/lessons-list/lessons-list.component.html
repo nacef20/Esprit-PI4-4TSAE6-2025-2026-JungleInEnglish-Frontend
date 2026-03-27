@@ -55,37 +55,47 @@
 
   <!-- List -->
   <div *ngIf="!lessonsLoading && !error && lessons.length > 0" class="lessons-list">
-    <div class="lesson-card" *ngFor="let lesson of lessons">
-      <div class="lesson-main">
-<div class="lesson-badges">
-  <span class="badge">#{{ lesson.orderIndex }}</span>
-  <span class="duration" *ngIf="lesson.duration">⏱ {{ lesson.duration }}</span>
+ <div class="lesson-card"
+     *ngFor="let lesson of lessons"
+     [class.locked]="isLocked(lesson)">
 
-  <span
-    *ngIf="getDifficultyLabel(lesson.id) as d"
-    class="diff-pill"
-    [ngClass]="getDifficultyClass(d)">
-    {{ d }}
-  </span>
-</div>
+  <div class="lesson-main">
+    <div class="lesson-badges">
+      <span class="badge">#{{ lesson.orderIndex }}</span>
+      <span class="duration" *ngIf="lesson.duration">⏱ {{ lesson.duration }}</span>
 
-        <h4 class="lesson-title">{{ lesson.title }}</h4>
+      <span *ngIf="getDifficultyLabel(lesson.id) as d"
+            class="diff-pill"
+            [ngClass]="getDifficultyClass(d)">
+        {{ d }}
+      </span>
 
-        <p class="lesson-preview">
-          {{ (lesson.content || '') | slice:0:120 }}
-          <span *ngIf="(lesson.content || '').length > 120">...</span>
-        </p>
-      </div>
-
-      <div class="lesson-actions">
-        <button class="btn-lite" (click)="openLesson(lesson)">
-          View
-        </button>
-        <!-- ✅ ADMIN ONLY -->
-        <button *ngIf="adminMode" class="btn-lite" (click)="openEdit(lesson)">Edit</button>
-        <button *ngIf="adminMode" class="btn-danger" (click)="delete(lesson)">Delete</button>
-      </div>
+      <!-- ✅ NEW: lock pill -->
+      <span *ngIf="!adminMode && isLocked(lesson)" class="lock-pill">
+        🔒 Locked
+      </span>
     </div>
+
+    <h4 class="lesson-title">{{ lesson.title }}</h4>
+
+    <p class="lesson-preview">
+      {{ (lesson.content || '') | slice:0:120 }}
+      <span *ngIf="(lesson.content || '').length > 120">...</span>
+    </p>
+  </div>
+
+  <div class="lesson-actions">
+    <button class="btn-lite"
+            (click)="openLesson(lesson)"
+            [disabled]="!adminMode && isLocked(lesson)">
+      View
+    </button>
+
+    <!-- ✅ ADMIN ONLY -->
+    <button *ngIf="adminMode" class="btn-lite" (click)="openEdit(lesson)">Edit</button>
+    <button *ngIf="adminMode" class="btn-danger" (click)="delete(lesson)">Delete</button>
+  </div>
+</div>
   </div>
 </div>
 

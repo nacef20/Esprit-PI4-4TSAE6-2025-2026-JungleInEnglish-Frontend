@@ -393,3 +393,30 @@ input:focus, textarea:focus, select:focus {
   color: #1b5e20;
   border-color: rgba(76, 175, 80, 0.25);
 }
+.lesson-card.locked {
+  opacity: 0.6;
+  background: #f4f6f6;
+  border-color: #dfe6e6;
+}
+
+.lesson-card.locked .lesson-title,
+.lesson-card.locked .lesson-preview,
+.lesson-card.locked .badge,
+.lesson-card.locked .duration {
+  color: #8a9a9a;
+}
+
+.lesson-card.locked .btn-lite {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.lock-pill {
+  margin-left: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: rgba(45, 87, 87, 0.12);
+  color: #2D5757;
+  font-weight: 600;
+}

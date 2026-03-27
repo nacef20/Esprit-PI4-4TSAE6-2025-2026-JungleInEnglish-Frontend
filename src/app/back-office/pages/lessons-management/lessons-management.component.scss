@@ -1,0 +1,56 @@
+.lessons-management {
+  padding: 30px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.course-selector {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 30px;
+}
+
+.course-selector label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.selector-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.course-select {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 40px;
+}
+
+.lessons-section {
+  margin-top: 20px;
+}

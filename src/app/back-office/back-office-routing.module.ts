@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BackOfficeComponent } from './back-office.component';
 import { CoursesManagementComponent } from './pages/courses-management/courses-management.component';
 import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';
+import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
       {
         path: 'lessons',
         component: LessonsManagementComponent
+      },
+      {
+        path: 'my-courses',
+        component: MyCoursesComponent
       },
       {
         path: 'gestionchatprive',

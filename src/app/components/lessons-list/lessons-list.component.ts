@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Lesson } from '../../models/lesson.model';
-import { LessonsService } from '../../services/lessons.service';
+import { CourseProgressSummary, LessonsService } from '../../services/lessons.service';
 import { LessonAttachment, AttachmentType } from '../../models/lesson-attachment.model';
 
 @Component({
@@ -11,7 +11,7 @@ import { LessonAttachment, AttachmentType } from '../../models/lesson-attachment
 export class LessonsListComponent implements OnChanges {
   @Input() courseId!: number;
   @Input() adminMode: boolean = false;
-
+progressSummary!: CourseProgressSummary;
   lessons: Lesson[] = [];
   lessonsLoading = false;
   error: string | null = null;
@@ -41,8 +41,8 @@ export class LessonsListComponent implements OnChanges {
   private toastTimer?: any;
 
   // progress tracking (for public viewer)
-  courseProgressPercent = 0;
-  unlockedOrderIndexMax = 1;
+unlockedOrderIndexMax = 1; // default: first lesson unlocked
+courseProgressPercent = 0;
 
 lessonDifficulty = new Map<number, {
   difficulty: 'HARD' | 'MEDIUM' | 'EASY';
@@ -127,10 +127,11 @@ getDifficultyClass(label: string | null): string {
   if (label === 'EASY') return 'diff-easy';
   return '';
 }
-  isLessonLocked(lesson: Lesson): boolean {
-    if (!lesson.orderIndex) return false;
-    return lesson.orderIndex > this.unlockedOrderIndexMax;
-  }
+isLessonLocked(lesson: Lesson): boolean {
+  if (!this.progressSummary) return true;
+
+  return lesson.orderIndex > this.progressSummary.unlockedOrderIndexMax;
+}
   // =========================
   // VIEW LESSON (modal)
   // =========================
@@ -455,4 +456,32 @@ if (!this.isTypeMatchingFile(this.selectedType, this.selectedFile)) {
       this.toastMessage = null;
     }, 2500);
   }
+  loadProgress(courseId: number) {
+  this.lessonsService.getCourseProgressSummary(courseId)
+    .subscribe(summary => {
+      this.progressSummary = summary;
+    });
+}
+isLocked(lesson: any): boolean {
+
+  return lesson.orderIndex > this.unlockedOrderIndexMax;
+}
+loadCourseSummary() {
+  this.lessonsService.getCourseProgressSummary(this.courseId).subscribe({
+    next: (s) => {
+            console.log("SUMMARY", s); // 👈 check this in browser console
+
+      this.courseProgressPercent = s.completionPercent;
+      this.unlockedOrderIndexMax = s.unlockedOrderIndexMax ?? 1;
+    },
+    error: () => {
+      // keep default unlock=1 if summary fails
+      this.unlockedOrderIndexMax = 1;
+    }
+  });
+}
+onLessonCompleted() {
+  this.loadCourseSummary();
+  this.loadLessons(); // optional if you want refresh
+}
 }

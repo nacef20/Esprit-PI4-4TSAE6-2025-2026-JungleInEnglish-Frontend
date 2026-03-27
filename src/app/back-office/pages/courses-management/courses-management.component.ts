@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CoursesService } from '../../../services/courses.service';
+import { LessonsService } from '../../../services/lessons.service';
 import { Course, CourseLevel } from '../../../models/course.model';
 
 @Component({
@@ -28,8 +29,10 @@ export class CoursesManagementComponent implements OnInit {
   // Current course being edited/created
   currentCourse: Course = this.getEmptyCourse();
 
-  constructor(private coursesService: CoursesService) { }
-
+constructor(
+  private coursesService: CoursesService,
+  private lessonsService: LessonsService
+) {}
   ngOnInit(): void {
     this.loadCourses();
   }
@@ -45,7 +48,7 @@ loadCourses(): void {
       this.loading = false;
     },
     error: (err) => {
-      this.error = 'Erreur lors du chargement des cours';
+      this.error = 'Error loading courses';
       this.loading = false;
       console.error(err);
     }
@@ -63,7 +66,7 @@ filterCourses(): void {
       this.loading = false;
     },
     error: (err) => {
-      this.error = 'Erreur lors du chargement des cours';
+      this.error = 'Error loading courses';
       this.loading = false;
       console.error(err);
     }
@@ -94,7 +97,7 @@ filterCourses(): void {
   saveCourse(): void {
     if (!this.currentCourse.name || !this.currentCourse.description ||
       !this.currentCourse.duration || !this.currentCourse.level) {
-      alert('Veuillez remplir tous les champs obligatoires');
+      alert('Please fill in all required fields');
       return;
     }
 
@@ -109,31 +112,31 @@ filterCourses(): void {
         this.saving = false;
         this.closeModal();
         this.loadCourses();
-        alert(this.isEditMode ? 'Cours mis à jour!' : 'Cours créé!');
+        alert(this.isEditMode ? 'Course updated!' : 'Course created!');
       },
       error: (err) => {
         console.error(err);
         this.saving = false;
 
-        const msg = this.extractErrorMessage(err, 'Erreur lors de l\'enregistrement');
+        const msg = this.extractErrorMessage(err, 'Error saving course');
         alert(msg);
       }
     });
   }
 
   deleteCourse(course: Course): void {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer "${course.name}"?`)) {
+    if (!confirm(`are you sure you want to delete "${course.name}"?`)) {
       return;
     }
 
     this.coursesService.deleteCourse(course.id!).subscribe({
       next: () => {
         this.loadCourses();
-        alert('Cours supprimé!');
+        alert('Cours deleted!');
       },
       error: (err) => {
         console.error(err);
-        alert(this.extractErrorMessage(err, 'Erreur lors de la suppression'));
+        alert(this.extractErrorMessage(err, 'Error deleting course'));
       }
     });
   }
@@ -188,5 +191,15 @@ filterCourses(): void {
       fallback
     );
   }
-  
+  enroll(courseId: number) {
+  this.lessonsService.enrollCourse(courseId).subscribe({
+    next: () => {
+      alert('Course added to My Courses ✅');
+    },
+    error: (err) => {
+      console.error('Enroll failed', err);
+      alert('Enroll failed ❌');
+    }
+  });
+}
 }

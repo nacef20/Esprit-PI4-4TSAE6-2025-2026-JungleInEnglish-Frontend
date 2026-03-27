@@ -1,14 +1,12 @@
 
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../auth/auth.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-
 
 userName: string = 'Jean Dupont';
   userRole: string = 'Administrateur';
@@ -20,13 +18,13 @@ userName: string = 'Jean Dupont';
   isDarkMode: boolean = false;
   notificationCount: number = 3;
   searchQuery: string = '';
-currentUser: any = null;
-  constructor(private router: Router,private authService: AuthService) {}
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     // Charger le thème sauvegardé
     this.loadTheme();
-    this.currentUser = this.authService.getUserInfo();
+    
     // Vous pouvez charger les données utilisateur depuis un service
     // this.loadUserData();
   }
@@ -85,14 +83,19 @@ currentUser: any = null;
     this.router.navigate([`/${route}`]);
   }
 
-
-  
-
   // Logout
-  logout() {
-    this.authService.logout();
+  logout(): void {
+    this.isUserMenuOpen = false;
+    
+    // Nettoyer les données de session
+    localStorage.removeItem('token');
+    // localStorage.removeItem('user');
+    
+    // Rediriger vers la page de connexion
+    this.router.navigate(['/login']);
+    
+    console.log('User logged out');
   }
-
 
   // Charger les données utilisateur (à implémenter avec votre service)
   loadUserData(): void {

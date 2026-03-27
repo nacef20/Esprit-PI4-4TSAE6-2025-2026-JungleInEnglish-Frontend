@@ -4,8 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { BackOfficeRoutingModule } from './back-office-routing.module';
 import { BackOfficeComponent } from './back-office.component';
+
 import { SidebarComponent } from './back-layout/sidebar/sidebar.component';
 import { HeaderComponent } from './back-layout/header/header.component';
+import { SalleModule } from './salle/salle.module';
 
 import { CoursesManagementComponent } from './pages/courses-management/courses-management.component';
 import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';

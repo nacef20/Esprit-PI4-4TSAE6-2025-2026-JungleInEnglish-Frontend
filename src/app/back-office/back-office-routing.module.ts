@@ -17,14 +17,27 @@ const routes: Routes = [
         path: 'lessons',
         component: LessonsManagementComponent
       },
-
       {
         path: 'gestionchatprive',
         loadChildren: () =>
           import('./gestionchatprive/gestionchatprive.module')
             .then(m => m.GestionchatpriveModule)
       },
-
+      {
+        path: 'planning',
+        loadChildren: () =>
+          import('./planning/planning.module').then(m => m.PlanningModule)
+      },
+      {
+        path: 'salle',
+        loadChildren: () =>
+          import('./salle/salle.module').then(m => m.SalleModule)
+      },
+      {
+        path: 'groupe',
+        loadChildren: () =>
+          import('./groupe/groupe.module').then(m => m.GroupeModule)
+      },
       {
         path: '',
         redirectTo: 'courses',

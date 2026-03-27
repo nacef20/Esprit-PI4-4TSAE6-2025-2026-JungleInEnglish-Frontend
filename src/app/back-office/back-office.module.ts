@@ -10,6 +10,7 @@ import { HeaderComponent } from './back-layout/header/header.component';
 import { CoursesManagementComponent } from './pages/courses-management/courses-management.component';
 import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';
 import { LessonsListComponent } from '../components/lessons-list/lessons-list.component';
+import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { LessonsListComponent } from '../components/lessons-list/lessons-list.co
     HeaderComponent,
     CoursesManagementComponent,
     LessonsManagementComponent,
-    LessonsListComponent
+    LessonsListComponent,
+    MyCoursesComponent
   ],
   imports: [
     CommonModule,

@@ -75,7 +75,25 @@
           <div class="nav-link__indicator"></div>
         </a>
       </li>
-
+<!-- My Courses -->
+<li class="nav-item">
+  <a
+    class="nav-link"
+    [class.active]="currentRoute === '/admin/my-courses'"
+    [routerLink]="['/admin/my-courses']"
+    routerLinkActive="active"
+  >
+    <div class="nav-link__icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 6H4"/>
+        <path d="M20 12H4"/>
+        <path d="M20 18H4"/>
+      </svg>
+    </div>
+    <span class="nav-link__text">My Courses</span>
+    <div class="nav-link__indicator"></div>
+  </a>
+</li>
       <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Communication</span>

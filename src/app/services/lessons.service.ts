@@ -155,6 +155,28 @@ getLearnerKey(): string {
   deleteLessonAttachment(attachmentId: number): Observable<void> {
   return this.http.delete<void>(`${this.apiUrl}/attachments/${attachmentId}`);
 }
+// ✅ Enrollment
+enrollCourse(courseId: number): Observable<void> {
+  const learnerKey = this.getLearnerKey();
+  return this.http.post<void>(
+    `${this.apiUrl}/progress/course/${courseId}/enroll?learnerKey=${learnerKey}`,
+    {}
+  );
+}
 
+// ✅ My courses (ids)
+getMyCourseIds(): Observable<number[]> {
+  const learnerKey = this.getLearnerKey();
+  return this.http.get<number[]>(
+    `${this.apiUrl}/progress/my-courses?learnerKey=${learnerKey}`
+  );
+}
 
+// ✅ Top 3 suggested course IDs
+getTop3SuggestedCourseIds(): Observable<number[]> {
+  const learnerKey = this.getLearnerKey();
+  return this.http.get<number[]>(
+    `${this.apiUrl}/progress/recommendations/top3?learnerKey=${learnerKey}`
+  );
+}
 }

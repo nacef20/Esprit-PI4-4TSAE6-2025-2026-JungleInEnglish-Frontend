@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CoursesService } from '../../../services/courses.service';
-import { LessonsService } from '../../../services/lessons.service';
+import { CourseProgressSummary, LessonsService } from '../../../services/lessons.service';
 import { Course } from '../../../models/course.model';
 import { LessonAttachment, AttachmentType } from '../../../models/lesson-attachment.model';
 
@@ -12,6 +12,7 @@ import { LessonAttachment, AttachmentType } from '../../../models/lesson-attachm
 export class LessonsManagementComponent implements OnInit {
   courses: Course[] = [];
   selectedCourseId: number | null = null;
+  progressSummary!: CourseProgressSummary;
 
   // ✅ Attachments admin panel state
   selectedLessonId: number | null = null;
@@ -128,4 +129,10 @@ loadAttachments(): void {
   attachmentUrl(id: number): string {
     return this.lessonsService.getAttachmentUrl(id);
   }
+  loadProgress(courseId: number) {
+  this.lessonsService.getCourseProgressSummary(courseId)
+    .subscribe(summary => {
+      this.progressSummary = summary;
+    });
+}
 }

@@ -35,4 +35,7 @@ getAllCourses(search?: string, level?: string): Observable<Course[]> {
   deleteCourse(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/deleteCourse/${id}`);
   }
+getCoursesByIds(ids: number[]): Observable<Course[]> {
+  return this.http.post<Course[]>(`${this.apiUrl}/by-ids`, ids);
+}
 }

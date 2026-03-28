@@ -6,8 +6,8 @@ import { FirstloginComponent } from './pages/Reset/firstlogin/firstlogin.compone
 import { ForgotpasswordComponent } from './pages/Reset/forgotpassword/forgotpassword.component';
 import { CoursesPageComponent } from '../back-office/pages/courses-page/courses-page.component';
 
-const routes: Routes = [{ path: '', component: FrontOfficeComponent },
-  { path: 'login', component: LoginComponent },
+const routes: Routes = [
+  { path: '', component: FrontOfficeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotpasswordComponent },
   { path: 'first-login', component: FirstloginComponent },

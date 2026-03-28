@@ -1,11 +1,14 @@
 import { GroupService } from '../../services/group.service';
 import { MessageGroupService } from '../../services/message-group.service';
 import { JoinGroupService ,JoinGroupDTO } from '../../services/join-group.service';
+import { MemberGroupService } from '../../services/member-group.service';
 import { Component, HostListener } from '@angular/core'; 
 import { GroupData } from './create-group/create-group.component';
 import { AuthService } from '../../auth/auth.service';
 
 import { KeycloakUserService } from '../../services/keycloak-user.service';
+import { BehaviorSubject } from 'rxjs';
+import Swal from 'sweetalert2';
 
 interface Group {
   id: number;
@@ -16,6 +19,7 @@ interface Group {
   unread: number;
   online: number;
   ownerId?: number; 
+  isMember?: boolean;
 }
 
 interface Message {
@@ -51,7 +55,7 @@ export class GestionchatpriveComponent {
   selectedGroupToEdit: GroupData | null = null;  
   currentUserId: any = null; 
   groups: Group[] = [];
-  messages: Message[] = [];
+  messages: any[] = [];
   statusMap: { [groupChatId: number]: string | null } = {};
   emojis: any[] = [];   
   showEmojis = false;   
@@ -62,8 +66,14 @@ export class GestionchatpriveComponent {
 private stompSubscription: any;
 showJoinGroupModal = false;
  showJoinGroup = false;
+ showGroupMembers = false;
+private onlineUsersSubject = new BehaviorSubject<{ [groupId: number]: number[] }>({});
+public onlineUsers$ = this.onlineUsersSubject.asObservable();
+private onlineUsersMap: { [groupId: number]: number[] } = {};
+selectedGroupId!: number;
   constructor(private groupService: GroupService, private messageGroupService: MessageGroupService,
-    private joinGroupService: JoinGroupService ,private authService: AuthService ,private userService: KeycloakUserService
+    private joinGroupService: JoinGroupService ,private authService: AuthService ,private userService: KeycloakUserService,
+    private memberGroupService: MemberGroupService
   ) { }
 
 ngOnInit(): void {
@@ -80,13 +90,12 @@ ngOnInit(): void {
       unread: g.unread || 0,
       online: g.online || 0,
       ownerId: g.ownerId,
+      isMember: false
     }));
 
-    if (this.groups.length > 0) {
-      this.selectedGroup = this.groups[0];
-    }
+   this.checkIsMember(this.groups,this.currentUserId);
 
-    // ← ICI DEDANS, après que les groupes sont chargés
+   
     this.groups.forEach(group => {
       this.getStatusForGroup(group.id);
     });
@@ -257,7 +266,26 @@ joinGroup(group: Group): void {
 
   userCache: { [id: string]: any } = {};
 
-selectGroup(group: Group): void {
+
+
+
+
+  
+async selectGroup(group: Group): Promise<void>  {
+
+
+ const canAccess = await this.checkIsMember2(group.id, this.currentUserId);
+
+  if (!canAccess && group.ownerId !== this.currentUserId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Access Denied',
+      text: 'You cannot access this group. It is private. You must join the group to participate'
+    });
+    return;
+  }
+
+ 
   this.selectedGroup = group;
   group.unread = 0;
 
@@ -304,9 +332,8 @@ selectGroup(group: Group): void {
 
   // 5️⃣ Charger le statut de l'utilisateur pour ce groupe
   this.getStatusForGroup(group.id);
+  
 }
-
-
 
 
 sendMessage(): void {
@@ -412,7 +439,6 @@ addEmoji(emoji: string) {
   this.showEmojis = false;
 }
 
-selectedGroupId!: number;
 openJoinRequests(groupId: number) {
   this.openMenuId = null; // ferme le dropdown
   this.showJoinGroup = true;
@@ -420,5 +446,91 @@ openJoinRequests(groupId: number) {
 }
 
 
-  
+
+
+openGroupMembers(groupId: number) {
+  this.selectedGroupId = groupId;
+  this.showGroupMembers = true;
+  this.openMenuId = null;
+}
+closeGroupMembers() {
+  this.showGroupMembers = false;
+}
+
+
+isMemberUser: boolean = false;
+
+ async checkIsMember(groups: any[], userId: string) {
+  groups.forEach(group => {
+    this.memberGroupService.isMember(group.id, userId).subscribe({
+      next: (exists: boolean) => {
+        // Ajouter un champ isMember à chaque groupe
+        group.isMember = exists;
+      },
+      error: (err) => {
+        console.error(`Erreur lors de la vérification du membre pour le groupe ${group.id}`, err);
+        group.isMember = false; // par défaut
+      }
+    });
+  });
+}
+
+async checkIsMember2(groupId: number, userId: string): Promise<boolean> {
+  try {
+    // Convertit l'Observable en Promise
+    const exists = await this.memberGroupService.isMember(groupId, userId).toPromise();
+    return exists ?? false; // ← si undefined, retourne false
+  } catch (err) {
+    console.error(`Erreur vérification membre groupe ${groupId}`, err);
+    return false;
+  }
+}
+
+
+
+toggleLangMenu(message: any) {
+  message.showLangMenu = !message.showLangMenu;
+}
+
+// ✅ Traduire le message
+translateMessage(message: any, language: string) {
+  message.showLangMenu = false;
+  message.isTranslating = true;
+  message.translatedText = '';
+
+  this.messageGroupService.translateMessage(message.content, language).subscribe({
+    next: (result) => {
+      message.translatedText = result;
+      message.isTranslating = false;
+    },
+    error: (err) => {
+      console.error('Erreur traduction:', err);
+      message.isTranslating = false;
+    }
+  });
+}
+
+robotResponse: string = '';
+isRobotTyping: boolean = false;
+
+askRobot(message: any) {
+  if (!message.content) return;
+
+  message.isRobotTyping = true;
+  message.robotResponse = '';
+
+  this.messageGroupService.askQuestion(message.content).subscribe({
+    next: (result) => {
+      message.robotResponse = result;
+      message.isRobotTyping = false;
+    },
+    error: (err) => {
+      console.error('Erreur robot:', err);
+      message.robotResponse = "Désolé, je n'ai pas pu répondre.";
+      message.isRobotTyping = false;
+    }
+  });
+}
+
+
 }

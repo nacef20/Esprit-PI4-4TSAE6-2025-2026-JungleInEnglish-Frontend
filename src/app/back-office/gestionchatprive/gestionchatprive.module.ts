@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { CreateGroupComponent } from './create-group/create-group.component';
 
 import { JoingroupComponent } from './joingroup/joingroup.component';
+import { MembregroupComponent } from './membregroup/membregroup.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { JoingroupComponent } from './joingroup/joingroup.component';
     GestionchatpriveComponent,
     CreateGroupComponent,
     
-    JoingroupComponent
+    JoingroupComponent,
+         MembregroupComponent
   ],
   imports: [
     CommonModule,

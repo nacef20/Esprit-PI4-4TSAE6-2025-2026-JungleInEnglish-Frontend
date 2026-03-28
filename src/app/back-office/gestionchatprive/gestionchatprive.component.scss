@@ -863,3 +863,194 @@ body {
     color: var(--green-dark);
   }
 }
+
+
+
+// =============================================
+// MESSAGE ACTIONS
+// =============================================
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.own .message-actions {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  justify-content: flex-end;
+}
+
+// =============================================
+// ICÔNE TRADUIRE
+// =============================================
+.translate-wrapper {
+  position: relative;
+}
+
+.translate-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+
+  &:hover {
+    color: #2563eb;
+    background: #dbeafe;
+    transform: scale(1.15);
+  }
+}
+
+.lang-menu {
+  position: absolute;
+  bottom: 34px;
+  left: 0;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(14, 163, 122, 0.15);
+  min-width: 160px;
+  z-index: 300;
+  overflow: hidden;
+  animation: dropdownIn 0.2s ease;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+  }
+
+  li {
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+
+    &:hover {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+  }
+}
+
+// =============================================
+// ICÔNE ROBOT
+// =============================================
+.robot-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: var(--transition);
+
+  &:hover {
+    color: #7c3aed;
+    background: #ede9fe;
+    transform: scale(1.15);
+  }
+}
+
+// =============================================
+// TRADUCTION AFFICHÉE
+// =============================================
+.translated-text {
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 600;
+  color: #2563eb;
+  background: #eff6ff;
+  border-left: 3px solid #2563eb;
+  border-radius: 0 6px 6px 0;
+  padding: 6px 10px;
+  margin-top: 4px;
+}
+
+.own .translated-text {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
+  border-left-color: rgba(255, 255, 255, 0.6);
+}
+
+.translating {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+// =============================================
+// RÉPONSE ROBOT
+// =============================================
+.robot-response {
+  margin-top: 6px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  border: 1px solid #c4b5fd;
+  border-radius: 0 10px 10px 10px;
+  animation: slideIn 0.3s ease;
+}
+
+.robot-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.robot-response p {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4c1d95;
+  line-height: 1.55;
+  margin: 0;
+}
+
+// =============================================
+// TYPING ANIMATION
+// =============================================
+.typing-indicator {
+  display: flex;
+  gap: 5px;
+  padding: 4px 0;
+  align-items: center;
+
+  span {
+    width: 7px;
+    height: 7px;
+    background: #7c3aed;
+    border-radius: 50%;
+    animation: typingBounce 1.2s infinite ease-in-out;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}

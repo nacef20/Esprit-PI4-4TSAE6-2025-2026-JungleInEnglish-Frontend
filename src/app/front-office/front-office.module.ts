@@ -23,6 +23,7 @@ import { FirstloginComponent } from './pages/Reset/firstlogin/firstlogin.compone
 import { CoursesListComponent } from '../components/courses-list/courses-list.component';
 import { LessonsPublicComponent } from './pages/lessons-public/lessons-public.component'; // adjust path
 import { CoursesPageComponent } from '../back-office/pages/courses-page/courses-page.component';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import { CoursesPageComponent } from '../back-office/pages/courses-page/courses-
     CommonModule,
     FrontOfficeRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

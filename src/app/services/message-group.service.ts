@@ -19,15 +19,6 @@ export interface MessageGroup {
 })
 export class MessageGroupService {
 
-
-
-
-
-
-
-
-
-
    private apiUrl = 'http://localhost:8222/messageGroup';
   private wsUrl  = 'http://localhost:7070/ws';
 
@@ -131,6 +122,22 @@ stompClient!: Client;
   }
 
 
- 
+  // ✅ Traduire un message
+  translateMessage(text: string, language: string): Observable<string> {
+    return this.http.post<string>(
+      `${this.apiUrl}/translate`,
+      { text, language },
+      { responseType: 'text' as 'json' }
+    );
+  }
+
+  // ✅ Poser une question
+  askQuestion(question: string): Observable<string> {
+    return this.http.post<string>(
+      `${this.apiUrl}/ask`,
+      { question },
+      { responseType: 'text' as 'json' }
+    );
+  }
 
 }

@@ -1,0 +1,132 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+  <!-- Navigation bar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-screen-xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a routerLink="/back" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
+      <div class="flex items-center gap-4">
+        <a routerLink="/back/student-quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
+        <a routerLink="/back/student-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
+        <a routerLink="/back" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-24 pb-16 px-6">
+    <div class="max-w-screen-xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Available Quizzes</h1>
+      <p class="text-gray-500">Select a quiz to get started</p>
+    </div>
+
+    <!-- Search bar -->
+    <div class="relative max-w-md mx-auto mb-6">
+      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+      <input type="text" placeholder="Search for a quiz..." (input)="onSearch($event)"
+        class="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm shadow-sm focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+    </div>
+
+    <!-- Filter buttons -->
+    <div class="flex items-center justify-center gap-2 mb-10">
+      <button (click)="onFilter('all')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'all' ? 'bg-[#0ea37a] text-white border-[#0ea37a] shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        All
+      </button>
+      <button (click)="onFilter('open')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'open' ? 'bg-[#0ea37a] text-white border-[#0ea37a] shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Open
+      </button>
+      <button (click)="onFilter('attempted')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'attempted' ? 'bg-amber-500 text-white border-amber-500 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Already taken
+      </button>
+      <button (click)="onFilter('closed')"
+        class="px-4 py-2 text-sm rounded-full border transition-all font-medium"
+        [ngClass]="activeFilter === 'closed' ? 'bg-red-500 text-white border-red-500 shadow-sm' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Closed
+      </button>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="quizzes.length === 0" class="text-center py-20 text-gray-400">
+      <span class="material-symbols-outlined text-5xl mb-4 block">quiz</span>
+      <p class="text-lg">No published quizzes at the moment</p>
+    </div>
+
+    <!-- Quiz grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let quiz of quizzes"
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group"
+        [class.cursor-pointer]="canTakeQuiz(quiz)"
+        [class.opacity-70]="!canTakeQuiz(quiz)"
+        (click)="startQuiz(quiz)">
+
+        <!-- Top accent bar -->
+        <div class="h-2" [ngClass]="quiz.status === 'CLOSED' ? 'bg-gradient-to-r from-gray-400 to-gray-500' : 'bg-gradient-to-r from-[#0ea37a] to-[#0b8a68]'"></div>
+
+        <div class="p-6">
+          <!-- Badges row -->
+          <div class="flex items-center gap-2 mb-3 flex-wrap">
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1"
+              [ngClass]="quiz.status === 'CLOSED' ? 'text-red-600 bg-red-50' : 'text-[#0ea37a] bg-[#0ea37a]/10'">
+              <span class="material-symbols-outlined text-sm">schedule</span>
+              {{ quiz.duration }} min
+            </span>
+            <span *ngIf="quiz.status === 'CLOSED'"
+              class="text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-full">
+              Closed
+            </span>
+            <span *ngIf="(attemptCounts.get(quiz.id!) || 0) >= 1"
+              class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+              Already taken
+            </span>
+          </div>
+
+          <!-- Title & description -->
+          <h3 class="text-lg font-bold text-gray-800 mb-2 transition-colors"
+            [class.group-hover:text-[#0ea37a]]="canTakeQuiz(quiz)">{{ quiz.title }}</h3>
+          <p class="text-sm text-gray-500 mb-6 line-clamp-2">{{ quiz.description }}</p>
+
+          <!-- CTA or blocked message -->
+          <button *ngIf="canTakeQuiz(quiz)"
+            class="w-full py-2.5 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all group-hover:shadow-md">
+            Start quiz
+          </button>
+          <div *ngIf="!canTakeQuiz(quiz)"
+            class="w-full py-2.5 bg-gray-100 text-gray-500 rounded-lg font-medium text-center">
+            {{ getQuizBlockReason(quiz) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="flex items-center justify-between mt-12 bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 max-w-screen-xl mx-auto">
+      <span class="text-sm text-gray-500">
+        Page {{ currentPage }} of {{ totalPages }} — {{ totalElements }} quiz(es)
+      </span>
+      <div class="flex items-center gap-1">
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+          ← Previous
+        </button>
+        <ng-container *ngFor="let page of getPageNumbers()">
+          <button (click)="goToPage(page)"
+            class="w-9 h-9 text-sm rounded-lg border transition-all"
+            [ngClass]="page === currentPage ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 hover:bg-gray-50'">
+            {{ page }}
+          </button>
+        </ng-container>
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+          Next →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

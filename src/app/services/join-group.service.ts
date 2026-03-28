@@ -9,6 +9,8 @@ export interface JoinGroupDTO {
   requestedAt?: string;
   groupChatId: number;
   status?: 'ATTENTE' | 'ACCEPTE' | 'REFUSE';
+  firstName?: string;
+  lastName?: string;
 }
 
 @Injectable({

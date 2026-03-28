@@ -72,12 +72,12 @@
 
           <!-- Aucune demande -->
           <button
-            *ngIf="group.ownerId != currentUserId && (statusMap[group.id] === null || statusMap[group.id] === undefined)"
+            *ngIf="!group.isMember && group.ownerId != currentUserId && (statusMap[group.id] === null || statusMap[group.id] === undefined     )"
             class="btn-join"
             (click)="joinGroup(group)"
             title="Rejoindre le groupe"
           >
-            <i class="fa-solid fa-user-plus"></i>
+            <i class="fa-solid fa-user-plus"  ></i>
           </button>
 
           <!-- En attente -->
@@ -103,7 +103,21 @@
             <i class="fa-solid fa-user-xmark"></i>
           </button>
 
+
+        
+ 
+
+  
+
+<i class="fa-solid fa-users-gear" style="color: rgb(99, 230, 190);"
+   title="Voir les membres du groupe"
+   (click)="openGroupMembers(group.id); $event.stopPropagation()">
+</i>
+
+
           <!-- Menu 3 points (seulement pour le owner) -->
+          
+
           <div class="dropdown-menu" *ngIf="group.ownerId === currentUserId">
             <button
               class="btn-menu"
@@ -151,7 +165,7 @@
         </div>
         <div>
           <h2 class="header-title">{{ selectedGroup.name }}</h2>
-          <p class="header-subtitle">{{ selectedGroup.online }} membres en ligne</p>
+          
         </div>
       </div>
 
@@ -169,38 +183,85 @@
     </div>
 
     <!-- Messages -->
-    <div class="messages-container" *ngIf="selectedGroup">
-      <div class="messages-list">
-        <div
-          *ngFor="let message of messages"
-          class="message"
-          (dblclick)="showDeleteIcon(message)"
-          [class.own]="message.sender === currentUserId"
-        >
-          <div class="message-avatar">👨‍💻</div>
+   <div class="messages-container" *ngIf="selectedGroup">
+  <div class="messages-list">
+    <div
+      *ngFor="let message of messages"
+      class="message"
+      (dblclick)="showDeleteIcon(message)"
+      [class.own]="message.sender === currentUserId"
+    >
+      <div class="message-avatar">👨‍💻</div>
 
-          <div class="message-content" [class.deleted-text]="message.deleted">
-            <span class="message-sender">
-              {{ message.senderInfo?.firstName }} {{ message.senderInfo?.lastName }}
-            </span>
+      <div class="message-content" [class.deleted-text]="message.deleted">
+        <span class="message-sender">
+          {{ message.senderInfo?.firstName }} {{ message.senderInfo?.lastName }}
+        </span>
 
-            <div class="message-bubble">
-              <p class="message-text" [class.deleted-text]="message.deleted">
-                {{ message.deleted ? 'Message supprimé' : message.content }}
-              </p>
+        <div class="message-bubble">
+          <p class="message-text" [class.deleted-text]="message.deleted">
+            {{ message.deleted ? 'Message supprimé' : message.content }}
+          </p>
 
+          <!-- ✅ Traduction affichée -->
+          <p class="translated-text" *ngIf="message.translatedText">
+            🌍 {{ message.translatedText }}
+          </p>
+
+          <!-- ✅ Loading traduction -->
+          <p class="translating" *ngIf="message.isTranslating">
+            ⏳ Traduction...
+          </p>
+
+          <div class="message-actions">
+            <!-- ✅ Icône Supprimer -->
+            <i
+              *ngIf="message.showDelete && message.sender === currentUserId && !message.deleted"
+              class="fa-solid fa-trash delete-icon"
+              (click)="deleteMessage(message)"
+            ></i>
+
+            <!-- ✅ Icône Traduire -->
+            <div class="translate-wrapper" *ngIf="!message.deleted">
               <i
-                *ngIf="message.showDelete && message.sender === currentUserId && !message.deleted"
-                class="fa-solid fa-trash delete-icon"
-                (click)="deleteMessage(message)"
+                class="fa-solid fa-language translate-icon"
+                (click)="toggleLangMenu(message)"
               ></i>
-            </div>
 
-            <span class="message-time">{{ message.time }}</span>
+                <i
+    *ngIf="!message.deleted"
+    class="fa-solid fa-robot robot-icon"
+    title="Demander à l'IA"
+    (click)="askRobot(message)"
+  ></i>
+</div>
+
+
+<div class="robot-response" *ngIf="message.robotResponse || message.isRobotTyping">
+  <span class="robot-label">🤖 Assistant IA</span>
+  <p *ngIf="!message.isRobotTyping">{{ message.robotResponse }}</p>
+  <p class="typing-indicator" *ngIf="message.isRobotTyping">
+    <span></span><span></span><span></span>
+  </p>
+</div>
+ 
+
+              <!-- ✅ Dropdown langues -->
+              <div class="lang-menu" *ngIf="message.showLangMenu">
+                <ul>
+                  <li (click)="translateMessage(message, 'anglais')">🇬🇧 Anglais</li>
+                  <li (click)="translateMessage(message, 'français')">🇫🇷 Français</li>
+                </ul>
+              </div>
+
+            </div>
           </div>
         </div>
+
+        <span class="message-time">{{ message.time }}</span>
       </div>
     </div>
+  </div>
 
     <!-- Zone de saisie -->
     <div class="message-input-container" *ngIf="selectedGroup">
@@ -254,3 +315,10 @@
   (close)="showJoinGroup = false"
    [groupChatId]="selectedGroupId">
 </app-joingroup>
+
+
+<app-membregroup
+  *ngIf="showGroupMembers"
+  (close)="showGroupMembers = false"
+  [groupId]="selectedGroupId">
+</app-membregroup>

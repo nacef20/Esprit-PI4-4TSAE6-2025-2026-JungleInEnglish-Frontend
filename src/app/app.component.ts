@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,13 @@ import { Component } from '@angular/core';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+  constructor(private authService: AuthService) {}
+
+ngOnInit() {
+  this.authService.getMe().subscribe({
+    next: (res) => console.log('ME:', res),
+    error: (err) => console.error('ME ERROR:', err)
+  });
+}
   title = 'school-management';
 }

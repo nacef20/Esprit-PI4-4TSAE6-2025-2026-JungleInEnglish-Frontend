@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CoursesService } from '../../../services/courses.service';
 import { LessonsService } from '../../../services/lessons.service';
 import { Course, CourseLevel } from '../../../models/course.model';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-courses-management',
@@ -31,11 +32,20 @@ export class CoursesManagementComponent implements OnInit {
 
 constructor(
   private coursesService: CoursesService,
-  private lessonsService: LessonsService
+  private lessonsService: LessonsService,
+   private authService: AuthService
 ) {}
   ngOnInit(): void {
     this.loadCourses();
   }
+
+  isTeacher(): boolean {
+  return this.authService.getRoles().includes('TEACHER');
+}
+
+isStudent(): boolean {
+  return this.authService.getRoles().includes('STUDENT');
+}
 
 loadCourses(): void {
   this.loading = true;

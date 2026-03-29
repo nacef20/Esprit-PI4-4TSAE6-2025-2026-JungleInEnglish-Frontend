@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { getKeycloak } from './keycloak.config';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
+constructor(private http: HttpClient) {}
  login(): void {
     getKeycloak().login({
       redirectUri: window.location.origin + '/admin' 
@@ -45,5 +46,14 @@ getUserInfo() {
   }
   return null;
 }
+isTeacher(): boolean {
+  return this.getRoles().includes('TEACHER');
+}
 
+isStudent(): boolean {
+  return this.getRoles().includes('STUDENT');
+}
+  getMe() {
+    return this.http.get<any>('http://localhost:8222/api/users/me');
+  }
 }

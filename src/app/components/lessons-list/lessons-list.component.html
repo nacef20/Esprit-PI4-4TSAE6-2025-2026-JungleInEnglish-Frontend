@@ -171,8 +171,7 @@
               <li *ngFor="let a of attachments" style="margin-bottom:6px; display:flex; gap:10px; align-items:center;">
                 <span style="flex:1;">
                   <strong>{{ a.type }}</strong> —
-                  <a [href]="attachmentUrl(a.id)" target="_blank">{{ a.originalName }}</a>
-                </span>
+<a href="javascript:void(0)" (click)="openAttachment(a.id)">{{ a.originalName }}</a>                </span>
 
                 <button class="btn-danger" type="button" (click)="deleteAttachment(a.id)">
                   Delete
@@ -221,8 +220,7 @@
 
         <ng-container *ngIf="selectedLesson as sl">
           <video width="100%" controls (timeupdate)="onVideoTimeUpdate($event, sl.id!)" (ended)="onVideoEnded(sl.id!)">
-            <source [src]="attachmentUrl(uv.id)" [type]="uv.contentType">
-          </video>
+<source [src]="videoObjectUrl" [type]="uv.contentType">          </video>
         </ng-container>
       </div>
 
@@ -237,22 +235,20 @@
   <div *ngIf="!attachmentsLoading && attachments.length > 0">
     <div *ngFor="let f of pdfFiles">
       📄
-      <a
-        [href]="attachmentUrl(f.id)"
-        target="_blank"
-        (click)="onAttachmentClicked(f.id, sl.id!)">
-        {{ f.originalName }}
-      </a>
+<a
+  href="javascript:void(0)"
+  (click)="onAttachmentClicked(f.id, sl.id!); openAttachment(f.id)">
+  {{ f.originalName }}
+</a>
     </div>
 
     <div *ngFor="let f of otherFiles">
       📎
-      <a
-        [href]="attachmentUrl(f.id)"
-        target="_blank"
-        (click)="onAttachmentClicked(f.id, sl.id!)">
-        {{ f.originalName }}
-      </a>
+<a
+  href="javascript:void(0)"
+  (click)="onAttachmentClicked(f.id, sl.id!); openAttachment(f.id)">
+  {{ f.originalName }}
+</a>
       <span class="muted">({{ f.type }})</span>
     </div>
   </div>

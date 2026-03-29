@@ -140,23 +140,27 @@ openLesson(lesson: Lesson): void {
 
   if (!lesson.id) return;
 
-  // start progress (optional, doesn't block)
-  this.lessonsService.startLessonProgress(lesson.id).subscribe({ next: () => {}, error: () => {} });
+  // open modal immediately
+  this.selectedLesson = lesson;
+  this.showLessonViewer = true;
 
-  // load attachments (optional)
+  // start lesson progress
+  this.lessonsService.startLessonProgress(lesson.id).subscribe({
+    next: () => {},
+    error: (err) => console.error('startLessonProgress failed', err)
+  });
+
+  // reset + load attachments
   this.resetAttachmentsUI();
   this.loadAttachments(lesson.id);
 
-  // load full lesson content
+  // load full lesson details
   this.lessonsService.getLesson(lesson.id).subscribe({
     next: (full) => {
       this.selectedLesson = full;
-      this.showLessonViewer = true;
     },
     error: (e) => {
       console.error('getLesson failed', e);
-      this.selectedLesson = lesson; // fallback
-      this.showLessonViewer = true;
     }
   });
 }
@@ -200,11 +204,17 @@ onVideoEnded(lessonId: number): void {
 markAttachmentDone(attachmentId: number): void {
   this.lessonsService.completeAttachmentProgress(attachmentId).subscribe({ next: () => {}, error: () => {} });
 }
-  closeLesson(): void {
-    this.showLessonViewer = false;
-    this.selectedLesson = null;
-    this.resetAttachmentsUI();
+closeLesson(): void {
+  this.showLessonViewer = false;
+  this.selectedLesson = null;
+
+  if (this.videoObjectUrl) {
+    URL.revokeObjectURL(this.videoObjectUrl);
+    this.videoObjectUrl = null;
   }
+
+  this.resetAttachmentsUI();
+}
 
   // =========================
   // CREATE / EDIT LESSON (admin modal)
@@ -294,23 +304,33 @@ this.showToast(msg, 'error');
   // =========================
   // ATTACHMENTS (admin + view)
   // =========================
-  loadAttachments(lessonId: number): void {
-    this.attachmentsLoading = true;
-    this.attachmentsError = null;
+loadAttachments(lessonId: number): void {
+  this.attachmentsLoading = true;
+  this.attachmentsError = null;
 
-    this.lessonsService.getLessonAttachments(lessonId).subscribe({
-      next: (data) => {
-        this.attachments = data || [];
-        this.attachmentsLoading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.attachments = [];
-        this.attachmentsError = 'Failed to load attachments.';
-        this.attachmentsLoading = false;
+  this.lessonsService.getLessonAttachments(lessonId).subscribe({
+    next: (data) => {
+      this.attachments = data || [];
+      this.attachmentsLoading = false;
+
+      const video = this.attachments.find(a => a.type === 'VIDEO');
+      if (video?.id) {
+        this.loadVideoAttachment(video.id);
+      } else {
+        if (this.videoObjectUrl) {
+          URL.revokeObjectURL(this.videoObjectUrl);
+          this.videoObjectUrl = null;
+        }
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error(err);
+      this.attachments = [];
+      this.attachmentsError = 'Failed to load attachments.';
+      this.attachmentsLoading = false;
+    }
+  });
+}
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -359,10 +379,37 @@ if (!this.isTypeMatchingFile(this.selectedType, this.selectedFile)) {
       });
   }
 
-  attachmentUrl(attachmentId: number): string {
-    return this.lessonsService.getAttachmentUrl(attachmentId);
+videoObjectUrl: string | null = null;
+
+openAttachment(attachmentId: number): void {
+  this.lessonsService.getAttachmentBlob(attachmentId).subscribe({
+    next: (blob) => {
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    },
+    error: (err) => {
+      console.error('Error opening attachment:', err);
+      this.showToast('Failed to open attachment ❌', 'error');
+    }
+  });
+}
+
+loadVideoAttachment(attachmentId: number): void {
+  if (this.videoObjectUrl) {
+    URL.revokeObjectURL(this.videoObjectUrl);
+    this.videoObjectUrl = null;
   }
 
+  this.lessonsService.getAttachmentBlob(attachmentId).subscribe({
+    next: (blob) => {
+      this.videoObjectUrl = URL.createObjectURL(blob);
+    },
+    error: (err) => {
+      console.error('Error loading video attachment:', err);
+      this.showToast('Failed to load video ❌', 'error');
+    }
+  });
+}
   get uploadedVideo(): LessonAttachment | undefined {
     return this.attachments.find(a => a.type === 'VIDEO');
   }
@@ -416,6 +463,10 @@ if (!this.isTypeMatchingFile(this.selectedType, this.selectedFile)) {
     this.uploadMessage = null;
     this.uploadError = null;
     this.uploading = false;
+    if (this.videoObjectUrl) {
+  URL.revokeObjectURL(this.videoObjectUrl);
+  this.videoObjectUrl = null;
+}
   }
 
   private emptyLesson(): Lesson {

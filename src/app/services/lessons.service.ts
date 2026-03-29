@@ -22,17 +22,15 @@ export interface LessonDifficultyDTO {
   avgTimeSeconds: number;
   difficulty: 'HARD' | 'MEDIUM' | 'EASY';
 }
+
 @Injectable({
   providedIn: 'root'
 })
 export class LessonsService {
-private apiUrl = `${environment.apiUrl}/api/lessons`;
+  private apiUrl = `${environment.apiUrl}/api/lessons`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // =========================
-  // Lessons CRUD (yours)
-  // =========================
   createLesson(lesson: Lesson): Observable<Lesson> {
     return this.http.post<Lesson>(`${this.apiUrl}/addLesson`, lesson);
   }
@@ -57,9 +55,6 @@ private apiUrl = `${environment.apiUrl}/api/lessons`;
     return this.http.get<Lesson[]>(`${this.apiUrl}/course/${courseId}`);
   }
 
-  // =========================
-  // Attachments (from earlier)
-  // =========================
   getLessonAttachments(lessonId: number): Observable<LessonAttachment[]> {
     return this.http.get<LessonAttachment[]>(`${this.apiUrl}/${lessonId}/attachments`);
   }
@@ -73,7 +68,11 @@ private apiUrl = `${environment.apiUrl}/api/lessons`;
   getAttachmentUrl(attachmentId: number): string {
     return `${this.apiUrl}/attachments/${attachmentId}`;
   }
-
+getAttachmentBlob(attachmentId: number): Observable<Blob> {
+  return this.http.get(`${this.apiUrl}/attachments/${attachmentId}`, {
+    responseType: 'blob'
+  });
+}
   private getExt(fileName: string): string {
     const i = fileName.lastIndexOf('.');
     return i >= 0 ? fileName.slice(i + 1).toLowerCase() : '';
@@ -86,97 +85,60 @@ private apiUrl = `${environment.apiUrl}/api/lessons`;
     switch (type) {
       case 'PDF':
         return ext === 'pdf' || ct === 'application/pdf';
-
       case 'WORD':
         return ['doc', 'docx'].includes(ext)
           || ct.includes('msword')
           || ct.includes('officedocument.wordprocessingml');
-
       case 'PPT':
         return ['ppt', 'pptx'].includes(ext)
           || ct.includes('ms-powerpoint')
           || ct.includes('officedocument.presentationml');
-
       case 'VIDEO':
         return ['mp4', 'webm', 'mov', 'mkv'].includes(ext) || ct.startsWith('video/');
-
       case 'OTHER':
       default:
         return true;
     }
   }
-  
-  // =========================
-  // ✅ Progress (NEW)
-  // =========================
-getLearnerKey(): string {
-  const keyName = 'learnerKey';
-  const existing = localStorage.getItem(keyName);
-  if (existing) return existing;
 
-  const generated =
-    (typeof crypto !== 'undefined' && (crypto as any).randomUUID)
-      ? (crypto as any).randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-  localStorage.setItem(keyName, generated);
-  return generated;
-}
   startLessonProgress(lessonId: number): Observable<void> {
-    const learnerKey = this.getLearnerKey();
-    return this.http.post<void>(`${this.apiUrl}/progress/lesson/start`, { learnerKey, lessonId });
+    return this.http.post<void>(`${this.apiUrl}/progress/lesson/start`, { lessonId });
   }
 
   completeLessonProgress(lessonId: number, timeSpentSeconds?: number): Observable<void> {
-    const learnerKey = this.getLearnerKey();
     return this.http.post<void>(`${this.apiUrl}/progress/lesson/complete`, {
-      learnerKey,
       lessonId,
       timeSpentSeconds: timeSpentSeconds ?? null
     });
   }
 
   completeAttachmentProgress(attachmentId: number): Observable<void> {
-    const learnerKey = this.getLearnerKey();
-    return this.http.post<void>(`${this.apiUrl}/progress/attachment/complete`, { learnerKey, attachmentId });
+    return this.http.post<void>(`${this.apiUrl}/progress/attachment/complete`, { attachmentId });
   }
 
   getCourseProgressSummary(courseId: number): Observable<CourseProgressSummary> {
-    const learnerKey = this.getLearnerKey();
-    return this.http.get<CourseProgressSummary>(`${this.apiUrl}/progress/course/${courseId}/summary?learnerKey=${learnerKey}`);
+    return this.http.get<CourseProgressSummary>(`${this.apiUrl}/progress/course/${courseId}/summary`);
   }
 
-  getLessonDifficulty(courseId: number) {
-  return this.http.get<LessonDifficultyDTO[]>(
-    `${this.apiUrl}/progress/course/${courseId}/difficulty`
-  );
-}
-  
+  getLessonDifficulty(courseId: number): Observable<LessonDifficultyDTO[]> {
+    return this.http.get<LessonDifficultyDTO[]>(
+      `${this.apiUrl}/progress/course/${courseId}/difficulty`
+    );
+  }
+
   deleteLessonAttachment(attachmentId: number): Observable<void> {
-  return this.http.delete<void>(`${this.apiUrl}/attachments/${attachmentId}`);
-}
-// ✅ Enrollment
-enrollCourse(courseId: number): Observable<void> {
-  const learnerKey = this.getLearnerKey();
-  return this.http.post<void>(
-    `${this.apiUrl}/progress/course/${courseId}/enroll?learnerKey=${learnerKey}`,
-    {}
-  );
-}
+    return this.http.delete<void>(`${this.apiUrl}/attachments/${attachmentId}`);
+  }
 
-// ✅ My courses (ids)
-getMyCourseIds(): Observable<number[]> {
-  const learnerKey = this.getLearnerKey();
-  return this.http.get<number[]>(
-    `${this.apiUrl}/progress/my-courses?learnerKey=${learnerKey}`
-  );
-}
+  enrollCourse(courseId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/progress/course/${courseId}/enroll`, {});
+  }
 
-// ✅ Top 3 suggested course IDs
-getTop3SuggestedCourseIds(): Observable<number[]> {
-  const learnerKey = this.getLearnerKey();
-  return this.http.get<number[]>(
-    `${this.apiUrl}/progress/recommendations/top3?learnerKey=${learnerKey}`
-  );
-}
+  getMyCourseIds(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.apiUrl}/progress/my-courses`);
+  }
+
+  getTop3SuggestedCourseIds(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.apiUrl}/progress/recommendations/top3`);
+  }
 }

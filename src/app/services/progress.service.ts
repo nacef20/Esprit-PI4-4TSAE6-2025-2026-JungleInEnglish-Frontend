@@ -4,14 +4,13 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface LessonHeartbeatRequest {
-  learnerKey: string;
   courseId: number;
   deltaSeconds: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ProgressService {
-  private baseUrl = environment.apiUrl; // ex: http://localhost:8083/api
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

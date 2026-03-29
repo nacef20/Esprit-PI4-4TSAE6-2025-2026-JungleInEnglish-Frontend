@@ -6,6 +6,7 @@ import 'swiper/element/bundle';
 import { AppModule } from './app/app.module';
 import { initKeycloak } from './app/auth/keycloak.config';  
 
+
 initKeycloak().then(() => {
   platformBrowserDynamic()
     .bootstrapModule(AppModule, {

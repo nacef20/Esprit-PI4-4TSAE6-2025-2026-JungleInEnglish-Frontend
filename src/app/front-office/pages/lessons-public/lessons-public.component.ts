@@ -19,7 +19,6 @@ export class LessonsPublicComponent implements OnChanges, OnDestroy {
   showLessonViewer = false;
   selectedLesson: Lesson | null = null;
 
-  // ✅ heartbeat fields
   private hbSub?: Subscription;
   private lastTickMs = Date.now();
 
@@ -29,7 +28,9 @@ export class LessonsPublicComponent implements OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges(): void {
-    if (this.courseId != null) this.loadLessons();
+    if (this.courseId != null) {
+      this.loadLessons();
+    }
   }
 
   ngOnDestroy(): void {
@@ -59,17 +60,14 @@ export class LessonsPublicComponent implements OnChanges, OnDestroy {
     this.selectedLesson = lesson;
     this.showLessonViewer = true;
 
-    // ✅ start heartbeat when lesson viewer opens
     if (lesson.id != null) {
-      this.stopHeartbeat(); // if another lesson already running
+      this.stopHeartbeat();
       this.startHeartbeat(lesson.id, lesson.courseId);
     }
   }
 
   closeLesson(): void {
-    // ✅ stop heartbeat when viewer closes
     this.stopHeartbeat();
-
     this.showLessonViewer = false;
     this.selectedLesson = null;
   }
@@ -79,32 +77,10 @@ export class LessonsPublicComponent implements OnChanges, OnDestroy {
     return url.trim();
   }
 
-  // -----------------------
-  // ✅ Learner key (your version)
-  // -----------------------
-  getLearnerKey(): string {
-    const keyName = 'learnerKey';
-    const existing = localStorage.getItem(keyName);
-    if (existing) return existing;
-
-    const generated =
-      (typeof crypto !== 'undefined' && (crypto as any).randomUUID)
-        ? (crypto as any).randomUUID()
-        : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-    localStorage.setItem(keyName, generated);
-    return generated;
-  }
-
-  // -----------------------
-  // ✅ Heartbeat core logic
-  // -----------------------
   private startHeartbeat(lessonId: number, courseId: number): void {
-    const learnerKey = this.getLearnerKey();
     this.lastTickMs = Date.now();
 
     this.hbSub = interval(15000).subscribe(() => {
-      // don’t count time when tab not visible
       if (document.hidden) return;
 
       const now = Date.now();
@@ -112,7 +88,6 @@ export class LessonsPublicComponent implements OnChanges, OnDestroy {
       this.lastTickMs = now;
 
       this.progressService.heartbeatLesson(lessonId, {
-        learnerKey,
         courseId,
         deltaSeconds
       }).subscribe({

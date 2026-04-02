@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Complaint } from '../../models/complaint.model';
 import { ComplaintResponse } from '../../models/response.model';
@@ -55,9 +55,9 @@ export class ComplaintViewComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'EN_ATTENTE': return 'En attente';
-      case 'TRAITEE': return 'Traitée';
-      case 'REJETEE': return 'Rejetée';
+      case 'EN_ATTENTE': return 'Pending';
+      case 'TRAITEE': return 'Resolved';
+      case 'REJETEE': return 'Rejected';
       default: return status;
     }
   }
@@ -71,3 +71,4 @@ export class ComplaintViewComponent implements OnInit {
     }
   }
 }
+

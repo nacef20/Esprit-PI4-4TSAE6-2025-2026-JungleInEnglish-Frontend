@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto space-y-6">
+﻿<div class="max-w-3xl mx-auto space-y-6">
 
   <!-- Header -->
   <div class="flex items-center gap-3">
@@ -7,7 +7,7 @@
     </button>
     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
       <span class="material-symbols-outlined text-[#0ea37a]">description</span>
-      Détail de la Réclamation
+      Complaint Details
     </h1>
   </div>
 
@@ -42,7 +42,7 @@
         <span class="material-symbols-outlined text-sm">{{ getStatusIcon(complaint.status) }}</span>
         {{ getStatusLabel(complaint.status) }}
       </span>
-      <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Revue admin</span>
+      <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Admin review</span>
     </div>
 
     <!-- Title -->
@@ -55,11 +55,11 @@
     <div class="flex items-center gap-4 text-sm text-gray-400 pt-3 border-t border-gray-100">
       <span class="flex items-center gap-1">
         <span class="material-symbols-outlined text-base">calendar_today</span>
-        Créée le {{ complaint.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+        Created on {{ complaint.createdAt | date:'dd/MM/yyyy HH:mm' }}
       </span>
       <span *ngIf="complaint.updatedAt" class="flex items-center gap-1">
         <span class="material-symbols-outlined text-base">update</span>
-        Mise à jour le {{ complaint.updatedAt | date:'dd/MM/yyyy à HH:mm' }}
+        Updated on {{ complaint.updatedAt | date:'dd/MM/yyyy HH:mm' }}
       </span>
     </div>
   </div>
@@ -69,20 +69,20 @@
 
     <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
       <span class="material-symbols-outlined text-[#0ea37a]">forum</span>
-      Réponses ({{ responses.length }})
+      Responses ({{ responses.length }})
     </h3>
 
     <!-- Add response form -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Ajouter une réponse</label>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Add a response</label>
       <div class="flex gap-3">
-        <textarea [(ngModel)]="newResponseMessage" rows="2" placeholder="Écrivez votre réponse..."
+        <textarea [(ngModel)]="newResponseMessage" rows="2" placeholder="Write your response..."
           class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"></textarea>
         <button (click)="addResponse()" [disabled]="submittingResponse || !newResponseMessage.trim()"
           class="self-end px-5 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-1">
           <span *ngIf="submittingResponse" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
           <span *ngIf="!submittingResponse" class="material-symbols-outlined text-base">send</span>
-          Envoyer
+          Send
         </button>
       </div>
     </div>
@@ -90,7 +90,7 @@
     <!-- Empty responses -->
     <div *ngIf="responses.length === 0" class="text-center py-8 text-gray-400">
       <span class="material-symbols-outlined text-4xl mb-2 block">chat_bubble_outline</span>
-      <p>Aucune réponse pour le moment</p>
+      <p>No responses yet</p>
     </div>
 
     <!-- Response list -->
@@ -103,15 +103,15 @@
         <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
           <span class="text-xs text-gray-400 flex items-center gap-1">
             <span class="material-symbols-outlined text-sm">schedule</span>
-            {{ response.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+            {{ response.createdAt | date:'dd/MM/yyyy HH:mm' }}
           </span>
           <div class="flex items-center gap-1">
             <button (click)="startEditResponse(response)"
-              class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Modifier">
+              class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
               <span class="material-symbols-outlined text-lg">edit</span>
             </button>
             <button (click)="deleteResponse(response.id!)"
-              class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Supprimer">
+              class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete">
               <span class="material-symbols-outlined text-lg">delete</span>
             </button>
           </div>
@@ -126,15 +126,16 @@
           <button (click)="saveEditResponse(response.id!)"
             class="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-medium">
             <span class="material-symbols-outlined text-base">save</span>
-            Sauvegarder
+            Save
           </button>
           <button (click)="cancelEditResponse()"
             class="flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all text-sm font-medium">
             <span class="material-symbols-outlined text-base">close</span>
-            Annuler
+            Cancel
           </button>
         </div>
       </div>
     </div>
   </div>
 </div>
+

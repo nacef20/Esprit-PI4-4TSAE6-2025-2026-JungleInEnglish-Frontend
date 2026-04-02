@@ -8,7 +8,7 @@
       </button>
       <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
         <span class="material-symbols-outlined text-[#0ea37a]">description</span>
-        Ma Réclamation
+        My Complaint
       </h1>
     </div>
 
@@ -31,7 +31,7 @@
           <span class="material-symbols-outlined text-sm">{{ getStatusIcon(complaint.status) }}</span>
           {{ getStatusLabel(complaint.status) }}
         </span>
-        <span class="text-sm text-gray-400">{{ complaint.createdAt | date:'dd/MM/yyyy à HH:mm' }}</span>
+        <span class="text-sm text-gray-400">{{ complaint.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
       </div>
 
       <!-- Title -->
@@ -47,14 +47,14 @@
     <div *ngIf="complaint && !loading" class="space-y-4">
       <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
         <span class="material-symbols-outlined text-[#0ea37a]">forum</span>
-        Réponses ({{ responses.length }})
+        Responses ({{ responses.length }})
       </h3>
 
       <div *ngIf="responses.length === 0"
         class="text-center py-10 bg-white rounded-2xl shadow-sm border border-gray-100">
         <span class="material-symbols-outlined text-5xl text-gray-300 mb-3 block">chat_bubble_outline</span>
-        <p class="text-gray-500">Aucune réponse pour le moment</p>
-        <p class="text-sm text-gray-400 mt-1">Vous serez notifié lorsqu'une réponse sera apportée</p>
+        <p class="text-gray-500">No responses yet</p>
+        <p class="text-sm text-gray-400 mt-1">You will be notified when a response is added</p>
       </div>
 
       <div *ngFor="let response of responses"
@@ -66,7 +66,7 @@
           <div class="flex-1">
             <div class="flex items-center justify-between mb-1">
               <span class="text-sm font-semibold text-gray-700">Administration</span>
-              <span class="text-xs text-gray-400">{{ response.createdAt | date:'dd/MM/yyyy à HH:mm' }}</span>
+              <span class="text-xs text-gray-400">{{ response.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
             </div>
             <p class="text-gray-600 leading-relaxed">{{ response.message }}</p>
           </div>

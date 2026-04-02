@@ -1,4 +1,4 @@
-<div class="max-w-2xl mx-auto space-y-6">
+﻿<div class="max-w-2xl mx-auto space-y-6">
   <!-- Header -->
   <div class="flex items-center gap-3">
     <button (click)="cancel()" class="p-2 hover:bg-gray-100 rounded-lg transition-all">
@@ -6,7 +6,7 @@
     </button>
     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
       <span class="material-symbols-outlined text-[#0ea37a]">{{ isEdit ? 'edit_note' : 'note_add' }}</span>
-      {{ isEdit ? 'Modifier la Réclamation' : 'Nouvelle Réclamation' }}
+      {{ isEdit ? 'Edit Complaint' : 'New Complaint' }}
     </h1>
   </div>
 
@@ -31,15 +31,15 @@
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">
         <span class="material-symbols-outlined text-sm align-middle mr-1">title</span>
-        Titre *
+        Title *
       </label>
-      <input formControlName="title" type="text" placeholder="Titre de la réclamation"
+      <input formControlName="title" type="text" placeholder="Complaint title"
         class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all"
         [ngClass]="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched ? 'border-red-400' : 'border-gray-200'" />
       <p *ngIf="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched"
         class="mt-1 text-sm text-red-500 flex items-center gap-1">
         <span class="material-symbols-outlined text-sm">error</span>
-        Le titre est requis (minimum 3 caractères)
+        Title is required (minimum 3 characters)
       </p>
     </div>
 
@@ -49,13 +49,13 @@
         <span class="material-symbols-outlined text-sm align-middle mr-1">description</span>
         Description *
       </label>
-      <textarea formControlName="description" rows="5" placeholder="Décrivez votre réclamation en détail..."
+      <textarea formControlName="description" rows="5" placeholder="Describe your complaint in detail..."
         class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"
         [ngClass]="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched ? 'border-red-400' : 'border-gray-200'"></textarea>
       <p *ngIf="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched"
         class="mt-1 text-sm text-red-500 flex items-center gap-1">
         <span class="material-symbols-outlined text-sm">error</span>
-        La description est requise (minimum 10 caractères)
+        Description is required (minimum 10 characters)
       </p>
     </div>
 
@@ -63,7 +63,7 @@
     <div *ngIf="isEdit">
       <label class="block text-sm font-medium text-gray-700 mb-1">
         <span class="material-symbols-outlined text-sm align-middle mr-1">flag</span>
-        Statut
+        Status
       </label>
       <select formControlName="status"
         class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all bg-white">
@@ -77,13 +77,14 @@
         class="flex items-center gap-2 px-6 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium">
         <span *ngIf="submitting" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
         <span *ngIf="!submitting" class="material-symbols-outlined text-xl">{{ isEdit ? 'save' : 'add_circle' }}</span>
-        {{ submitting ? 'En cours...' : (isEdit ? 'Enregistrer' : 'Créer') }}
+        {{ submitting ? 'Saving...' : (isEdit ? 'Save' : 'Create') }}
       </button>
       <button type="button" (click)="cancel()"
         class="flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all font-medium">
         <span class="material-symbols-outlined text-xl">close</span>
-        Annuler
+        Cancel
       </button>
     </div>
   </form>
 </div>
+

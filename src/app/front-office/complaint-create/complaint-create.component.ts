@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComplaintService } from '../../services/complaint.service';
@@ -46,12 +46,12 @@ export class ComplaintCreateComponent implements OnInit {
 
     this.complaintService.create(complaint).subscribe({
       next: () => {
-        this.successMessage = 'Réclamation soumise avec succès !';
+        this.successMessage = 'Complaint submitted successfully!';
         setTimeout(() => this.router.navigate(['/my-complaints']), 1500);
       },
       error: () => {
         this.submitting = false;
-        this.errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
+        this.errorMessage = 'An error occurred. Please try again.';
       }
     });
   }
@@ -60,3 +60,4 @@ export class ComplaintCreateComponent implements OnInit {
     this.router.navigate(['/my-complaints']);
   }
 }
+

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Complaint } from '../../models/complaint.model';
 import { ComplaintResponse } from '../../models/response.model';
@@ -47,7 +47,7 @@ export class ComplaintDetailComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.errorMessage = 'Réclamation introuvable.';
+        this.errorMessage = 'Complaint not found.';
         this.loading = false;
       }
     });
@@ -74,14 +74,14 @@ export class ComplaintDetailComponent implements OnInit {
       next: () => {
         this.newResponseMessage = '';
         this.submittingResponse = false;
-        this.successMessage = 'Réponse ajoutée avec succès !';
+        this.successMessage = 'Response added successfully!';
         this.loadResponses();
         this.loadComplaint(); // Reload to get updated status
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: () => {
         this.submittingResponse = false;
-        this.errorMessage = 'Erreur lors de l\'ajout de la réponse.';
+        this.errorMessage = 'Error while adding the response.';
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });
@@ -104,27 +104,27 @@ export class ComplaintDetailComponent implements OnInit {
       next: () => {
         this.editingResponseId = null;
         this.editResponseMessage = '';
-        this.successMessage = 'Réponse modifiée avec succès !';
+        this.successMessage = 'Response updated successfully!';
         this.loadResponses();
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: () => {
-        this.errorMessage = 'Erreur lors de la modification.';
+        this.errorMessage = 'Error while updating.';
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });
   }
 
   deleteResponse(id: number): void {
-    if (confirm('Supprimer cette réponse ?')) {
+    if (confirm('Delete this response?')) {
       this.responseService.delete(id).subscribe({
         next: () => {
-          this.successMessage = 'Réponse supprimée.';
+          this.successMessage = 'Response deleted.';
           this.loadResponses();
           setTimeout(() => this.successMessage = '', 3000);
         },
         error: () => {
-          this.errorMessage = 'Erreur lors de la suppression.';
+          this.errorMessage = 'Error while deleting.';
           setTimeout(() => this.errorMessage = '', 3000);
         }
       });
@@ -137,9 +137,9 @@ export class ComplaintDetailComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'EN_ATTENTE': return 'En attente';
-      case 'TRAITEE': return 'Traitée';
-      case 'REJETEE': return 'Rejetée';
+      case 'EN_ATTENTE': return 'Pending';
+      case 'TRAITEE': return 'Resolved';
+      case 'REJETEE': return 'Rejected';
       default: return status;
     }
   }
@@ -153,3 +153,4 @@ export class ComplaintDetailComponent implements OnInit {
     }
   }
 }
+

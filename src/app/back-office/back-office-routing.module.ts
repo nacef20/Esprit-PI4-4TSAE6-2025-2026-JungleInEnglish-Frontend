@@ -17,6 +17,9 @@ import { QuizStudentListComponent } from '../front-office/quiz-student-list/quiz
 import { QuizPassComponent } from '../front-office/quiz-pass/quiz-pass.component';
 import { AttemptHistoryComponent } from '../front-office/attempt-history/attempt-history.component';
 import { AttemptDetailStudentComponent } from '../front-office/attempt-detail/attempt-detail.component';
+import { ComplaintListComponent } from './complaint-list/complaint-list.component';
+import { ComplaintFormComponent } from './complaint-form/complaint-form.component';
+import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
 
 const routes: Routes = [
   {
@@ -99,6 +102,14 @@ const routes: Routes = [
       {
         path: 'student-attempts/:attemptId',
         component: AttemptDetailStudentComponent
+      },
+      {
+        path: 'complaints',
+        component: ComplaintListComponent
+      },
+      {
+        path: 'complaints/:id',
+        component: ComplaintDetailComponent
       },
       {
         path: 'gestionchatprive',

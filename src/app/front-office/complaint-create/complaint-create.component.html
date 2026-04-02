@@ -1,0 +1,91 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-4">
+  <div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <button (click)="cancel()" class="p-2 hover:bg-white rounded-lg transition-all shadow-sm bg-white/80">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">edit_document</span>
+        Soumettre une Réclamation
+      </h1>
+    </div>
+
+    <!-- Success -->
+    <div *ngIf="successMessage"
+      class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 animate-fade-in">
+      <span class="material-symbols-outlined">check_circle</span>
+      {{ successMessage }}
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage"
+      class="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 animate-fade-in">
+      <span class="material-symbols-outlined">error</span>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="complaintForm" (ngSubmit)="onSubmit()"
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="material-symbols-outlined text-sm align-middle mr-1 text-[#0ea37a]">title</span>
+          Titre de la réclamation *
+        </label>
+        <input formControlName="title" type="text" placeholder="Ex: Problème d'accès au cours..."
+          class="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all"
+          [ngClass]="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched ? 'border-red-300' : 'border-gray-200'" />
+        <p *ngIf="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched"
+          class="mt-1.5 text-sm text-red-500 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">error</span>
+          Le titre est requis (minimum 3 caractères)
+        </p>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="material-symbols-outlined text-sm align-middle mr-1 text-[#0ea37a]">description</span>
+          Description détaillée *
+        </label>
+        <textarea formControlName="description" rows="6"
+          placeholder="Décrivez votre problème en détail pour nous aider à le résoudre rapidement..."
+          class="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"
+          [ngClass]="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched ? 'border-red-300' : 'border-gray-200'"></textarea>
+        <p *ngIf="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched"
+          class="mt-1.5 text-sm text-red-500 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">error</span>
+          La description est requise (minimum 10 caractères)
+        </p>
+      </div>
+
+      <!-- Info box -->
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue-500 mt-0.5">info</span>
+        <p class="text-sm text-blue-700">
+          Votre réclamation sera soumise avec le statut <strong>"En attente"</strong>.
+          Vous recevrez une réponse dès qu'elle sera traitée.
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+        <button type="submit" [disabled]="submitting"
+          class="flex items-center gap-2 px-8 py-3 bg-[#0ea37a] text-white rounded-xl hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-md hover:shadow-lg">
+          <span *ngIf="submitting" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+          <span *ngIf="!submitting" class="material-symbols-outlined">send</span>
+          {{ submitting ? 'Envoi en cours...' : 'Soumettre' }}
+        </button>
+        <button type="button" (click)="cancel()"
+          class="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all font-medium">
+          <span class="material-symbols-outlined">close</span>
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

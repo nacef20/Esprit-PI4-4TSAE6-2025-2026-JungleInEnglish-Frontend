@@ -1,0 +1,100 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#0ea37a]">report</span>
+      Gestion des Réclamations
+    </h1>
+    <span class="text-sm text-gray-500">Espace admin: revue et réponse</span>
+  </div>
+
+  <!-- Search bar -->
+  <div class="relative">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+    <input type="text" placeholder="Rechercher une réclamation..." (input)="onSearch($event)"
+      class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+  </div>
+
+  <!-- Status filter -->
+  <div class="flex items-center gap-2 flex-wrap">
+    <span class="text-sm font-medium text-gray-500">Filtrer :</span>
+    <button (click)="onFilterStatus('')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === '' ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      Tout
+    </button>
+    <button (click)="onFilterStatus('EN_ATTENTE')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === 'EN_ATTENTE' ? 'bg-yellow-500 text-white border-yellow-500' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      <span class="material-symbols-outlined text-sm align-middle mr-1">hourglass_top</span>
+      En attente
+    </button>
+    <button (click)="onFilterStatus('TRAITEE')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === 'TRAITEE' ? 'bg-green-600 text-white border-green-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      <span class="material-symbols-outlined text-sm align-middle mr-1">check_circle</span>
+      Traitée
+    </button>
+    <button (click)="onFilterStatus('REJETEE')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === 'REJETEE' ? 'bg-red-500 text-white border-red-500' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      <span class="material-symbols-outlined text-sm align-middle mr-1">cancel</span>
+      Rejetée
+    </button>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="flex items-center justify-center py-16">
+    <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#0ea37a] border-t-transparent"></div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && filteredComplaints.length === 0" class="text-center py-16 text-gray-400">
+    <span class="material-symbols-outlined text-5xl mb-4 block">inbox</span>
+    <p class="text-lg">Aucune réclamation trouvée</p>
+    <p class="text-sm mt-1">Les réclamations créées par les étudiants s'affichent ici</p>
+  </div>
+
+  <!-- Cards grid -->
+  <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let complaint of filteredComplaints"
+      class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer group">
+
+      <!-- Status badge + Date -->
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1"
+          [ngClass]="{
+            'bg-yellow-100 text-yellow-700': complaint.status === 'EN_ATTENTE',
+            'bg-green-100 text-green-700': complaint.status === 'TRAITEE',
+            'bg-red-100 text-red-700': complaint.status === 'REJETEE'
+          }">
+          <span class="material-symbols-outlined text-sm">{{ getStatusIcon(complaint.status) }}</span>
+          {{ getStatusLabel(complaint.status) }}
+        </span>
+        <span class="text-xs text-gray-400">{{ complaint.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+
+      <!-- Title & description -->
+      <h3 class="text-lg font-semibold text-gray-800 mb-1 group-hover:text-[#0ea37a] transition-colors"
+        (click)="viewComplaint(complaint.id!)">
+        {{ complaint.title }}
+      </h3>
+      <p class="text-sm text-gray-500 mb-4 line-clamp-2">{{ complaint.description }}</p>
+
+      <!-- Responses count -->
+      <div *ngIf="complaint.responses" class="flex items-center gap-1 text-xs text-gray-400 mb-3">
+        <span class="material-symbols-outlined text-sm">chat</span>
+        {{ complaint.responses.length }} réponse(s)
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
+        <button (click)="viewComplaint(complaint.id!)"
+          class="flex-1 flex items-center justify-center gap-1 text-sm px-3 py-2 bg-[#0ea37a]/10 text-[#0ea37a] rounded-lg hover:bg-[#0ea37a]/20 transition-all font-medium">
+          <span class="material-symbols-outlined text-base">visibility</span>
+          Revoir / Répondre
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,140 @@
+<div class="max-w-3xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3">
+    <button (click)="goBack()" class="p-2 hover:bg-gray-100 rounded-lg transition-all">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#0ea37a]">description</span>
+      Détail de la Réclamation
+    </h1>
+  </div>
+
+  <!-- Success / Error messages -->
+  <div *ngIf="successMessage"
+    class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 animate-fade-in">
+    <span class="material-symbols-outlined">check_circle</span>
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage"
+    class="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 animate-fade-in">
+    <span class="material-symbols-outlined">error</span>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center justify-center py-16">
+    <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#0ea37a] border-t-transparent"></div>
+  </div>
+
+  <!-- Complaint card -->
+  <div *ngIf="complaint && !loading" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+
+    <!-- Status + Actions -->
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-semibold px-3 py-1.5 rounded-full flex items-center gap-1"
+        [ngClass]="{
+          'bg-yellow-100 text-yellow-700': complaint.status === 'EN_ATTENTE',
+          'bg-green-100 text-green-700': complaint.status === 'TRAITEE',
+          'bg-red-100 text-red-700': complaint.status === 'REJETEE'
+        }">
+        <span class="material-symbols-outlined text-sm">{{ getStatusIcon(complaint.status) }}</span>
+        {{ getStatusLabel(complaint.status) }}
+      </span>
+      <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Revue admin</span>
+    </div>
+
+    <!-- Title -->
+    <h2 class="text-xl font-bold text-gray-800">{{ complaint.title }}</h2>
+
+    <!-- Description -->
+    <p class="text-gray-600 leading-relaxed">{{ complaint.description }}</p>
+
+    <!-- Meta -->
+    <div class="flex items-center gap-4 text-sm text-gray-400 pt-3 border-t border-gray-100">
+      <span class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">calendar_today</span>
+        Créée le {{ complaint.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+      </span>
+      <span *ngIf="complaint.updatedAt" class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">update</span>
+        Mise à jour le {{ complaint.updatedAt | date:'dd/MM/yyyy à HH:mm' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Responses section -->
+  <div *ngIf="complaint && !loading" class="space-y-4">
+
+    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#0ea37a]">forum</span>
+      Réponses ({{ responses.length }})
+    </h3>
+
+    <!-- Add response form -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Ajouter une réponse</label>
+      <div class="flex gap-3">
+        <textarea [(ngModel)]="newResponseMessage" rows="2" placeholder="Écrivez votre réponse..."
+          class="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"></textarea>
+        <button (click)="addResponse()" [disabled]="submittingResponse || !newResponseMessage.trim()"
+          class="self-end px-5 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-1">
+          <span *ngIf="submittingResponse" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+          <span *ngIf="!submittingResponse" class="material-symbols-outlined text-base">send</span>
+          Envoyer
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty responses -->
+    <div *ngIf="responses.length === 0" class="text-center py-8 text-gray-400">
+      <span class="material-symbols-outlined text-4xl mb-2 block">chat_bubble_outline</span>
+      <p>Aucune réponse pour le moment</p>
+    </div>
+
+    <!-- Response list -->
+    <div *ngFor="let response of responses"
+      class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+
+      <!-- View mode -->
+      <div *ngIf="editingResponseId !== response.id">
+        <p class="text-gray-700 leading-relaxed">{{ response.message }}</p>
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+          <span class="text-xs text-gray-400 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">schedule</span>
+            {{ response.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+          </span>
+          <div class="flex items-center gap-1">
+            <button (click)="startEditResponse(response)"
+              class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Modifier">
+              <span class="material-symbols-outlined text-lg">edit</span>
+            </button>
+            <button (click)="deleteResponse(response.id!)"
+              class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Supprimer">
+              <span class="material-symbols-outlined text-lg">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit mode -->
+      <div *ngIf="editingResponseId === response.id" class="space-y-3">
+        <textarea [(ngModel)]="editResponseMessage" rows="3"
+          class="w-full px-4 py-2.5 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-300 outline-none transition-all resize-none"></textarea>
+        <div class="flex items-center gap-2">
+          <button (click)="saveEditResponse(response.id!)"
+            class="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-medium">
+            <span class="material-symbols-outlined text-base">save</span>
+            Sauvegarder
+          </button>
+          <button (click)="cancelEditResponse()"
+            class="flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all text-sm font-medium">
+            <span class="material-symbols-outlined text-base">close</span>
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -30,6 +30,10 @@ import { LessonsManagementComponent } from './pages/lessons-management/lessons-m
 import { LessonsListComponent } from '../components/lessons-list/lessons-list.component';
 import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
 
+import { ComplaintListComponent } from './complaint-list/complaint-list.component';
+import { ComplaintFormComponent } from './complaint-form/complaint-form.component';
+import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
+
 @NgModule({
   declarations: [
     BackOfficeComponent,
@@ -51,7 +55,10 @@ import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
     QuizStudentListComponent,
     QuizPassComponent,
     AttemptHistoryComponent,
-    AttemptDetailStudentComponent
+    AttemptDetailStudentComponent,
+    ComplaintListComponent,
+    ComplaintFormComponent,
+    ComplaintDetailComponent
   ],
   imports: [
     CommonModule,

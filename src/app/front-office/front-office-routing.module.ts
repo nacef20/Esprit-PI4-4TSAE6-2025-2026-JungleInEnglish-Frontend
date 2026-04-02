@@ -5,13 +5,19 @@ import { LoginComponent } from './login/login.component';
 import { FirstloginComponent } from './pages/Reset/firstlogin/firstlogin.component';
 import { ForgotpasswordComponent } from './pages/Reset/forgotpassword/forgotpassword.component';
 import { CoursesPageComponent } from '../back-office/pages/courses-page/courses-page.component';
+import { MyComplaintsComponent } from './my-complaints/my-complaints.component';
+import { ComplaintCreateComponent } from './complaint-create/complaint-create.component';
+import { ComplaintViewComponent } from './complaint-view/complaint-view.component';
 
 const routes: Routes = [
   { path: '', component: FrontOfficeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotpasswordComponent },
   { path: 'first-login', component: FirstloginComponent },
-   { path: 'courses', component: CoursesPageComponent },
+  { path: 'courses', component: CoursesPageComponent },
+  { path: 'my-complaints', component: MyComplaintsComponent },
+  { path: 'my-complaints/new', component: ComplaintCreateComponent },
+  { path: 'my-complaints/:id', component: ComplaintViewComponent },
 ];
 
 

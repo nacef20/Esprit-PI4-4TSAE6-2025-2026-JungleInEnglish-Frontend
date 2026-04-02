@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
@@ -24,6 +25,9 @@ import { CoursesListComponent } from '../components/courses-list/courses-list.co
 import { LessonsPublicComponent } from './pages/lessons-public/lessons-public.component'; // adjust path
 import { CoursesPageComponent } from '../back-office/pages/courses-page/courses-page.component';
 import { RouterModule } from '@angular/router';
+import { MyComplaintsComponent } from './my-complaints/my-complaints.component';
+import { ComplaintCreateComponent } from './complaint-create/complaint-create.component';
+import { ComplaintViewComponent } from './complaint-view/complaint-view.component';
 
 
 @NgModule({
@@ -42,12 +46,16 @@ import { RouterModule } from '@angular/router';
     FirstloginComponent,
     CoursesListComponent,
     LessonsPublicComponent,
-    CoursesPageComponent 
+    CoursesPageComponent,
+    MyComplaintsComponent,
+    ComplaintCreateComponent,
+    ComplaintViewComponent
   ],
   imports: [
     CommonModule,
     FrontOfficeRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     RouterModule
   ],

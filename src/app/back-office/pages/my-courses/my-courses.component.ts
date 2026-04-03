@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CoursesService } from '../../../services/courses.service';
 import { LessonsService } from '../../../services/lessons.service';
 import { Course } from '../../../models/course.model';
+import { AuthService } from '../../../auth/auth.service';
+
 
 @Component({
   selector: 'app-my-courses',
@@ -15,16 +17,18 @@ export class MyCoursesComponent implements OnInit {
   error: string | null = null;
   suggestedCourses: Course[] = [];
   loadingSuggested = false;
-
+  isStudent = false;
 
   constructor(
     private lessonsService: LessonsService,
-    private coursesService: CoursesService
+    private coursesService: CoursesService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
     this.loadMyCourses();
     this.loadSuggestedCourses();
+      this.isStudent = this.authService.isStudent();
   }
 
   loadMyCourses() {

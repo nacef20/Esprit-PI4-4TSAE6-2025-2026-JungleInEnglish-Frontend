@@ -29,6 +29,7 @@ import { CoursesManagementComponent } from './pages/courses-management/courses-m
 import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';
 import { LessonsListComponent } from '../components/lessons-list/lessons-list.component';
 import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
+import { FeedbackModule } from '../features/lessons/feedback.module';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
     QuizStudentListComponent,
     QuizPassComponent,
     AttemptHistoryComponent,
-    AttemptDetailStudentComponent
+    AttemptDetailStudentComponent,
+    
   ],
   imports: [
     CommonModule,
@@ -59,7 +61,8 @@ import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
     ReactiveFormsModule,
     BackOfficeRoutingModule,
     NgChartsModule,
-    SalleModule
+    SalleModule,
+    FeedbackModule
   ]
 })
 export class BackOfficeModule { }

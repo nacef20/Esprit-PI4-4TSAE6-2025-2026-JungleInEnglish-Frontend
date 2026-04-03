@@ -6,4 +6,5 @@ export interface Lesson {
   duration?: string;
   orderIndex: number;
   courseId: number;
+  professorId?: string;
 }

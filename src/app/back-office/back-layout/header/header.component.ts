@@ -2,6 +2,8 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/auth.service';
+import { FeedbackService } from '../../../services/feedback.service';
+import { ProfessorBadgeResponse } from '../../../models/feedback.model';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -9,7 +11,7 @@ import { AuthService } from '../../../auth/auth.service';
 })
 export class HeaderComponent {
 
-userName: string = 'Jean Dupont';
+  userName: string = 'chirine dardouri';
   userRole: string = 'Administrateur';
   userAvatar: string = 'assets/avatar.jpg'; // Chemin vers votre image
 
@@ -19,22 +21,35 @@ userName: string = 'Jean Dupont';
   isDarkMode: boolean = false;
   notificationCount: number = 3;
   searchQuery: string = '';
-currentUser: any = null;
-  constructor(private router: Router,private authService: AuthService) {}
+  currentUser: any = null;
+  badgeData: ProfessorBadgeResponse | null = null;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private feedbackService: FeedbackService
+  ) { }
 
   ngOnInit(): void {
     // Charger le thème sauvegardé
     this.loadTheme();
     this.currentUser = this.authService.getUserInfo();
-    // Vous pouvez charger les données utilisateur depuis un service
-    // this.loadUserData();
+
+    if (this.currentUser && this.authService.isTeacher()) {
+      this.feedbackService.getProfessorBadge(this.currentUser.id).subscribe({
+        next: (res) => {
+          this.badgeData = res;
+        },
+        error: (err) => console.error('Error fetching badge', err)
+      });
+    }
   }
 
   // Fermer les menus quand on clique ailleurs
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    
+
     if (!target.closest('.user-menu')) {
       this.isUserMenuOpen = false;
     }
@@ -55,7 +70,7 @@ currentUser: any = null;
   // Toggle dark mode
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
-    
+
     if (this.isDarkMode) {
       document.body.classList.add('dark-mode');
       localStorage.setItem('theme', 'dark');
@@ -68,7 +83,7 @@ currentUser: any = null;
   // Load theme from localStorage
   loadTheme(): void {
     const savedTheme = localStorage.getItem('theme');
-    
+
     if (savedTheme === 'dark') {
       this.isDarkMode = true;
       document.body.classList.add('dark-mode');
@@ -85,7 +100,7 @@ currentUser: any = null;
   }
 
 
-  
+
 
   // Logout
   logout() {

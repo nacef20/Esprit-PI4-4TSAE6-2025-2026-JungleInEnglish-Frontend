@@ -263,29 +263,14 @@
         </p>
       </div>
 
-      <!-- Static Feedback -->
-      <div class="block feedback">
-        <div class="feedback-head">
-          <h4>Feedback (Coming Soon)</h4>
-          <button class="btn-secondary" disabled>+ Add Review</button>
-        </div>
-
-        <div class="stars">★★★★★ <span class="muted">(static preview)</span></div>
-
-        <div class="review">
-          <p class="name">Student A</p>
-          <p class="text">Very clear explanation, loved the examples!</p>
-        </div>
-
-        <div class="review">
-          <p class="name">Student B</p>
-          <p class="text">The lesson was easy to follow. Great pacing.</p>
-        </div>
-
-        <div class="review">
-          <p class="name">Student C</p>
-          <p class="text">Can you add a short quiz at the end?</p>
-        </div>
+      <!-- Live Feedback -->
+      <div class="block">
+        <app-lesson-feedback
+          *ngIf="selectedLesson?.id"
+          [lessonId]="selectedLesson!.id!"
+          [courseId]="courseId"
+          [professorId]="selectedLesson!.professorId || ''">
+        </app-lesson-feedback>
       </div>
     </div>
   </div>

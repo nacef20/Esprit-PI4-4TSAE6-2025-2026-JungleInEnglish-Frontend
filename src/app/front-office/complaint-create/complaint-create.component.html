@@ -37,13 +37,7 @@
           Complaint title *
         </label>
         <input formControlName="title" type="text" placeholder="Example: Problem accessing a course..."
-          class="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all"
-          [ngClass]="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched ? 'border-red-300' : 'border-gray-200'" />
-        <p *ngIf="complaintForm.get('title')?.invalid && complaintForm.get('title')?.touched"
-          class="mt-1.5 text-sm text-red-500 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">error</span>
-          Title is required (minimum 3 characters)
-        </p>
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
       </div>
 
       <!-- Description -->
@@ -54,13 +48,7 @@
         </label>
         <textarea formControlName="description" rows="6"
           placeholder="Describe your issue in detail so we can resolve it quickly..."
-          class="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"
-          [ngClass]="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched ? 'border-red-300' : 'border-gray-200'"></textarea>
-        <p *ngIf="complaintForm.get('description')?.invalid && complaintForm.get('description')?.touched"
-          class="mt-1.5 text-sm text-red-500 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">error</span>
-          Description is required (minimum 10 characters)
-        </p>
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"></textarea>
       </div>
 
       <!-- Info box -->

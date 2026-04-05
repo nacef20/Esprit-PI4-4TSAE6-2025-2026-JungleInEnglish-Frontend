@@ -65,8 +65,6 @@ export class ComplaintDetailComponent implements OnInit {
   }
 
   addResponse(): void {
-    if (!this.newResponseMessage.trim()) return;
-
     this.submittingResponse = true;
     const response: ComplaintResponse = { message: this.newResponseMessage };
 
@@ -98,8 +96,6 @@ export class ComplaintDetailComponent implements OnInit {
   }
 
   saveEditResponse(id: number): void {
-    if (!this.editResponseMessage.trim()) return;
-
     this.responseService.update(id, { message: this.editResponseMessage }).subscribe({
       next: () => {
         this.editingResponseId = null;

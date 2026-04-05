@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ComplaintService } from '../../services/complaint.service';
 import { ComplaintStatus } from '../../models/complaint.model';
 
@@ -24,17 +24,12 @@ export class ComplaintCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.complaintForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(10)]]
+      title: [''],
+      description: ['']
     });
   }
 
   onSubmit(): void {
-    if (this.complaintForm.invalid) {
-      this.complaintForm.markAllAsTouched();
-      return;
-    }
-
     this.submitting = true;
     this.successMessage = '';
     this.errorMessage = '';

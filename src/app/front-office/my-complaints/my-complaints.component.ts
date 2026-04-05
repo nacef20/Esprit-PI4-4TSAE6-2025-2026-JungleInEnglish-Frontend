@@ -1,5 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Complaint } from '../../models/complaint.model';
 import { ComplaintService } from '../../services/complaint.service';
 
@@ -14,6 +15,7 @@ export class MyComplaintsComponent implements OnInit {
   filteredComplaints: Complaint[] = [];
   statusFilter = '';
   loading = false;
+  deletingComplaintIds = new Set<number>();
 
   constructor(
     private complaintService: ComplaintService,
@@ -57,6 +59,51 @@ export class MyComplaintsComponent implements OnInit {
 
   viewComplaint(id: number): void {
     this.router.navigate(['/my-complaints', id]);
+  }
+
+  deleteComplaint(id: number, event: Event): void {
+    event.stopPropagation();
+
+    const confirmed = window.confirm('Are you sure you want to delete this complaint?');
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingComplaintIds.add(id);
+    this.complaintService.delete(id).subscribe({
+      next: () => {
+        this.complaints = this.complaints.filter(c => c.id !== id);
+        this.applyFilter();
+        this.deletingComplaintIds.delete(id);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.deletingComplaintIds.delete(id);
+        const message = this.getBackendErrorMessage(error) || 'Unable to delete complaint. Please try again.';
+        alert(message);
+      }
+    });
+  }
+
+  isDeleting(id: number): boolean {
+    return this.deletingComplaintIds.has(id);
+  }
+
+  private getBackendErrorMessage(error: HttpErrorResponse): string {
+    const payload = error?.error;
+
+    if (!payload) {
+      return '';
+    }
+
+    if (typeof payload === 'string') {
+      return payload;
+    }
+
+    if (typeof payload.message === 'string' && payload.message.trim()) {
+      return payload.message;
+    }
+
+    return '';
   }
 
   getStatusLabel(status: string): string {

@@ -94,6 +94,12 @@
           <span class="material-symbols-outlined text-base">visibility</span>
           Review / Respond
         </button>
+        <button (click)="deleteComplaint(complaint.id!, $event)"
+          [disabled]="isDeleting(complaint.id!)"
+          class="flex items-center justify-center gap-1 text-sm px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed">
+          <span class="material-symbols-outlined text-base">delete</span>
+          {{ isDeleting(complaint.id!) ? 'Deleting...' : 'Delete' }}
+        </button>
       </div>
     </div>
   </div>

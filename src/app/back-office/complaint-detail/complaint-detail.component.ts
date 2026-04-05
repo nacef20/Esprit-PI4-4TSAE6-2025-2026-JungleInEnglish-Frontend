@@ -20,6 +20,7 @@ export class ComplaintDetailComponent implements OnInit {
   // Response form
   newResponseMessage = '';
   submittingResponse = false;
+  rejectingComplaint = false;
   editingResponseId: number | null = null;
   editResponseMessage = '';
 
@@ -125,6 +126,34 @@ export class ComplaintDetailComponent implements OnInit {
         }
       });
     }
+  }
+
+  rejectComplaint(): void {
+    if (!this.complaint || this.complaint.status === 'REJETEE') {
+      return;
+    }
+
+    if (!confirm('Reject this complaint?')) {
+      return;
+    }
+
+    this.rejectingComplaint = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    this.complaintService.reject(this.complaintId).subscribe({
+      next: (updatedComplaint) => {
+        this.complaint = updatedComplaint;
+        this.rejectingComplaint = false;
+        this.successMessage = 'Complaint rejected successfully!';
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (error) => {
+        this.rejectingComplaint = false;
+        this.errorMessage = this.getBackendErrorMessage(error, 'Error while rejecting complaint.');
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
   }
 
   goBack(): void {

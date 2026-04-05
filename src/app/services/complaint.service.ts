@@ -26,6 +26,10 @@ export class ComplaintService {
     return this.http.put<Complaint>(`${this.apiUrl}/${id}`, complaint);
   }
 
+  reject(id: number): Observable<Complaint> {
+    return this.http.put<Complaint>(`${this.apiUrl}/${id}/reject`, {});
+  }
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

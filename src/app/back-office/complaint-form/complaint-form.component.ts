@@ -63,9 +63,9 @@ export class ComplaintFormComponent implements OnInit {
         this.successMessage = this.isEdit ? 'Complaint updated successfully!' : 'Complaint created successfully!';
         setTimeout(() => this.router.navigate(['/admin/complaints']), 1500);
       },
-      error: () => {
+      error: (error) => {
         this.submitting = false;
-        this.errorMessage = 'An error occurred. Please try again.';
+        this.errorMessage = this.getBackendErrorMessage(error, 'An error occurred. Please try again.');
       }
     });
   }
@@ -81,6 +81,36 @@ export class ComplaintFormComponent implements OnInit {
       case 'REJETEE': return 'Rejected';
       default: return status;
     }
+  }
+
+  private getBackendErrorMessage(error: any, fallback: string): string {
+    const payload = error?.error;
+
+    if (typeof payload === 'string' && payload.trim()) {
+      return payload;
+    }
+
+    if (payload && typeof payload === 'object') {
+      if (typeof payload.error === 'string' && payload.error.trim()) {
+        return payload.error;
+      }
+
+      for (const field of ['title', 'description', 'message']) {
+        if (typeof payload[field] === 'string' && payload[field].trim()) {
+          return payload[field];
+        }
+      }
+
+      const firstMessage = Object.values(payload).find(
+        (value) => typeof value === 'string' && value.trim()
+      ) as string | undefined;
+
+      if (firstMessage) {
+        return firstMessage;
+      }
+    }
+
+    return fallback;
   }
 }
 

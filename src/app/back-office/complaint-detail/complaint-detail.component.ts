@@ -77,9 +77,9 @@ export class ComplaintDetailComponent implements OnInit {
         this.loadComplaint(); // Reload to get updated status
         setTimeout(() => this.successMessage = '', 3000);
       },
-      error: () => {
+      error: (error) => {
         this.submittingResponse = false;
-        this.errorMessage = 'Error while adding the response.';
+        this.errorMessage = this.getBackendErrorMessage(error, 'Error while adding the response.');
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });
@@ -104,8 +104,8 @@ export class ComplaintDetailComponent implements OnInit {
         this.loadResponses();
         setTimeout(() => this.successMessage = '', 3000);
       },
-      error: () => {
-        this.errorMessage = 'Error while updating.';
+      error: (error) => {
+        this.errorMessage = this.getBackendErrorMessage(error, 'Error while updating.');
         setTimeout(() => this.errorMessage = '', 3000);
       }
     });
@@ -147,6 +147,36 @@ export class ComplaintDetailComponent implements OnInit {
       case 'REJETEE': return 'cancel';
       default: return 'help';
     }
+  }
+
+  private getBackendErrorMessage(error: any, fallback: string): string {
+    const payload = error?.error;
+
+    if (typeof payload === 'string' && payload.trim()) {
+      return payload;
+    }
+
+    if (payload && typeof payload === 'object') {
+      if (typeof payload.error === 'string' && payload.error.trim()) {
+        return payload.error;
+      }
+
+      for (const field of ['title', 'description', 'message']) {
+        if (typeof payload[field] === 'string' && payload[field].trim()) {
+          return payload[field];
+        }
+      }
+
+      const firstMessage = Object.values(payload).find(
+        (value) => typeof value === 'string' && value.trim()
+      ) as string | undefined;
+
+      if (firstMessage) {
+        return firstMessage;
+      }
+    }
+
+    return fallback;
   }
 }
 

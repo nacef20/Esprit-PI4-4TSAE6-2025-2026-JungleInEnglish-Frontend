@@ -1,0 +1,110 @@
+<div class="auth">
+  <div class="bg">
+    <div class="blob"></div>
+    <div class="blob b2"></div>
+    <div class="grid"></div>
+  </div>
+
+  <div class="card"
+       (mousemove)="onTilt($event)"
+       (mouseleave)="resetTilt()"
+       [style.--rx]="tilt.rx"
+       [style.--ry]="tilt.ry">
+
+    <div class="card-grid">
+
+      <!-- LEFT: White form -->
+      <div class="left">
+        <div class="title">
+          <h1>Welcome back</h1>
+          <p>Sign in to continue</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" #f="ngForm" class="form">
+
+          <label class="field">
+            <span>Email</span>
+            <input
+              type="email"
+              name="email"
+              [(ngModel)]="model.email"
+              placeholder="name@example.com"
+              required
+              autocomplete="email"
+            />
+          </label>
+
+          <label class="field">
+            <span>Password</span>
+
+            <div class="password">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                name="password"
+                [(ngModel)]="model.password"
+                placeholder="••••••••"
+                required
+                minlength="6"
+                autocomplete="current-password"
+              />
+
+              <button
+                type="button"
+                class="icon-btn"
+                (click)="showPassword = !showPassword"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+
+                <!-- Eye -->
+                <svg *ngIf="!showPassword" viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                  <path fill="currentColor"
+                    d="M12 5c5.5 0 9.7 4 11 7-1.3 3-5.5 7-11 7S2.3 15 1 12c1.3-3 5.5-7 11-7Zm0 2C7.8 7 4.4 10 3.2 12 4.4 14 7.8 17 12 17s7.6-3 8.8-5C19.6 10 16.2 7 12 7Zm0 2.5A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5Z"/>
+                </svg>
+
+                <!-- Eye Off -->
+                <svg *ngIf="showPassword" viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                  <path fill="currentColor"
+                    d="M2.1 3.5 3.5 2.1 21.9 20.5 20.5 21.9l-2.2-2.2c-1.7.8-3.7 1.3-6.3 1.3-5.5 0-9.7-4-11-7 1-2.3 3.3-5 6.6-6.3L2.1 3.5Zm9.9 5.6 4.4 4.4A2.5 2.5 0 0 0 12 9.1Zm-7.8 2.9C5.4 14 8.8 17 12 17c1.6 0 3-.3 4.1-.8l-1.8-1.8c-.7.3-1.5.4-2.3.3a4.5 4.5 0 0 1-3.9-3.9c-.1-.8 0-1.6.3-2.3L6.7 7.4c-1.9 1.1-3.4 2.9-4.5 4.6Zm16.6 0c-.6-1.2-1.7-2.6-3.2-3.7l-1.4-1.4c2.2 1.2 3.9 3.2 4.6 4.7Z"/>
+                </svg>
+
+              </button>
+            </div>
+          </label>
+
+          <div class="links">
+            <a class="link" routerLink="/front-office/forgot-password">Forgot password?</a>
+            <a class="link subtle" routerLink="/front-office/first-login">First login? Create account</a>
+          </div>
+
+          <button 
+  class="btn" 
+  type="submit"
+  [disabled]="f.invalid || loading">
+  <span *ngIf="!loading">Sign in</span>
+  <span *ngIf="loading">Signing in…</span>
+</button>
+
+
+          <p class="hint" *ngIf="error">{{ error }}</p>
+        </form>
+      </div>
+
+      <!-- RIGHT: Big green brand -->
+      <div class="right">
+        <div class="brand-big">
+          <div class="brand-logo-big">J</div>
+
+          <div class="brand-name-big">
+            <div class="big">Jungle</div>
+            <div class="small">in english</div>
+          </div>
+        </div>
+
+        <div class="right-note">
+          <div class="pill">Secure Login</div>
+         
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

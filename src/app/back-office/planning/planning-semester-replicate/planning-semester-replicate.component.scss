@@ -1,0 +1,517 @@
+// =====================================================================
+// Planning Semester Replicate Component – Styles
+// =====================================================================
+
+// ---- Variables ----
+$primary:     #667eea;
+$primary-dark:#5a67d8;
+$green:       #48bb78;
+$green-dark:  #38a169;
+$orange:      #ed8936;
+$red:         #e53e3e;
+$purple:      #9f7aea;
+$teal:        #4fd1c5;
+$blue:        #4299e1;
+
+// ---- Container ----
+.replicate-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  min-height: 100vh;
+}
+
+// ---- Header ----
+.planning-header {
+  margin-bottom: 1.5rem;
+
+  .header-content {
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 0.4rem;
+    svg { stroke: $primary; }
+  }
+
+  .page-subtitle {
+    margin: 0;
+    color: #718096;
+    font-size: 0.95rem;
+    padding-left: 2.75rem;
+  }
+}
+
+// ---- Cards ----
+.form-card,
+.result-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  margin-bottom: 1.5rem;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 1.25rem;
+
+  svg { stroke: $primary; flex-shrink: 0; }
+
+  &--created svg { stroke: $green; }
+  &--ignored  svg { stroke: $orange; }
+  &--blocked  svg { stroke: $red; }
+}
+
+.card-description {
+  color: #718096;
+  font-size: 0.9rem;
+  margin: -0.75rem 0 1rem;
+}
+
+// ---- Form grid ----
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.field-hint {
+  font-weight: 400;
+  color: #a0aec0;
+  font-size: 0.8rem;
+  margin-left: 0.3rem;
+}
+
+.field-description {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin: 0;
+}
+
+.input-field {
+  padding: 0.6rem 0.9rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #2d3748;
+  background: #f7fafc;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background: white;
+  }
+}
+
+// ---- Add row ----
+.add-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  .input-field { flex: 1; }
+}
+
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  background: $primary;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) { background: $primary-dark; }
+  &:active:not(:disabled) { transform: scale(0.97); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ---- Tag list ----
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  
+  &-holiday {
+    background: #fefcbf;
+    color: #744210;
+    border: 1px solid #f6e05e;
+    svg { stroke: #d69e2e; }
+  }
+
+  &-exam {
+    background: #fed7d7;
+    color: #742a2a;
+    border: 1px solid #fc8181;
+    svg { stroke: $red; }
+  }
+
+  &-blocked {
+    background: #fed7d7;
+    color: #742a2a;
+    border: 1px solid #fc8181;
+    svg { stroke: $red; }
+  }
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+  margin-left: 0.2rem;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 1; }
+
+  svg { stroke: currentColor; }
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  margin: 0.5rem 0 0;
+  font-style: italic;
+}
+
+// ---- Alert ----
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+
+  &-danger {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #fc8181;
+    svg { stroke: $red; flex-shrink: 0; margin-top: 1px; }
+  }
+}
+
+// ---- Action bar ----
+.action-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+// ---- Buttons ----
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.5rem;
+  background: $primary;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.45);
+  }
+  &:active:not(:disabled) { transform: scale(0.98); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+
+  &.btn-launch { min-width: 220px; justify-content: center; }
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.4rem;
+  background: white;
+  color: #4a5568;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: $primary;
+    color: $primary;
+    background: #f0f4ff;
+  }
+}
+
+// ---- Spinner ----
+.spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ---- Result banner ----
+.result-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+  color: #22543d;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 1rem 1.75rem;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 14px rgba(72, 187, 120, 0.3);
+
+  svg { stroke: #22543d; }
+}
+
+// ---- Stats grid ----
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  border-top: 4px solid transparent;
+
+  &-blue   { border-top-color: $blue; }
+  &-green  { border-top-color: $green; }
+  &-orange { border-top-color: $orange; }
+  &-red    { border-top-color: $red; }
+  &-purple { border-top-color: $purple; }
+}
+
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #2d3748;
+  line-height: 1;
+}
+
+.stat-unit {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 500;
+  margin-top: 0.4rem;
+}
+
+// ---- Week accordion ----
+.week-accordion {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: #f7fafc;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+
+  &:hover { background: #edf2f7; }
+
+  &--warn {
+    background: #fffbeb;
+    &:hover { background: #fef3c7; }
+  }
+}
+
+.accordion-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.accordion-chevron {
+  transition: transform 0.2s;
+  stroke: #a0aec0;
+  &.open { transform: rotate(90deg); }
+}
+
+.accordion-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #2d3748;
+  text-transform: capitalize;
+}
+
+.accordion-body {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  background: white;
+  overflow-x: auto;
+}
+
+// ---- Badge count ----
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #edf2f7;
+  color: #4a5568;
+
+  &-green  { background: #c6f6d5; color: #22543d; }
+  &-orange { background: #feebc8; color: #7b341e; }
+}
+
+// ---- Sessions table ----
+.sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: #f7fafc;
+    color: #718096;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #f0f4f8;
+    color: #2d3748;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f7fafc; }
+}
+
+// ---- Pills ----
+.pill {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  &-blue   { background: #bee3f8; color: #2a4365; }
+  &-purple { background: #e9d8fd; color: #44337a; }
+  &-teal   { background: #b2f5ea; color: #234e52; }
+}
+
+// ---- Status badge ----
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+
+  &.status-planifie { background: #c6f6d5; color: #22543d; }
+}
+
+// ---- Raisons list ----
+.raisons-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.raison-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #744210;
+  background: #fffbeb;
+  border: 1px solid #f6e05e;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+
+  svg { stroke: $orange; flex-shrink: 0; margin-top: 1px; }
+}

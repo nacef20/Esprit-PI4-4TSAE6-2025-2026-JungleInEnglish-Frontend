@@ -15,6 +15,10 @@ export class ComplaintListComponent implements OnInit {
   filteredComplaints: Complaint[] = [];
   statusFilter: ComplaintStatus | '' = '';
   loading = false;
+  currentPage = 1;
+  pageSize = 6;
+  totalElements = 0;
+  totalPages = 0;
   deletingComplaintIds = new Set<number>();
 
   constructor(private complaintService: ComplaintService, private router: Router) {}
@@ -25,13 +29,13 @@ export class ComplaintListComponent implements OnInit {
 
   loadComplaints(): void {
     this.loading = true;
-    const request$ = this.statusFilter
-      ? this.complaintService.getByStatus(this.statusFilter)
-      : this.complaintService.getAll();
+    const request$ = this.complaintService.getPaged(this.currentPage - 1, this.pageSize, this.statusFilter);
 
     request$.subscribe({
-      next: (data) => {
-        this.complaints = data;
+      next: (pageData) => {
+        this.complaints = pageData.content;
+        this.totalElements = pageData.totalElements;
+        this.totalPages = pageData.totalPages;
         this.applyFilters();
         this.loading = false;
       },
@@ -47,7 +51,23 @@ export class ComplaintListComponent implements OnInit {
 
   onFilterStatus(status: string): void {
     this.statusFilter = status as ComplaintStatus | '';
+    this.currentPage = 1;
     this.loadComplaints();
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadComplaints();
+    }
   }
 
   viewComplaint(id: number): void {
@@ -62,9 +82,14 @@ export class ComplaintListComponent implements OnInit {
       return;
     }
 
+    const wasLastItemOnPage = this.filteredComplaints.length === 1 && this.currentPage > 1;
+
     this.deletingComplaintIds.add(id);
     this.complaintService.delete(id).subscribe({
       next: () => {
+        if (wasLastItemOnPage) {
+          this.currentPage -= 1;
+        }
         this.loadComplaints();
         this.deletingComplaintIds.delete(id);
       },

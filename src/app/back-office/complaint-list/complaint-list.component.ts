@@ -1,50 +1,32 @@
-﻿import { Component, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Complaint } from '../../models/complaint.model';
+import { Complaint, ComplaintStatus } from '../../models/complaint.model';
 import { ComplaintService } from '../../services/complaint.service';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-complaint-list',
   templateUrl: './complaint-list.component.html',
   styleUrls: ['./complaint-list.component.scss']
 })
-export class ComplaintListComponent implements OnInit, OnDestroy {
+export class ComplaintListComponent implements OnInit {
 
   complaints: Complaint[] = [];
   filteredComplaints: Complaint[] = [];
-  searchTerm = '';
-  statusFilter = '';
+  statusFilter: ComplaintStatus | '' = '';
   loading = false;
   deletingComplaintIds = new Set<number>();
-  private searchSubject = new Subject<string>();
-  private destroy$ = new Subject<void>();
 
   constructor(private complaintService: ComplaintService, private router: Router) {}
 
   ngOnInit(): void {
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$)
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.loadComplaints();
-    });
     this.loadComplaints();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   loadComplaints(): void {
     this.loading = true;
-    const request$ = this.searchTerm.trim()
-      ? this.complaintService.searchByName(this.searchTerm.trim())
+    const request$ = this.statusFilter
+      ? this.complaintService.getByStatus(this.statusFilter)
       : this.complaintService.getAll();
 
     request$.subscribe({
@@ -60,23 +42,12 @@ export class ComplaintListComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    let result = [...this.complaints];
-
-    if (this.statusFilter) {
-      result = result.filter(c => c.status === this.statusFilter);
-    }
-
-    this.filteredComplaints = result;
-  }
-
-  onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchSubject.next(value);
+    this.filteredComplaints = [...this.complaints];
   }
 
   onFilterStatus(status: string): void {
-    this.statusFilter = status;
-    this.applyFilters();
+    this.statusFilter = status as ComplaintStatus | '';
+    this.loadComplaints();
   }
 
   viewComplaint(id: number): void {
@@ -94,8 +65,7 @@ export class ComplaintListComponent implements OnInit, OnDestroy {
     this.deletingComplaintIds.add(id);
     this.complaintService.delete(id).subscribe({
       next: () => {
-        this.complaints = this.complaints.filter(c => c.id !== id);
-        this.applyFilters();
+        this.loadComplaints();
         this.deletingComplaintIds.delete(id);
       },
       error: (error: HttpErrorResponse) => {

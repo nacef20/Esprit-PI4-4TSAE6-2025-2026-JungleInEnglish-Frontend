@@ -1,26 +1,21 @@
-﻿import { Component, OnDestroy, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Complaint } from '../../models/complaint.model';
+import { Complaint, ComplaintStatus } from '../../models/complaint.model';
 import { ComplaintService } from '../../services/complaint.service';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-complaints',
   templateUrl: './my-complaints.component.html',
   styleUrls: ['./my-complaints.component.scss']
 })
-export class MyComplaintsComponent implements OnInit, OnDestroy {
+export class MyComplaintsComponent implements OnInit {
 
   complaints: Complaint[] = [];
   filteredComplaints: Complaint[] = [];
-  searchTerm = '';
-  statusFilter = '';
+  statusFilter: ComplaintStatus | '' = '';
   loading = false;
   deletingComplaintIds = new Set<number>();
-  private searchSubject = new Subject<string>();
-  private destroy$ = new Subject<void>();
 
   constructor(
     private complaintService: ComplaintService,
@@ -28,27 +23,13 @@ export class MyComplaintsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.searchSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$)
-    ).subscribe(term => {
-      this.searchTerm = term;
-      this.loadComplaints();
-    });
-
     this.loadComplaints();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   loadComplaints(): void {
     this.loading = true;
-    const request$ = this.searchTerm.trim()
-      ? this.complaintService.searchByName(this.searchTerm.trim())
+    const request$ = this.statusFilter
+      ? this.complaintService.getByStatus(this.statusFilter)
       : this.complaintService.getAll();
 
     request$.subscribe({
@@ -64,21 +45,12 @@ export class MyComplaintsComponent implements OnInit, OnDestroy {
   }
 
   applyFilter(): void {
-    if (this.statusFilter) {
-      this.filteredComplaints = this.complaints.filter(c => c.status === this.statusFilter);
-    } else {
-      this.filteredComplaints = [...this.complaints];
-    }
+    this.filteredComplaints = [...this.complaints];
   }
 
   onFilterStatus(status: string): void {
-    this.statusFilter = status;
-    this.applyFilter();
-  }
-
-  onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchSubject.next(value);
+    this.statusFilter = status as ComplaintStatus | '';
+    this.loadComplaints();
   }
 
   newComplaint(): void {
@@ -100,8 +72,7 @@ export class MyComplaintsComponent implements OnInit, OnDestroy {
     this.deletingComplaintIds.add(id);
     this.complaintService.delete(id).subscribe({
       next: () => {
-        this.complaints = this.complaints.filter(c => c.id !== id);
-        this.applyFilter();
+        this.loadComplaints();
         this.deletingComplaintIds.delete(id);
       },
       error: (error: HttpErrorResponse) => {

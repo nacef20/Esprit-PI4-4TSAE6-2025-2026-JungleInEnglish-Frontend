@@ -37,12 +37,4 @@ export class ComplaintService {
   getByStatus(status: ComplaintStatus): Observable<Complaint[]> {
     return this.http.get<Complaint[]>(`${this.apiUrl}/status/${status}`);
   }
-
-  searchByName(name: string): Observable<Complaint[]> {
-    return this.http.get<Complaint[]>(`${this.apiUrl}/search?name=${encodeURIComponent(name)}`);
-  }
-
-  searchByTitle(title: string): Observable<Complaint[]> {
-    return this.searchByName(title);
-  }
 }

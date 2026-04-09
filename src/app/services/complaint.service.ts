@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Complaint, ComplaintStatus } from '../models/complaint.model';
+import { ComplaintAiAssistRequest, ComplaintAiAssistResponse } from '../models/complaint-ai-assist.model';
 import { ComplaintDashboardStats, ComplaintStatsPeriod } from '../models/complaint-dashboard-stats.model';
 import { Page } from './quiz.service';
 
@@ -50,5 +51,9 @@ export class ComplaintService {
 
   getDashboardStats(period: ComplaintStatsPeriod = 'MONTH'): Observable<ComplaintDashboardStats> {
     return this.http.get<ComplaintDashboardStats>(`${this.apiUrl}/stats/dashboard?period=${period}`);
+  }
+
+  assistTextWithAi(payload: ComplaintAiAssistRequest): Observable<ComplaintAiAssistResponse> {
+    return this.http.post<ComplaintAiAssistResponse>(`${this.apiUrl}/ai/assist`, payload);
   }
 }

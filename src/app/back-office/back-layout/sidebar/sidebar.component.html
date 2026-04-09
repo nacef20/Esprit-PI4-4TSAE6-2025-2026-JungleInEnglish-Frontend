@@ -166,13 +166,27 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute.includes('/admin/complaints')" [routerLink]="['/admin/complaints']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/complaints' || currentRoute.startsWith('/admin/complaints?')" [routerLink]="['/admin/complaints']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </div>
           <span class="nav-link__text">Complaints</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/complaints/stats')" [routerLink]="['/admin/complaints/stats']" routerLinkActive="active">
+          <div class="nav-link__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <span class="nav-link__text">Complaints Stats</span>
           <div class="nav-link__indicator"></div>
         </a>
       </li>

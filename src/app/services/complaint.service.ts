@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Complaint, ComplaintStatus } from '../models/complaint.model';
+import { ComplaintDashboardStats, ComplaintStatsPeriod } from '../models/complaint-dashboard-stats.model';
 import { Page } from './quiz.service';
 
 @Injectable({ providedIn: 'root' })
@@ -45,5 +46,9 @@ export class ComplaintService {
       url += `&status=${status}`;
     }
     return this.http.get<Page<Complaint>>(url);
+  }
+
+  getDashboardStats(period: ComplaintStatsPeriod = 'MONTH'): Observable<ComplaintDashboardStats> {
+    return this.http.get<ComplaintDashboardStats>(`${this.apiUrl}/stats/dashboard?period=${period}`);
   }
 }

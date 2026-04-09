@@ -20,6 +20,7 @@ import { AttemptDetailStudentComponent } from '../front-office/attempt-detail/at
 import { ComplaintListComponent } from './complaint-list/complaint-list.component';
 import { ComplaintFormComponent } from './complaint-form/complaint-form.component';
 import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
+import { ComplaintStatsDashboardComponent } from './complaint-stats-dashboard/complaint-stats-dashboard.component';
 
 const routes: Routes = [
   {
@@ -106,6 +107,10 @@ const routes: Routes = [
       {
         path: 'complaints',
         component: ComplaintListComponent
+      },
+      {
+        path: 'complaints/stats',
+        component: ComplaintStatsDashboardComponent
       },
       {
         path: 'complaints/:id',

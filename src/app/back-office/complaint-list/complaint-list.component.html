@@ -1,11 +1,18 @@
 ﻿<div class="space-y-6">
   <!-- Header -->
   <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <span class="material-symbols-outlined text-[#0ea37a]">report</span>
-      Complaint Management
-    </h1>
-    <span class="text-sm text-gray-500">Admin area: review and response</span>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">report</span>
+        Complaint Management
+      </h1>
+      <span class="text-sm text-gray-500">Admin area: review and response</span>
+    </div>
+    <a routerLink="/admin/complaints/stats"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0ea37a] text-white text-sm font-medium hover:bg-[#0c8d6a] transition-all">
+      <span class="material-symbols-outlined text-base">monitoring</span>
+      View Stats Dashboard
+    </a>
   </div>
 
   <!-- Status filter -->

@@ -1,21 +1,26 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Complaint } from '../../models/complaint.model';
 import { ComplaintService } from '../../services/complaint.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-complaints',
   templateUrl: './my-complaints.component.html',
   styleUrls: ['./my-complaints.component.scss']
 })
-export class MyComplaintsComponent implements OnInit {
+export class MyComplaintsComponent implements OnInit, OnDestroy {
 
   complaints: Complaint[] = [];
   filteredComplaints: Complaint[] = [];
+  searchTerm = '';
   statusFilter = '';
   loading = false;
   deletingComplaintIds = new Set<number>();
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private complaintService: ComplaintService,
@@ -23,12 +28,30 @@ export class MyComplaintsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.loadComplaints();
+    });
+
     this.loadComplaints();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadComplaints(): void {
     this.loading = true;
-    this.complaintService.getAll().subscribe({
+    const request$ = this.searchTerm.trim()
+      ? this.complaintService.searchByName(this.searchTerm.trim())
+      : this.complaintService.getAll();
+
+    request$.subscribe({
       next: (data) => {
         this.complaints = data;
         this.applyFilter();
@@ -51,6 +74,11 @@ export class MyComplaintsComponent implements OnInit {
   onFilterStatus(status: string): void {
     this.statusFilter = status;
     this.applyFilter();
+  }
+
+  onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(value);
   }
 
   newComplaint(): void {

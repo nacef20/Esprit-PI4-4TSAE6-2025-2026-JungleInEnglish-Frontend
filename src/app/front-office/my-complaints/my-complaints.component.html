@@ -17,6 +17,13 @@
       </button>
     </div>
 
+    <!-- Search -->
+    <div class="relative">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+      <input type="text" placeholder="Search by complaint name..." (input)="onSearch($event)"
+        class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+    </div>
+
     <!-- Filters -->
     <div class="flex items-center gap-2 flex-wrap">
       <button (click)="onFilterStatus('')"

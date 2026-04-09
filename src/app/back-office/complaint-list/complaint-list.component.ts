@@ -31,7 +31,7 @@ export class ComplaintListComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe(term => {
       this.searchTerm = term;
-      this.applyFilters();
+      this.loadComplaints();
     });
     this.loadComplaints();
   }
@@ -43,7 +43,11 @@ export class ComplaintListComponent implements OnInit, OnDestroy {
 
   loadComplaints(): void {
     this.loading = true;
-    this.complaintService.getAll().subscribe({
+    const request$ = this.searchTerm.trim()
+      ? this.complaintService.searchByName(this.searchTerm.trim())
+      : this.complaintService.getAll();
+
+    request$.subscribe({
       next: (data) => {
         this.complaints = data;
         this.applyFilters();
@@ -60,14 +64,6 @@ export class ComplaintListComponent implements OnInit, OnDestroy {
 
     if (this.statusFilter) {
       result = result.filter(c => c.status === this.statusFilter);
-    }
-
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase();
-      result = result.filter(c =>
-        c.title.toLowerCase().includes(term) ||
-        c.description.toLowerCase().includes(term)
-      );
     }
 
     this.filteredComplaints = result;

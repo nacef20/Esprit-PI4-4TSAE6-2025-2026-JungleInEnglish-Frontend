@@ -97,18 +97,36 @@ export class ComplaintFormComponent implements OnInit {
     this.aiLoading = true;
     this.errorMessage = '';
 
+    const currentTitle = (this.complaintForm.get('title')?.value ?? '').trim();
+    const currentDescription = (this.complaintForm.get('description')?.value ?? '').trim();
+    const effectiveMode: ComplaintAiAssistMode = mode === 'IMPROVE' && !currentDescription ? 'GENERATE' : mode;
+
     const payload = {
-      title: this.complaintForm.get('title')?.value ?? '',
-      description: this.complaintForm.get('description')?.value ?? '',
-      mode
+      title: currentTitle,
+      description: currentDescription,
+      mode: effectiveMode
     };
 
     this.complaintService.assistTextWithAi(payload).subscribe({
       next: (result) => {
         const normalized = this.normalizeAiResult(result.suggestedTitle, result.suggestedDescription);
+        let nextDescription = (normalized.description || '').trim();
+
+        if (!nextDescription && effectiveMode === 'GENERATE') {
+          nextDescription = this.buildLocalGeneratedDescription(currentTitle, currentDescription);
+        }
+
+        if (!nextDescription) {
+          nextDescription = currentDescription;
+        }
+
+        if (effectiveMode === 'IMPROVE' && nextDescription === currentDescription) {
+          nextDescription = this.forceImproveText(currentDescription, 'Please review and process this complaint as soon as possible.');
+        }
+
         this.complaintForm.patchValue({
           title: normalized.title,
-          description: normalized.description
+          description: nextDescription
         });
         this.aiLoading = false;
       },
@@ -311,6 +329,46 @@ export class ComplaintFormComponent implements OnInit {
       .replace(/\\"/g, '"')
       .replace(/\\'/g, "'")
       .replace(/\\\\/g, '\\');
+  }
+
+  private polishSentence(value: string): string {
+    const text = (value ?? '').trim();
+    if (!text) {
+      return '';
+    }
+
+    const capitalized = text.charAt(0).toUpperCase() + text.slice(1);
+    if (/[.!?]$/.test(capitalized)) {
+      return capitalized;
+    }
+
+    return `${capitalized}.`;
+  }
+
+  private forceImproveText(value: string, fallbackSuffix: string): string {
+    const original = (value ?? '').trim();
+    if (!original) {
+      return '';
+    }
+
+    const polished = this.polishSentence(original);
+    if (polished !== original) {
+      return polished;
+    }
+
+    return `${polished} ${fallbackSuffix}`.trim();
+  }
+
+  private buildLocalGeneratedDescription(title: string, existingDescription: string): string {
+    if (existingDescription) {
+      return this.polishSentence(existingDescription);
+    }
+
+    if (title) {
+      return `A complaint has been submitted regarding "${title}". Please investigate the issue and provide an appropriate resolution.`;
+    }
+
+    return 'A complaint has been submitted. Please investigate the issue and provide an appropriate resolution.';
   }
 }
 

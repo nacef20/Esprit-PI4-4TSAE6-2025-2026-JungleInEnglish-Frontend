@@ -102,7 +102,7 @@ export class ComplaintCreateComponent implements OnInit {
         }
 
         if (effectiveMode === 'IMPROVE' && nextDescription === currentDescription) {
-          nextDescription = this.polishSentence(currentDescription);
+          nextDescription = this.forceImproveText(currentDescription, 'We kindly ask for your assistance to resolve this issue.');
         }
 
         this.complaintForm.patchValue({
@@ -314,6 +314,20 @@ export class ComplaintCreateComponent implements OnInit {
     }
 
     return `${capitalized}.`;
+  }
+
+  private forceImproveText(value: string, fallbackSuffix: string): string {
+    const original = (value ?? '').trim();
+    if (!original) {
+      return '';
+    }
+
+    const polished = this.polishSentence(original);
+    if (polished !== original) {
+      return polished;
+    }
+
+    return `${polished} ${fallbackSuffix}`.trim();
   }
 
   private buildLocalGeneratedDescription(title: string, existingDescription: string): string {

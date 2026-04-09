@@ -239,7 +239,7 @@ export class ComplaintDetailComponent implements OnInit {
         let nextMessage = (normalized || currentDraft).trim();
 
         if (effectiveMode === 'IMPROVE' && nextMessage === currentDraft) {
-          nextMessage = this.polishSentence(currentDraft);
+          nextMessage = this.forceImproveText(currentDraft, 'Thank you for your patience and understanding.');
         }
 
         this.newResponseMessage = nextMessage;
@@ -399,6 +399,20 @@ export class ComplaintDetailComponent implements OnInit {
     }
 
     return `${capitalized}.`;
+  }
+
+  private forceImproveText(value: string, fallbackSuffix: string): string {
+    const original = (value ?? '').trim();
+    if (!original) {
+      return '';
+    }
+
+    const polished = this.polishSentence(original);
+    if (polished !== original) {
+      return polished;
+    }
+
+    return `${polished} ${fallbackSuffix}`.trim();
   }
 }
 

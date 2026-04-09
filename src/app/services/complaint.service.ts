@@ -61,4 +61,8 @@ export class ComplaintService {
   analyzeSentiment(payload: ComplaintSentimentRequest): Observable<ComplaintSentimentResponse> {
     return this.http.post<ComplaintSentimentResponse>(`${this.apiUrl}/ai/sentiment`, payload);
   }
+
+  downloadAdminReportPdf(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/stats/admin-report/pdf`, { responseType: 'blob' });
+  }
 }

@@ -18,6 +18,7 @@ export class ComplaintStatsDashboardComponent implements OnInit {
 
   stats: ComplaintDashboardStats | null = null;
   loading = false;
+  exportingPdf = false;
   selectedPeriod: ComplaintStatsPeriod = 'MONTH';
 
   statusChartData: ChartData<'doughnut'> = { labels: [], datasets: [] };
@@ -76,6 +77,28 @@ export class ComplaintStatsDashboardComponent implements OnInit {
     }
     this.selectedPeriod = period;
     this.loadStats();
+  }
+
+  exportAdminReportPdf(): void {
+    if (this.exportingPdf) {
+      return;
+    }
+
+    this.exportingPdf = true;
+    this.complaintService.downloadAdminReportPdf().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `complaints-admin-report-${new Date().toISOString().slice(0, 10)}.pdf`;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+        this.exportingPdf = false;
+      },
+      error: () => {
+        this.exportingPdf = false;
+      }
+    });
   }
 
   getStatusCount(status: 'EN_ATTENTE' | 'TRAITEE' | 'REJETEE'): number {

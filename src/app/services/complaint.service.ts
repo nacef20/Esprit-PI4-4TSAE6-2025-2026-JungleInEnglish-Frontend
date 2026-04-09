@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Complaint, ComplaintStatus } from '../models/complaint.model';
 import { ComplaintAiAssistRequest, ComplaintAiAssistResponse } from '../models/complaint-ai-assist.model';
 import { ComplaintDashboardStats, ComplaintStatsPeriod } from '../models/complaint-dashboard-stats.model';
+import { ComplaintSentimentRequest, ComplaintSentimentResponse } from '../models/complaint-sentiment.model';
 import { Page } from './quiz.service';
 
 @Injectable({ providedIn: 'root' })
@@ -55,5 +56,9 @@ export class ComplaintService {
 
   assistTextWithAi(payload: ComplaintAiAssistRequest): Observable<ComplaintAiAssistResponse> {
     return this.http.post<ComplaintAiAssistResponse>(`${this.apiUrl}/ai/assist`, payload);
+  }
+
+  analyzeSentiment(payload: ComplaintSentimentRequest): Observable<ComplaintSentimentResponse> {
+    return this.http.post<ComplaintSentimentResponse>(`${this.apiUrl}/ai/sentiment`, payload);
   }
 }

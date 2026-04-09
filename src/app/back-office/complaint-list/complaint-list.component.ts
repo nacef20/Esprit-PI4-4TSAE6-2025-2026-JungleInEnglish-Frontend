@@ -1,7 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { Complaint, ComplaintStatus } from '../../models/complaint.model';
+import { ComplaintSentimentResponse, ComplaintTone } from '../../models/complaint-sentiment.model';
 import { ComplaintService } from '../../services/complaint.service';
 
 @Component({
@@ -20,6 +22,8 @@ export class ComplaintListComponent implements OnInit {
   totalElements = 0;
   totalPages = 0;
   deletingComplaintIds = new Set<number>();
+  sentimentLoading = false;
+  sentimentByComplaintId: Record<number, ComplaintSentimentResponse> = {};
 
   constructor(private complaintService: ComplaintService, private router: Router) {}
 
@@ -37,6 +41,7 @@ export class ComplaintListComponent implements OnInit {
         this.totalElements = pageData.totalElements;
         this.totalPages = pageData.totalPages;
         this.applyFilters();
+        this.loadSentimentAnalysis();
         this.loading = false;
       },
       error: () => {
@@ -47,6 +52,53 @@ export class ComplaintListComponent implements OnInit {
 
   applyFilters(): void {
     this.filteredComplaints = [...this.complaints];
+  }
+
+  loadSentimentAnalysis(): void {
+    const complaintsWithId = this.filteredComplaints.filter((complaint) => complaint.id !== undefined);
+    if (complaintsWithId.length === 0) {
+      this.sentimentByComplaintId = {};
+      this.sentimentLoading = false;
+      return;
+    }
+
+    this.sentimentLoading = true;
+
+    const requests = complaintsWithId.map((complaint) =>
+      this.complaintService.analyzeSentiment({
+        complaintId: complaint.id,
+        title: complaint.title,
+        description: complaint.description
+      }).pipe(
+        map((result) => ({
+          id: complaint.id as number,
+          result
+        })),
+        catchError(() => of({
+          id: complaint.id as number,
+          result: {
+            complaintId: complaint.id,
+            tone: 'NEUTRAL' as ComplaintTone,
+            urgent: false,
+            reason: 'Sentiment unavailable.'
+          }
+        }))
+      )
+    );
+
+    forkJoin(requests).subscribe({
+      next: (entries) => {
+        const nextMap: Record<number, ComplaintSentimentResponse> = {};
+        for (const entry of entries) {
+          nextMap[entry.id] = entry.result;
+        }
+        this.sentimentByComplaintId = nextMap;
+        this.sentimentLoading = false;
+      },
+      error: () => {
+        this.sentimentLoading = false;
+      }
+    });
   }
 
   onFilterStatus(status: string): void {
@@ -138,6 +190,36 @@ export class ComplaintListComponent implements OnInit {
       case 'TRAITEE': return 'check_circle';
       case 'REJETEE': return 'cancel';
       default: return 'help';
+    }
+  }
+
+  getSentiment(complaintId?: number): ComplaintSentimentResponse | null {
+    if (!complaintId) {
+      return null;
+    }
+
+    return this.sentimentByComplaintId[complaintId] ?? null;
+  }
+
+  getToneLabel(tone: ComplaintTone): string {
+    switch (tone) {
+      case 'POSITIVE':
+        return 'Positive';
+      case 'NEGATIVE':
+        return 'Negative';
+      default:
+        return 'Neutral';
+    }
+  }
+
+  getToneIcon(tone: ComplaintTone): string {
+    switch (tone) {
+      case 'POSITIVE':
+        return 'sentiment_satisfied';
+      case 'NEGATIVE':
+        return 'sentiment_dissatisfied';
+      default:
+        return 'sentiment_neutral';
     }
   }
 }

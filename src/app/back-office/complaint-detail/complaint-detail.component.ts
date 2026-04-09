@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Complaint } from '../../models/complaint.model';
+import { ComplaintSentimentResponse, ComplaintTone } from '../../models/complaint-sentiment.model';
 import { ComplaintResponse } from '../../models/response.model';
 import { ComplaintService } from '../../services/complaint.service';
 import { ComplaintResponseService } from '../../services/complaint-response.service';
@@ -17,6 +18,8 @@ export class ComplaintDetailComponent implements OnInit {
   responses: ComplaintResponse[] = [];
   complaintId!: number;
   loading = true;
+  sentimentLoading = false;
+  sentimentAnalysis: ComplaintSentimentResponse | null = null;
 
   // Response form
   newResponseMessage = '';
@@ -47,6 +50,7 @@ export class ComplaintDetailComponent implements OnInit {
     this.complaintService.getById(this.complaintId).subscribe({
       next: (data) => {
         this.complaint = data;
+        this.analyzeComplaintSentiment();
         this.loading = false;
       },
       error: () => {
@@ -63,6 +67,28 @@ export class ComplaintDetailComponent implements OnInit {
       },
       error: () => {
         // Silently handle - complaint might have no responses
+      }
+    });
+  }
+
+  analyzeComplaintSentiment(): void {
+    if (!this.complaint) {
+      return;
+    }
+
+    this.sentimentLoading = true;
+    this.complaintService.analyzeSentiment({
+      complaintId: this.complaint.id,
+      title: this.complaint.title,
+      description: this.complaint.description
+    }).subscribe({
+      next: (result) => {
+        this.sentimentAnalysis = result;
+        this.sentimentLoading = false;
+      },
+      error: () => {
+        this.sentimentAnalysis = null;
+        this.sentimentLoading = false;
       }
     });
   }
@@ -185,6 +211,28 @@ export class ComplaintDetailComponent implements OnInit {
       case 'TRAITEE': return 'check_circle';
       case 'REJETEE': return 'cancel';
       default: return 'help';
+    }
+  }
+
+  getToneLabel(tone: ComplaintTone): string {
+    switch (tone) {
+      case 'POSITIVE':
+        return 'Positive';
+      case 'NEGATIVE':
+        return 'Negative';
+      default:
+        return 'Neutral';
+    }
+  }
+
+  getToneIcon(tone: ComplaintTone): string {
+    switch (tone) {
+      case 'POSITIVE':
+        return 'sentiment_satisfied';
+      case 'NEGATIVE':
+        return 'sentiment_dissatisfied';
+      default:
+        return 'sentiment_neutral';
     }
   }
 

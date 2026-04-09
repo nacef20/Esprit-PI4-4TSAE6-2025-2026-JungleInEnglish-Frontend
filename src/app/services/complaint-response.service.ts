@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ComplaintResponse } from '../models/response.model';
+import { ResponseAiAssistRequest, ResponseAiAssistResponse } from '../models/response-ai-assist.model';
 
 @Injectable({ providedIn: 'root' })
 export class ComplaintResponseService {
@@ -28,6 +29,10 @@ export class ComplaintResponseService {
 
   update(id: number, response: ComplaintResponse): Observable<ComplaintResponse> {
     return this.http.put<ComplaintResponse>(`${this.apiUrl}/${id}`, response);
+  }
+
+  assistTextWithAi(payload: ResponseAiAssistRequest): Observable<ResponseAiAssistResponse> {
+    return this.http.post<ResponseAiAssistResponse>(`${this.apiUrl}/ai/assist`, payload);
   }
 
   delete(id: number): Observable<void> {

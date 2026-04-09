@@ -78,18 +78,35 @@ export class ComplaintCreateComponent implements OnInit {
     this.aiLoading = true;
     this.errorMessage = '';
 
+    const currentTitle = (this.complaintForm.get('title')?.value ?? '').trim();
+    const currentDescription = (this.complaintForm.get('description')?.value ?? '').trim();
+    const effectiveMode: ComplaintAiAssistMode = mode === 'IMPROVE' && !currentDescription ? 'GENERATE' : mode;
+
     const payload = {
-      title: this.complaintForm.get('title')?.value ?? '',
-      description: this.complaintForm.get('description')?.value ?? '',
-      mode
+      title: currentTitle,
+      description: currentDescription,
+      mode: effectiveMode
     };
 
     this.complaintService.assistTextWithAi(payload).subscribe({
       next: (result) => {
         const normalized = this.normalizeAiResult(result.suggestedTitle, result.suggestedDescription);
+        let nextDescription = (normalized.description || '').trim();
+
+        if (!nextDescription && effectiveMode === 'GENERATE') {
+          nextDescription = this.buildLocalGeneratedDescription(currentTitle, currentDescription);
+        }
+
+        if (!nextDescription) {
+          nextDescription = currentDescription;
+        }
+
+        if (effectiveMode === 'IMPROVE' && nextDescription === currentDescription) {
+          nextDescription = this.polishSentence(currentDescription);
+        }
+
         this.complaintForm.patchValue({
-          title: normalized.title,
-          description: normalized.description
+          description: nextDescription
         });
         this.aiLoading = false;
       },
@@ -144,7 +161,24 @@ export class ComplaintCreateComponent implements OnInit {
     if (parsed) {
       title = (parsed.title ?? title).trim();
       description = (parsed.description ?? description).trim();
+    } else {
+      const lenientTitle = this.extractJsonFieldLenient(description, 'title') || this.extractJsonFieldLenient(title, 'title');
+      const lenientDescription = this.extractJsonFieldLenient(description, 'description')
+        || this.extractJsonFieldLenient(title, 'description')
+        || this.extractJsonFieldLenient(description, 'message')
+        || this.extractJsonFieldLenient(title, 'message');
+
+      if (lenientTitle) {
+        title = lenientTitle;
+      }
+
+      if (lenientDescription) {
+        description = lenientDescription;
+      }
     }
+
+    title = this.cleanupJsonArtifacts(title, 'title');
+    description = this.cleanupJsonArtifacts(description, 'description');
 
     return { title, description };
   }
@@ -177,6 +211,121 @@ export class ComplaintCreateComponent implements OnInit {
     } catch {
       return null;
     }
+  }
+
+  private extractJsonFieldLenient(value: string, fieldName: string): string {
+    if (!value) {
+      return '';
+    }
+
+    const source = value
+      .replace(/```json/gi, '')
+      .replace(/```/g, '')
+      .trim();
+
+    const fieldPattern = new RegExp(`["']?${fieldName}["']?\\s*:\\s*`, 'i');
+    const match = fieldPattern.exec(source);
+    if (!match || match.index === undefined) {
+      return '';
+    }
+
+    let index = match.index + match[0].length;
+    while (index < source.length && /\s/.test(source[index])) {
+      index++;
+    }
+
+    if (index >= source.length) {
+      return '';
+    }
+
+    const quote = source[index] === '"' || source[index] === '\'' ? source[index] : '';
+    if (quote) {
+      index++;
+    }
+
+    let buffer = '';
+    let escaped = false;
+    for (; index < source.length; index++) {
+      const ch = source[index];
+
+      if (quote) {
+        if (!escaped && ch === '\\') {
+          escaped = true;
+          buffer += ch;
+          continue;
+        }
+
+        if (!escaped && ch === quote) {
+          break;
+        }
+
+        escaped = false;
+        buffer += ch;
+        continue;
+      }
+
+      if (ch === ',' || ch === '}' || ch === '\n' || ch === '\r') {
+        break;
+      }
+
+      buffer += ch;
+    }
+
+    return this.unescapeJsonLikeString(buffer).trim();
+  }
+
+  private cleanupJsonArtifacts(value: string, preferredFieldName: string): string {
+    if (!value) {
+      return '';
+    }
+
+    let cleaned = value
+      .replace(/```json/gi, '')
+      .replace(/```/g, '')
+      .trim();
+
+    const escapedField = preferredFieldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    cleaned = cleaned.replace(new RegExp(`^[\\{\\s]*["']?${escapedField}["']?\\s*:\\s*["']?`, 'i'), '');
+    cleaned = cleaned.replace(/^[\{\s]*["']?(message|description|title)["']?\s*:\s*["']?/i, '');
+    cleaned = cleaned.replace(/["'\s}]+$/g, '').trim();
+
+    return cleaned;
+  }
+
+  private unescapeJsonLikeString(value: string): string {
+    return value
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '\r')
+      .replace(/\\t/g, '\t')
+      .replace(/\\"/g, '"')
+      .replace(/\\'/g, "'")
+      .replace(/\\\\/g, '\\');
+  }
+
+  private polishSentence(value: string): string {
+    const text = (value ?? '').trim();
+    if (!text) {
+      return '';
+    }
+
+    const capitalized = text.charAt(0).toUpperCase() + text.slice(1);
+    if (/[.!?]$/.test(capitalized)) {
+      return capitalized;
+    }
+
+    return `${capitalized}.`;
+  }
+
+  private buildLocalGeneratedDescription(title: string, existingDescription: string): string {
+    if (existingDescription) {
+      return this.polishSentence(existingDescription);
+    }
+
+    if (title) {
+      return `I am experiencing an issue related to "${title}". Please review my request and help resolve this problem as soon as possible.`;
+    }
+
+    return 'I am experiencing an issue and need assistance. Please review my complaint and help me resolve it.';
   }
 }
 

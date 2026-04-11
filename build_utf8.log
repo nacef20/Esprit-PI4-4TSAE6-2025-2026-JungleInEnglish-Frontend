@@ -1,0 +1,60 @@
+﻿[33mΓ¥»[39m Building...
+[32mΓ£ö[39m Building...
+Application bundle generation failed. [21.476 seconds]
+
+node.exe : 
+[1m[31m[31mX [41;31m[
+[41;97mERROR[41;31m][0
+m [1mNG2: Type 'string 
+| undefined' is not 
+assignable to type 
+'string'.
+At C:\Program 
+Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo       
+       : NotSpecified:   
+  ([1m[31m[31mX...    
+ type 'string'.:Strin    
+g) [], RemoteExcepti    
+on
+    + FullyQualifiedErro 
+   rId : NativeCommandE  
+  rror
+ 
+  Type 'undefined' is 
+not assignable to type 
+'string'.[0m 
+[1m[35m[plugin 
+angular-compiler][0m
+
+    src/app/components/le
+ssons-list/lessons-list.c
+omponent.html:272:11:
+[37m      272 Γöé       
+    [[32mprofessorId[37
+m]="selectedLesson!.profe
+ssorId">
+          Γò╡            
+[32m~~~~~~~~~~~[0m
+
+  Error occurs in the 
+template of component 
+LessonsListComponent.
+
+    src/app/components/le
+ssons-list/lessons-list.c
+omponent.ts:8:15:
+[37m      8 Γöé   
+templateUrl: [32m'./less
+ons-list.component.html'
+[37m,
+        Γò╡              
+  [32m~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~[0m
+
+[39m[22m

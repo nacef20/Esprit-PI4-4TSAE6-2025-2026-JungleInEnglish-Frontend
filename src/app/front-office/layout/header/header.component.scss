@@ -1,0 +1,85 @@
+:host {
+  --school-primary: #0ea37a;
+  --school-primary-dark: #0b8a66;
+}
+
+/* REMOVE BULLETS / POINTS */
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+li::before { content: none !important; }
+
+/* ===== MENU LINKS ===== */
+.menu-link {
+  cursor: pointer;
+  position: relative;
+  padding: 6px 0;
+  transition: color .2s ease;
+  user-select: none;
+}
+
+.menu-link:hover {
+  color: var(--school-primary);
+}
+
+/* underline hover */
+.menu-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  background: var(--school-primary);
+  transition: width .2s ease;
+}
+
+.menu-link:hover::after {
+  width: 100%;
+}
+
+/* active menu */
+.menu-active {
+  color: var(--school-primary);
+}
+.menu-active::after {
+  width: 100%;
+}
+
+/* ===== SIGN IN (no underline ever) ===== */
+.signin-link,
+.signin-link:visited,
+.signin-link:hover,
+.signin-link:active {
+  text-decoration: none !important;
+}
+
+.signin-link {
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: var(--school-primary);
+  font-weight: 700;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.signin-link:hover {
+  background: rgba(14,163,122,.12);
+  transform: translateY(-1px);
+}
+
+/* ===== REMOVE FOCUS LINES ===== */
+a:focus,
+button:focus,
+li:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+.site-header {
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+}

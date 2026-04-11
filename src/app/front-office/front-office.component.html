@@ -1,0 +1,263 @@
+<app-header class="fixed top-0 left-0 right-0 z-50"></app-header>
+
+<main class="relative overflow-hidden">
+  <!-- Section Hero - Effet 3D avec parallax -->
+  <section id="home" class="relative min-h-screen flex items-center overflow-hidden">
+    <!-- Background layers pour effet de profondeur -->
+    <div class="absolute inset-0 bg-gradient-to-br from-school-secondary via-white to-school-secondary-light"></div>
+
+    <!-- Couche 1: Cercles flous en arrière-plan (effet de profondeur) -->
+    <div class="absolute inset-0 parallax-layer-1">
+      <div
+        class="absolute top-20 left-10 w-[600px] h-[600px] bg-school-accent rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float">
+      </div>
+      <div
+        class="absolute bottom-20 right-10 w-[500px] h-[500px] bg-school-primary rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float-delayed">
+      </div>
+    </div>
+
+    <!-- Couche 2: Grille 3D perspective -->
+    <div class="absolute inset-0 bg-grid-3d opacity-5"></div>
+
+    <!-- Couche 3: Particules flottantes -->
+    <div class="absolute inset-0 particles-container pointer-events-none">
+      <div class="particle particle-1"></div>
+      <div class="particle particle-2"></div>
+      <div class="particle particle-3"></div>
+      <div class="particle particle-4"></div>
+      <div class="particle particle-5"></div>
+    </div>
+    <!-- Contenu principal avec effet 3D -->
+    <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto w-full relative z-10 parallax-layer-2">
+      <div class="transform-3d">
+        <app-home></app-home>
+      </div>
+    </div>
+    <!-- Effet de lumière en bas -->
+    <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/50 to-transparent"></div>
+  </section>
+
+  <!-- Wave Divider 3D -->
+  <div class="relative h-32 wave-divider">
+    <svg class="absolute bottom-0 w-full h-32" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wave-gradient-1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#faf5f0;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+        </linearGradient>
+        <filter id="wave-shadow">
+          <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.1" />
+        </filter>
+      </defs>
+      <path fill="url(#wave-gradient-1)" filter="url(#wave-shadow)"
+        d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z">
+      </path>
+    </svg>
+  </div>
+
+  <!-- Section Features - Cards 3D flottantes -->
+  <section id="feature" class="relative py-32 bg-white perspective-container">
+    <!-- Background avec profondeur -->
+    <div class="absolute inset-0">
+      <div
+        class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-school-secondary-light/10 to-transparent">
+      </div>
+    </div>
+
+    <!-- Décoration géométrique -->
+    <div class="absolute top-20 right-10 w-64 h-64 bg-school-accent/5 rounded-3xl transform rotate-12 blur-sm"></div>
+    <div class="absolute bottom-20 left-10 w-80 h-80 bg-school-primary/5 rounded-3xl transform -rotate-6 blur-sm"></div>
+
+    <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto relative z-10">
+      <div class="feature-cards-3d">
+        <app-feature></app-feature>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wave Divider inversé -->
+  <div class="relative h-32 wave-divider-inverse">
+    <svg class="absolute top-0 w-full h-32" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wave-gradient-2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#F7EDE2;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#faf5f0;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#F7EDE2;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <path fill="url(#wave-gradient-2)" filter="url(#wave-shadow)"
+        d="M0,0L48,5.3C96,11,192,21,288,26.7C384,32,480,32,576,26.7C672,21,768,11,864,16C960,21,1056,43,1152,48C1248,53,1344,43,1392,37.3L1440,32L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z">
+      </path>
+    </svg>
+  </div>
+
+  <!-- Section Pricing - Glassmorphism cards -->
+  <section id="pricing" class="relative py-32 bg-school-secondary overflow-hidden">
+    <!-- Background animé -->
+    <div class="absolute inset-0">
+      <div
+        class="absolute top-0 left-1/4 w-96 h-96 bg-school-accent rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob">
+      </div>
+      <div
+        class="absolute top-1/3 right-1/4 w-96 h-96 bg-school-primary rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000">
+      </div>
+      <div
+        class="absolute bottom-0 left-1/2 w-96 h-96 bg-school-accent-alt rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000">
+      </div>
+    </div>
+
+    <!-- Grille de fond -->
+    <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+
+    <!-- Glassmorphism overlay -->
+<div class="absolute inset-0 backdrop-blur-[100px] pointer-events-none"></div>
+    <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto relative z-10">
+      <div class="pricing-cards-glass">
+        <app-pricing></app-pricing>
+      </div>
+    </div>
+    <!-- Effet de lumière -->
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white/30 to-transparent"></div>
+  </section>
+
+  <!-- Section Testimonials - 3D carousel effect -->
+  <section id="testimonials"
+    class="relative py-32 bg-gradient-to-b from-white via-school-secondary-light/30 to-white overflow-hidden">
+    <!-- Decorative shapes avec depth -->
+    <div class="absolute inset-0 pointer-events-none">
+      <!-- Couche arrière -->
+      <div
+        class="absolute top-20 right-1/4 w-[500px] h-[500px] bg-school-accent rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float">
+      </div>
+      <div
+        class="absolute bottom-20 left-1/4 w-[600px] h-[600px] bg-school-primary rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float-delayed">
+      </div>
+      <div
+        class="absolute top-10 left-0 w-72 h-72 bg-school-accent rounded-full mix-blend-multiply filter blur-3xl opacity-10 transform -translate-x-1/2 scale-75">
+      </div>
+      <div
+        class="absolute bottom-10 right-0 w-96 h-96 bg-school-primary rounded-full mix-blend-multiply filter blur-3xl opacity-10 transform translate-x-1/2 scale-90">
+      </div>
+
+      <!-- Formes géométriques -->
+      <div
+        class="absolute top-1/4 right-10 w-32 h-32 border-4 border-school-accent/20 rounded-2xl transform rotate-45 animate-spin-slow">
+      </div>
+      <div
+        class="absolute bottom-1/4 left-10 w-24 h-24 border-4 border-school-primary/20 rounded-full animate-pulse-slow">
+      </div>
+    </div>
+
+    <!-- Lignes de connexion décoratives -->
+    <svg class="absolute inset-0 w-full h-full opacity-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#2D5757;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#84a98c;stop-opacity:0.1" />
+        </linearGradient>
+      </defs>
+      <line x1="0" y1="100" x2="1440" y2="300" stroke="url(#line-gradient)" stroke-width="2" />
+      <line x1="0" y1="400" x2="1440" y2="200" stroke="url(#line-gradient)" stroke-width="2" />
+    </svg>
+
+    <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto relative z-10">
+      <div class="testimonials-3d">
+        <app-testimoni></app-testimoni>
+      </div>
+    </div>
+  </section>
+  <!-- NEW: Section Courses -->
+  <section id="courses" class="relative py-32 bg-school-secondary overflow-hidden">
+    <!-- Background effects -->
+<div class="absolute inset-0 pointer-events-none">      <div
+        class="absolute top-20 right-1/4 w-[500px] h-[500px] bg-school-accent rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float">
+      </div>
+      <div
+        class="absolute bottom-20 left-1/4 w-[600px] h-[600px] bg-school-primary rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float-delayed">
+      </div>
+    </div>
+
+<div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto relative z-20 pointer-events-auto">
+  <app-courses-list></app-courses-list>
+</div>
+  </section>
+
+  <!-- ── NEW: Shop Section ──────────────────────────────────── -->
+  <section id="shop" class="relative py-32 bg-gradient-to-b from-white via-school-secondary-light/30 to-white overflow-hidden">
+    <!-- Background effects -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-20 left-1/4 w-[500px] h-[500px] bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+      <div class="absolute bottom-20 right-1/4 w-[600px] h-[600px] bg-amber-400 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float-delayed"></div>
+    </div>
+
+    <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto relative z-10">
+      <div class="text-center mb-16">
+        <span class="inline-block px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium tracking-wide mb-4">
+          🛒 Marketplace
+        </span>
+        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
+          Jungle <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600">Shop</span>
+        </h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          Explore our curated collection of learning resources, books, and educational materials.
+          Everything you need to boost your learning journey.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-8 mb-12">
+        <!-- Feature Cards -->
+        <div class="group w-72 p-6 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+          <div class="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-2">Products & Categories</h3>
+          <p class="text-sm text-gray-500">Browse through our organized catalog of products and categories.</p>
+        </div>
+
+        <div class="group w-72 p-6 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+          <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-2">Cart & Checkout</h3>
+          <p class="text-sm text-gray-500">Seamless shopping experience with a secure checkout process.</p>
+        </div>
+
+        <div class="group w-72 p-6 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+          <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-2">Order Tracking</h3>
+          <p class="text-sm text-gray-500">Track your orders in real-time with location updates.</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a href="http://localhost:4201" target="_blank"
+           class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-emerald-500/30 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-lg">
+          <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+          </svg>
+          Visit the Shop
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEW: Events Section ──────────────────────────────────── -->
+  <section id="events" class="relative py-32 bg-white overflow-hidden">
+    <app-event-gallery></app-event-gallery>
+  </section>
+
+</main>
+
+<app-footer></app-footer>

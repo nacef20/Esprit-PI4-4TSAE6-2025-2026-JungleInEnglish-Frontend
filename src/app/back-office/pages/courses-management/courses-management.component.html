@@ -1,0 +1,252 @@
+<div class="courses-management">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="page-header__title">
+      <h1>List of all Courses</h1>
+      <p class="subtitle">Create, modify, and manage all your courses</p>
+    </div>
+<button *ngIf="isTeacher()" class="btn-primary" (click)="openCreateModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      <span>Create New Course</span>
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--primary">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+      </div>
+      <div class="stat-card__content">
+        <p class="stat-card__label">Total Cours</p>
+        <h3 class="stat-card__value">{{ courses.length }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--success">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </div>
+      <div class="stat-card__content">
+        <p class="stat-card__label">BEGINNER</p>
+        <h3 class="stat-card__value">{{ getCountByLevel('BEGINNER') }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--warning">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+        </svg>
+      </div>
+      <div class="stat-card__content">
+        <p class="stat-card__label">INTERMEDIATE</p>
+        <h3 class="stat-card__value">{{ getCountByLevel('INTERMEDIATE') }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--danger">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      </div>
+      <div class="stat-card__content">
+        <p class="stat-card__label">ADVANCED</p>
+        <h3 class="stat-card__value">{{ getCountByLevel('ADVANCED') }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="search-box">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+      <input type="text" placeholder="Rechercher un cours..." [(ngModel)]="searchTerm" (input)="filterCourses()">
+    </div>
+
+    <select class="filter-select" [(ngModel)]="filterLevel" (change)="filterCourses()">
+      <option value="">Tous les niveaux</option>
+      <option value="BEGINNER">BEGINNER</option>
+      <option value="INTERMEDIATE">INTERMEDIATE</option>
+      <option value="ADVANCED">ADVANCED</option>
+    </select>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading courses...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+    <p>{{ error }}</p>
+    <button class="btn-secondary" (click)="loadCourses()">Retry</button>
+  </div>
+
+  <!-- Courses Table -->
+  <div *ngIf="!loading && !error" class="courses-table-container">
+    <table class="courses-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Duration</th>
+          <th>Level</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let course of filteredCourses" class="table-row">
+          <td>
+            <div class="course-image">
+              <img [src]="course.imageUrl || getDefaultImage()" [alt]="course.name">
+            </div>
+          </td>
+          <td>
+            <div class="course-info">
+              <h4>{{ course.name }}</h4>
+              <p>{{ course.description | slice:0:60 }}...</p>
+            </div>
+          </td>
+          <td>
+            <span class="duration-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              {{ course.duration }}
+            </span>
+          </td>
+          <td>
+            <span class="level-badge" [ngClass]="getLevelClass(course.level)">
+              {{ getLevelLabel(course.level) }}
+            </span>
+          </td>
+          <td>
+            <span class="date-text">{{ course.date | date: 'dd/MM/yyyy' }}</span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button     
+              *ngIf="isStudent()" 
+              class="btn-icon btn-icon--enroll" (click)="course.id && enroll(course.id)" [disabled]="!course.id"
+                title="Enroll">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6H4" />
+                  <path d="M20 12H4" />
+                  <path d="M20 18H4" />
+                </svg>
+              </button>
+              <button 
+              *ngIf="isTeacher()" 
+              class="btn-icon btn-icon--primary" (click)="editCourse(course)" title="Modifier">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+              </button>
+              <button 
+              *ngIf="isTeacher()" 
+              class="btn-icon btn-icon--danger" (click)="deleteCourse(course)" title="Supprimer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredCourses.length === 0" class="empty-state">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <p>No courses found</p>
+    </div>
+  </div>
+
+  <!-- Modal for Create/Edit -->
+  <div class="modal" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Modify Course' : 'New Course' }}</h2>
+        <button class="modal-close" (click)="closeModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <form class="modal-form" (ngSubmit)="saveCourse()">
+        <div class="form-group">
+          <label for="name">Course Name *</label>
+          <input type="text" id="name" [(ngModel)]="currentCourse.name" name="name"
+            placeholder="Ex: Introduction to Spring Boot" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea id="description" [(ngModel)]="currentCourse.description" name="description" rows="4"
+            placeholder="Describe the course content..." required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="duration">Duration *</label>
+            <input type="text" id="duration" [(ngModel)]="currentCourse.duration" name="duration"
+              placeholder="Ex: 4 weeks" required>
+          </div>
+
+          <div class="form-group">
+            <label for="level">Level *</label>
+            <select id="level" [(ngModel)]="currentCourse.level" name="level" required>
+              <option value="">Select...</option>
+              <option value="BEGINNER">BEGINNER</option>
+              <option value="INTERMEDIATE">INTERMEDIATE</option>
+              <option value="ADVANCED">ADVANCED</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl">URL of the image</label>
+          <input type="url" id="imageUrl" [(ngModel)]="currentCourse.imageUrl" name="imageUrl"
+            placeholder="https://example.com/image.jpg">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn-primary" [disabled]="saving">
+            <span *ngIf="!saving">{{ isEditMode ? 'Mettre à jour' : 'Créer' }}</span>
+            <span *ngIf="saving">saving...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -42,10 +42,14 @@ export class ComplaintService {
     return this.http.get<Complaint[]>(`${this.apiUrl}/status/${status}`);
   }
 
-  getPaged(page: number, size: number, status?: ComplaintStatus | ''): Observable<Page<Complaint>> {
+  getPaged(page: number, size: number, status?: ComplaintStatus | '', title?: string): Observable<Page<Complaint>> {
     let url = `${this.apiUrl}/page?page=${page}&size=${size}`;
     if (status) {
       url += `&status=${status}`;
+    }
+    const safeTitle = (title ?? '').trim();
+    if (safeTitle) {
+      url += `&title=${encodeURIComponent(safeTitle)}`;
     }
     return this.http.get<Page<Complaint>>(url);
   }

@@ -14,6 +14,7 @@ export class MyComplaintsComponent implements OnInit {
   complaints: Complaint[] = [];
   filteredComplaints: Complaint[] = [];
   statusFilter: ComplaintStatus | '' = '';
+  titleFilter = '';
   loading = false;
   currentPage = 1;
   pageSize = 5;
@@ -32,7 +33,12 @@ export class MyComplaintsComponent implements OnInit {
 
   loadComplaints(): void {
     this.loading = true;
-    const request$ = this.complaintService.getPaged(this.currentPage - 1, this.pageSize, this.statusFilter);
+    const request$ = this.complaintService.getPaged(
+      this.currentPage - 1,
+      this.pageSize,
+      this.statusFilter,
+      this.titleFilter
+    );
 
     request$.subscribe({
       next: (pageData) => {
@@ -54,6 +60,11 @@ export class MyComplaintsComponent implements OnInit {
 
   onFilterStatus(status: string): void {
     this.statusFilter = status as ComplaintStatus | '';
+    this.currentPage = 1;
+    this.loadComplaints();
+  }
+
+  onTitleSearch(): void {
     this.currentPage = 1;
     this.loadComplaints();
   }

@@ -17,6 +17,25 @@
       </button>
     </div>
 
+    <!-- Search -->
+    <div class="flex items-center gap-2 flex-wrap">
+      <div class="flex items-center gap-2">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base">search</span>
+          <input
+            [(ngModel)]="titleFilter"
+            (keyup.enter)="onTitleSearch()"
+            type="text"
+            placeholder="Search by title..."
+            class="pl-9 pr-3 py-2 text-sm rounded-xl border-2 border-gray-200 focus:border-[#0ea37a] focus:ring-2 focus:ring-[#0ea37a]/20 outline-none transition-all bg-white" />
+        </div>
+        <button (click)="onTitleSearch()"
+          class="px-3 py-2 text-sm rounded-xl bg-[#0ea37a] text-white hover:bg-[#0b8a68] transition-all font-medium">
+          Search
+        </button>
+      </div>
+    </div>
+
     <!-- Filters -->
     <div class="flex items-center gap-2 flex-wrap">
       <button (click)="onFilterStatus('')"

@@ -50,7 +50,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { 
+  imports: [RouterModule.forRoot(routes, {
     scrollPositionRestoration: 'enabled',
     enableTracing: true // Added tracing for deep diagnostics
   })],

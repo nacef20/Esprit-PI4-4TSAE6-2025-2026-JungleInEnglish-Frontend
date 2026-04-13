@@ -23,7 +23,7 @@ export interface Planning {
   updatedAt?: Date | string;
   createdBy?: string;
   updatedBy?: string;
-  
+
   // Propriétés optionnelles pour compatibilité
   title?: string;
   description?: string;

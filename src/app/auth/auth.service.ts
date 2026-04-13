@@ -32,15 +32,16 @@ constructor(private http: HttpClient) {}
     return roles;
   }
 
+
   getToken(): string {
-    return getKeycloak().token || '';
-  }
+  return getKeycloak().token || '';
+}
 
   getUserInfo() {
     const tokenParsed = getKeycloak().tokenParsed;
     if (tokenParsed) {
       return {
-        id: tokenParsed['sub'], 
+        id: tokenParsed['sub'],
         username: tokenParsed['preferred_username'],
         firstName: tokenParsed['given_name'],
         lastName: tokenParsed['family_name'],

@@ -89,7 +89,7 @@ body {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   flex-direction: column;
-  
+
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
@@ -103,10 +103,10 @@ body {
     overflow: hidden;
     padding: 1rem;
     position: relative;
-    img { 
-      width: 100%; height: 100%; object-fit: contain; 
+    img {
+      width: 100%; height: 100%; object-fit: contain;
       filter: drop-shadow(0 8px 10px rgba(0,0,0,0.08));
-      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1); 
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
   }
 
@@ -154,11 +154,11 @@ body {
 
 /* Toolbar & Search Bar */
 .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.search-bar { 
+.search-bar {
   position: relative; flex: 1; max-width: 400px;
-  input { 
-    width: 100%; padding: .625rem 1rem .625rem 2.5rem; 
-    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; 
+  input {
+    width: 100%; padding: .625rem 1rem .625rem 2.5rem;
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px;
     &:focus { border-color: var(--color-primary); outline: none; }
   }
   &::before { content: '🔍'; position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); font-size: .85rem; }
@@ -182,7 +182,7 @@ body {
   h1 { font-size: 2rem; font-weight: 700; color: #2D5757; }
 }
 .admin-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 2rem; }
-.admin-table-wrap { 
+.admin-table-wrap {
   background: white; border-radius: 12px; border: 1px solid #f0f0f0; overflow: auto;
   table { width: 100%; border-collapse: collapse; td, th { padding: 1rem; border-bottom: 1px solid #f1f5f9; text-align: left; } }
 }
@@ -276,9 +276,9 @@ body {
 // SHARED UTILITIES
 // =============================================
 .loading-center { display: flex; justify-content: center; padding: 3rem; }
-.spinner { 
-  width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: var(--color-primary); border-radius: 50%; 
-  animation: spin .8s linear infinite; 
+.spinner {
+  width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: var(--color-primary); border-radius: 50%;
+  animation: spin .8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 

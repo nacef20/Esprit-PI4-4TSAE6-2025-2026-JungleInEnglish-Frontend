@@ -34,6 +34,7 @@ import { LessonsManagementComponent } from './pages/lessons-management/lessons-m
 import { LessonsListComponent } from '../components/lessons-list/lessons-list.component';
 import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
 import { FeedbackModule } from '../features/lessons/feedback.module';
+import { FeedbackAnalyticsComponent } from './pages/feedback-analytics/feedback-analytics.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { FeedbackModule } from '../features/lessons/feedback.module';
     EventListComponent,
     EventFormComponent,
     QrScannerComponent,
+    FeedbackAnalyticsComponent
   ],
   imports: [
     CommonModule,

@@ -5,6 +5,7 @@ import { CoursesManagementComponent } from './pages/courses-management/courses-m
 import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';
 import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
 import { QuizListComponent } from './quiz-list/quiz-list.component';
+import { FeedbackAnalyticsComponent } from './pages/feedback-analytics/feedback-analytics.component';
 import { QuizFormComponent } from './quiz-form/quiz-form.component';
 import { AttemptListComponent } from './attempt-list/attempt-list.component';
 import { AttemptDetailComponent } from './attempt-detail/attempt-detail.component';
@@ -39,6 +40,10 @@ const routes: Routes = [
       {
         path: 'my-courses',
         component: MyCoursesComponent
+      },
+      {
+        path: 'analytics/feedback',
+        component: FeedbackAnalyticsComponent
       },
       {
         path: 'quizzes',
@@ -132,18 +137,18 @@ const routes: Routes = [
         canActivate: [shopAuthGuard, shopAdminGuard],
         children: [
           { path: '', loadComponent: () => import('../shop/features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
-          
+
           { path: 'products', loadComponent: () => import('../shop/features/admin/admin-product-list/admin-product-list.component').then(m => m.AdminProductListComponent) },
           { path: 'products/create', loadComponent: () => import('../shop/features/products/product-form/product-form.component').then(m => m.ProductFormComponent) },
           { path: 'products/:id/edit', loadComponent: () => import('../shop/features/products/product-form/product-form.component').then(m => m.ProductFormComponent) },
-          
+
           { path: 'orders', loadComponent: () => import('../shop/features/orders/order-admin/order-admin.component').then(m => m.OrderAdminComponent) },
           { path: 'inventory', loadComponent: () => import('../shop/features/admin/inventory-dashboard/inventory-dashboard.component').then(m => m.InventoryDashboardComponent) },
-          
+
           { path: 'categories', loadComponent: () => import('../shop/features/categories/category-list/category-list.component').then(m => m.CategoryListComponent) },
           { path: 'categories/create', loadComponent: () => import('../shop/features/categories/category-form/category-form.component').then(m => m.CategoryFormComponent) },
           { path: 'categories/:id/edit', loadComponent: () => import('../shop/features/categories/category-form/category-form.component').then(m => m.CategoryFormComponent) },
-          
+
           { path: 'users', loadComponent: () => import('../shop/features/users/user-list/user-list.component').then(m => m.UserListComponent) },
           { path: 'users/create', loadComponent: () => import('../shop/features/users/user-form/user-form.component').then(m => m.UserFormComponent) },
           { path: 'users/:id/edit', loadComponent: () => import('../shop/features/users/user-form/user-form.component').then(m => m.UserFormComponent) },

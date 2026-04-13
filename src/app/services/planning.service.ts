@@ -145,5 +145,5 @@ export class PlanningService {
         const message = error.error?.message || error.error || error.message || 'Erreur inconnue';
         return throwError(() => new Error(message));
     }
-    
+
 }

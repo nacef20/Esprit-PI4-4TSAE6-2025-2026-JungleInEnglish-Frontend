@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,7 +17,7 @@ export class SidebarComponent {
   chatNotifications: number = 5;
   forumNotifications: number = 2;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, public authService: AuthService) {
     // Écouter les changements de route
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -33,7 +33,7 @@ export class SidebarComponent {
   ngOnInit(): void {
     // Charger l'état du sidebar depuis localStorage
     this.loadSidebarState();
-    
+
     // Définir la route courante
     this.currentRoute = this.router.url;
 

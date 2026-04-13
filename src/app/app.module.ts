@@ -16,6 +16,7 @@ import { FeedbackModule } from './features/lessons/feedback.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FeedbackModule,
     HttpClientModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),

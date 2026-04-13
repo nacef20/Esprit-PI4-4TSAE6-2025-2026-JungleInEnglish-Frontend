@@ -74,6 +74,19 @@
         </a>
       </li>
 
+      <li class="nav-item" *ngIf="authService.isTeacher()">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/analytics/feedback'" [routerLink]="['/admin/analytics/feedback']" routerLinkActive="active">
+          <div class="nav-link__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+          </div>
+          <span class="nav-link__text">Feedback Analytics</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
       <li class="nav-divider">
         <span class="nav-divider__text">Quiz Management</span>
       </li>

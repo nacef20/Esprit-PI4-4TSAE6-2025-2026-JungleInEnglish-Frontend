@@ -113,6 +113,10 @@ filterCourses(): void {
 
     this.saving = true;
 
+    if (!this.isEditMode) {
+      this.currentCourse.professorId = this.authService.getUserInfo()?.id || '';
+    }
+
     const operation = this.isEditMode
       ? this.coursesService.updateCourse(this.currentCourse.id!, this.currentCourse)
       : this.coursesService.createCourse(this.currentCourse);
@@ -187,7 +191,8 @@ filterCourses(): void {
       description: '',
       duration: '',
       level: CourseLevel.BEGINNER,
-      imageUrl: ''
+      imageUrl: '',
+      professorId: ''
     };
   }
 

@@ -1,0 +1,60 @@
+<div class="analytics-container">
+  <div class="header-section">
+    <h1 class="page-title">Global Feedback Analytics</h1>
+    <p class="page-subtitle">Track systemic issues across all courses and lessons</p>
+  </div>
+
+  <div class="content-section">
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Analyzing feedback data...</p>
+    </div>
+
+    <div *ngIf="!isLoading && issues.length === 0" class="empty-state">
+      <div class="icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3>Looking good!</h3>
+      <p>No systemic issues detected in recent feedback.</p>
+    </div>
+
+    <div *ngIf="!isLoading && issues.length > 0" class="dashboard-grid">
+      <!-- Chart Card -->
+      <div class="card chart-card">
+        <div class="card-header">
+          <h2>Top Recurring Keywords</h2>
+          <span class="badge">App-Wide</span>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart 
+            [data]="pieChartData" 
+            [type]="pieChartType" 
+            [options]="pieChartOptions">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- Data List Card -->
+      <div class="card list-card">
+        <div class="card-header">
+          <h2>Frequency</h2>
+          <span class="text-sm text-gray-500">Most mentioned topics</span>
+        </div>
+        <div class="list-container">
+          <div class="issue-item" *ngFor="let result of issues; let i = index">
+            <div class="issue-info">
+              <span class="rank" [style.backgroundColor]="getColor(i)">{{i + 1}}</span>
+              <span class="keyword">"{{result.keyword}}"</span>
+            </div>
+            <div class="issue-metric">
+              <span class="count">{{result.count}}</span>
+              <span class="label">mentions</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,5 +11,6 @@ export interface Course {
   duration: string;
   level: CourseLevel;
   imageUrl?: string;
+  professorId?: string;
   date?: string;
 }

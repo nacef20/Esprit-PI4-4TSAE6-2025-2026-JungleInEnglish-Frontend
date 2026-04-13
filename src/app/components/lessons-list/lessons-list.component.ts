@@ -2,6 +2,8 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Lesson } from '../../models/lesson.model';
 import { CourseProgressSummary, LessonsService } from '../../services/lessons.service';
 import { LessonAttachment, AttachmentType } from '../../models/lesson-attachment.model';
+import { CoursesService } from '../../services/courses.service';
+import { Course } from '../../models/course.model';
 
 @Component({
   selector: 'app-lessons-list',
@@ -11,6 +13,7 @@ import { LessonAttachment, AttachmentType } from '../../models/lesson-attachment
 export class LessonsListComponent implements OnChanges {
   @Input() courseId!: number;
   @Input() adminMode: boolean = false;
+  course: Course | null = null;
 progressSummary!: CourseProgressSummary;
   lessons: Lesson[] = [];
   lessonsLoading = false;
@@ -56,12 +59,23 @@ difficultyLoading = false;
 
   // time tracking for lesson
   private lessonStartTimestamp: number | null = null;
-  constructor(private lessonsService: LessonsService) { }
+  constructor(
+    private lessonsService: LessonsService,
+    private coursesService: CoursesService
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['courseId'] && this.courseId) {
+      this.loadCourse();
       this.loadLessons();
     }
+  }
+
+  loadCourse(): void {
+    this.coursesService.getCourse(this.courseId).subscribe({
+      next: (course) => this.course = course,
+      error: (err) => console.error('Error loading course:', err)
+    });
   }
 
 loadLessons(): void {

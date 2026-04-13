@@ -5,6 +5,7 @@ import { CoursesManagementComponent } from './pages/courses-management/courses-m
 import { LessonsManagementComponent } from './pages/lessons-management/lessons-management.component';
 import { MyCoursesComponent } from './pages/my-courses/my-courses.component';
 import { QuizListComponent } from './quiz-list/quiz-list.component';
+import { FeedbackAnalyticsComponent } from './pages/feedback-analytics/feedback-analytics.component';
 import { QuizFormComponent } from './quiz-form/quiz-form.component';
 import { AttemptListComponent } from './attempt-list/attempt-list.component';
 import { AttemptDetailComponent } from './attempt-detail/attempt-detail.component';
@@ -34,6 +35,10 @@ const routes: Routes = [
       {
         path: 'my-courses',
         component: MyCoursesComponent
+      },
+      {
+        path: 'analytics/feedback',
+        component: FeedbackAnalyticsComponent
       },
       {
         path: 'quizzes',

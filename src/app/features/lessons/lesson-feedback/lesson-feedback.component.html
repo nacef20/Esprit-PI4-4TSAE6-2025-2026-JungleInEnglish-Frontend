@@ -11,10 +11,10 @@
     </div>
 
     <!-- Professor badge -->
-    <div class="professor-badge-wrap" *ngIf="professorBadge && professorBadge.badge !== 'NONE'">
-      <span class="professor-badge" [ngClass]="badgeCssClass(professorBadge.badge)">
-        {{ badgeLabel(professorBadge.badge) }}
-        <span class="professor-badge__score">{{ professorBadge.totalScore }} pts</span>
+    <div class="professor-badge-wrap" *ngIf="professorBadge && professorBadge.badgeType !== 'NONE'">
+      <span class="professor-badge" [ngClass]="badgeCssClass(professorBadge.badgeType)">
+        {{ badgeLabel(professorBadge.badgeType) }}
+        <span class="professor-badge__score">{{ professorBadge.totalScore || 0 }} pts</span>
       </span>
     </div>
   </div>

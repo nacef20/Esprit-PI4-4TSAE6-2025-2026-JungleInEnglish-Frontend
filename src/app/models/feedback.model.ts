@@ -35,7 +35,7 @@ export interface FeedbackResponse {
 
 export interface ProfessorBadgeResponse {
   professorId: string;
-  badge: ProfessorBadgeTier;
+  badgeType: ProfessorBadgeTier;
   starBadge: ProfessorBadgeTier | string;
   totalScore: number;
 }

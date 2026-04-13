@@ -269,7 +269,7 @@
           *ngIf="selectedLesson?.id"
           [lessonId]="selectedLesson!.id!"
           [courseId]="courseId"
-          [professorId]="selectedLesson!.professorId || ''">
+          [professorId]="course?.professorId || ''">
         </app-lesson-feedback>
       </div>
     </div>

@@ -10,7 +10,6 @@ import { ErrorInterceptor } from './shop/core/interceptors/error.interceptor';
 import { MessageService } from './shop/services/message.service';
 import { MessageToastComponent } from './shop/shared/components/message-toast/message-toast.component';
 
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { FeedbackModule } from './features/lessons/feedback.module';
 @NgModule({
@@ -29,10 +28,7 @@ import { FeedbackModule } from './features/lessons/feedback.module';
     })
   ],
   providers: [    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    },
+      provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     MessageService

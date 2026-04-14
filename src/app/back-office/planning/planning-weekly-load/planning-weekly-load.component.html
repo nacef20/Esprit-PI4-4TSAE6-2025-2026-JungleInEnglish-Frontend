@@ -1,0 +1,254 @@
+<div class="load-container">
+
+  <!-- ===== HEADER ===== -->
+  <div class="planning-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <svg class="title-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        Analyseur de Charge Hebdomadaire
+      </h1>
+    </div>
+  </div>
+
+  <!-- ===== DATE PICKER ===== -->
+  <div class="search-card">
+    <div class="search-group">
+      <label class="field-label">Sélectionnez une date dans la semaine à analyser</label>
+      <div class="search-row">
+        <input
+          type="date"
+          class="input-field"
+          [(ngModel)]="selectedDate"
+        />
+        <button
+          class="btn-primary"
+          (click)="analyzeLoad()"
+          [disabled]="isLoading"
+          type="button"
+        >
+          <div class="spinner-small" *ngIf="isLoading"></div>
+          <svg *ngIf="!isLoading" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          {{ isLoading ? 'Analyse…' : 'Analyser' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ERROR ===== -->
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- ===== REPORT ===== -->
+  <ng-container *ngIf="report">
+
+    <!-- Titre de la semaine -->
+    <div class="week-banner">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      Semaine <strong>{{ report.weekNumber }}</strong> — Année <strong>{{ report.year }}</strong>
+    </div>
+
+    <!-- ===== ALERTES ===== -->
+    <div class="alerts-card">
+      <h2 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Alertes
+      </h2>
+      <ul class="alert-list">
+        <li
+          *ngFor="let alerte of report.alertes"
+          class="alert-item"
+          [class.alert-warning]="isAlertSurcharge(alerte)"
+          [class.alert-ok]="!isAlertSurcharge(alerte)"
+        >
+          {{ alerte }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- ===== GRILLE DES GRAPHIQUES ===== -->
+    <div class="charts-grid">
+
+      <!-- Charge Enseignants -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <h3>Charge par Enseignant</h3>
+          <span class="seuil-label">Seuil : {{ SEUIL_ENSEIGNANT }} h</span>
+        </div>
+
+        <div class="chart-body">
+          <div class="empty-chart" *ngIf="enseignantEntries.length === 0">
+            Aucune donnée pour cette semaine
+          </div>
+          <div class="bar-row" *ngFor="let e of enseignantEntries">
+            <span class="bar-label">Ens. #{{ e.id }}</span>
+            <div class="bar-track">
+              <div
+                class="bar-fill"
+                [style.width.%]="getBarWidth(e.heures, getMaxHeuresEnseignant())"
+                [style.background]="getBarColor(e.heures, SEUIL_ENSEIGNANT)"
+              ></div>
+              <!-- Marqueur seuil -->
+              <div
+                class="seuil-marker"
+                [style.left.%]="getBarWidth(SEUIL_ENSEIGNANT, getMaxHeuresEnseignant())"
+              ></div>
+            </div>
+            <span class="bar-value">{{ e.heures | number:'1.1-1' }} h</span>
+            <span class="bar-warning" *ngIf="e.heures > SEUIL_ENSEIGNANT" title="Surcharge">⚠️</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charge Groupes -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <h3>Charge par Groupe</h3>
+          <span class="seuil-label">Seuil : {{ SEUIL_GROUPE }} h</span>
+        </div>
+
+        <div class="chart-body">
+          <div class="empty-chart" *ngIf="groupeEntries.length === 0">
+            Aucune donnée pour cette semaine
+          </div>
+          <div class="bar-row" *ngFor="let g of groupeEntries">
+            <span class="bar-label">Grp. #{{ g.id }}</span>
+            <div class="bar-track">
+              <div
+                class="bar-fill"
+                [style.width.%]="getBarWidth(g.heures, getMaxHeuresGroupe())"
+                [style.background]="getBarColor(g.heures, SEUIL_GROUPE)"
+              ></div>
+              <div
+                class="seuil-marker"
+                [style.left.%]="getBarWidth(SEUIL_GROUPE, getMaxHeuresGroupe())"
+              ></div>
+            </div>
+            <span class="bar-value">{{ g.heures | number:'1.1-1' }} h</span>
+            <span class="bar-warning" *ngIf="g.heures > SEUIL_GROUPE" title="Surcharge">⚠️</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Taux Occupation Salles -->
+    <div class="chart-card full-width" *ngIf="salleEntries.length > 0">
+      <div class="chart-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <h3>Taux d'occupation des Salles</h3>
+        <span class="seuil-label">Seuil : {{ SEUIL_SALLE }}%</span>
+      </div>
+
+      <div class="chart-body">
+        <div class="salle-grid">
+          <div class="salle-item" *ngFor="let s of salleEntries">
+            <div class="salle-gauge-wrapper">
+              <div
+                class="salle-gauge"
+                [style.background]="getBarColor(s.taux, SEUIL_SALLE)"
+                [style.height.%]="s.taux"
+              ></div>
+            </div>
+            <div class="salle-info">
+              <span class="salle-id">Salle #{{ s.id }}</span>
+              <span class="salle-taux" [style.color]="getBarColor(s.taux, SEUIL_SALLE)">
+                {{ s.taux | number:'1.1-1' }}%
+              </span>
+              <span *ngIf="s.taux > SEUIL_SALLE" class="salle-warn">Saturée ⚠️</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableaux récapitulatifs -->
+    <div class="tables-grid">
+
+      <!-- Tableau enseignants -->
+      <div class="table-card" *ngIf="enseignantEntries.length > 0">
+        <h3 class="table-title">Récapitulatif Enseignants</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID Enseignant</th>
+              <th>Heures / Semaine</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of enseignantEntries" [class.row-danger]="e.heures > SEUIL_ENSEIGNANT">
+              <td><span class="badge-id">E#{{ e.id }}</span></td>
+              <td><strong>{{ e.heures | number:'1.1-1' }} h</strong></td>
+              <td>
+                <span class="status-pill danger" *ngIf="e.heures > SEUIL_ENSEIGNANT">Surcharge</span>
+                <span class="status-pill ok" *ngIf="e.heures <= SEUIL_ENSEIGNANT">Normal</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tableau groupes -->
+      <div class="table-card" *ngIf="groupeEntries.length > 0">
+        <h3 class="table-title">Récapitulatif Groupes</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID Groupe</th>
+              <th>Heures / Semaine</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let g of groupeEntries" [class.row-danger]="g.heures > SEUIL_GROUPE">
+              <td><span class="badge-id">G#{{ g.id }}</span></td>
+              <td><strong>{{ g.heures | number:'1.1-1' }} h</strong></td>
+              <td>
+                <span class="status-pill danger" *ngIf="g.heures > SEUIL_GROUPE">Surcharge</span>
+                <span class="status-pill ok" *ngIf="g.heures <= SEUIL_GROUPE">Normal</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

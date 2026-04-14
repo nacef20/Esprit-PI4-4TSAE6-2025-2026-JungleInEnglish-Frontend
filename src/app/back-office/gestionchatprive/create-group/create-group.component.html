@@ -1,0 +1,86 @@
+<div class="modal-overlay" (click)="cancel()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h2>
+  <span class="bar"></span>
+  {{ isEditMode ? 'Modifier le groupe' : 'Créer un groupe' }}
+</h2>
+
+      <button class="btn-close" type="button" (click)="cancel()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="submit()">
+
+      <!-- Upload image -->
+      <div class="form-group">
+        <label>Photo du groupe</label>
+
+        <div class="image-upload-area" (click)="fileInput.click()">
+          <!-- Prévisualisation si image sélectionnée -->
+          <img
+            *ngIf="previewUrl"
+            [src]="previewUrl"
+            class="image-preview"
+            alt="Aperçu"
+          />
+          <!-- Placeholder si pas d'image -->
+          <div class="upload-placeholder" *ngIf="!previewUrl">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span class="upload-text">Cliquez pour choisir une image</span>
+            <span class="upload-hint">PNG, JPG, WEBP — max 5 MB</span>
+          </div>
+        </div>
+
+        <!-- Input file caché -->
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          class="file-input-hidden"
+          (change)="onFileSelected($event)"
+        />
+
+        <!-- Bouton changer si image déjà sélectionnée -->
+        <button
+          *ngIf="previewUrl"
+          type="button"
+          class="btn-change-image"
+          (click)="fileInput.click()"
+        >
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+          Changer l'image
+        </button>
+      </div>
+
+      <!-- Nom du groupe -->
+      <div class="form-group">
+        <label for="groupName">Nom du groupe</label>
+        <input
+          type="text"
+          id="groupName"
+          name="groupName"
+          placeholder="Ex : Équipe Design"
+          [(ngModel)]="groupName"
+          required
+        />
+      </div>
+
+      <!-- Boutons -->
+      <div class="actions">
+<button type="submit" class="btn-submit" [disabled]="!groupName.trim()">
+  <i class="fa-solid fa-check"></i>
+  {{ isEditMode ? 'Modifier' : 'Créer' }}
+</button>
+
+        <button type="button" class="btn-cancel" (click)="cancel()">
+          Annuler
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

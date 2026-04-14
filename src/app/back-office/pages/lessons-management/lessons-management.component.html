@@ -1,0 +1,47 @@
+<div class="lessons-management">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Lesson Management</h1>
+    <p class="subtitle">Select a course to manage its lessons</p>
+  </div>
+
+  <!-- Course Selector -->
+  <div class="course-selector">
+    <label for="courseSelect">Choose a course</label>
+
+    <div class="selector-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+
+      <select
+        id="courseSelect"
+        [(ngModel)]="selectedCourseId"
+        (change)="onCourseChange()"
+        class="course-select"
+      >
+        <option [ngValue]="null">Select a course...</option>
+        <option *ngFor="let c of courses" [ngValue]="c.id">
+          {{ c.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Lessons List -->
+  <div *ngIf="selectedCourseId as cid" class="lessons-section">
+    <app-lessons-list
+      [courseId]="+cid"
+      [adminMode]="true">
+    </app-lessons-list>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!selectedCourseId" class="empty-state">
+    <p>Please select a course to view and manage its lessons.</p>
+  </div>
+
+</div>

@@ -1,0 +1,165 @@
+<div class="relative max-w-screen-xl mt-24 px-6 sm:px-8 lg:px-16 mx-auto" id="about">
+
+  <!-- ============================================ -->
+  <!-- SECTION HERO -->
+  <!-- ============================================ -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 py-12 lg:py-20 items-center">
+
+    <!-- Colonne Gauche : Contenu Texte -->
+    <div class="flex flex-col justify-center items-start animate-fade-in">
+
+      <!-- Badge supérieur -->
+      <div class="inline-block mb-6">
+        <span class="px-4 py-2 bg-school-accent/10 text-school-primary rounded-full text-sm font-semibold border border-school-accent/20 backdrop-blur-sm">
+          🌿 English Learning Academy
+        </span>
+      </div>
+
+      <!-- Titre principal -->
+      <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold text-school-primary leading-tight mb-4">
+        Your Future Speaks
+        <span class="relative inline-block mt-2">
+          <span class="relative z-10 bg-gradient-to-r from-school-primary via-school-accent to-school-accent-alt bg-clip-text text-transparent">
+            English
+          </span>
+          <span class="absolute bottom-2 left-0 w-full h-4 bg-school-accent/30 -z-10 rounded"></span>
+        </span>
+      </h1>
+
+      <!-- Sous-titre accrocheur -->
+      <p class="text-2xl lg:text-3xl font-semibold text-school-accent-alt mb-6">
+        Step in and Let's Start Your English Journey
+      </p>
+
+      <!-- Divider décoratif -->
+      <div class="w-20 h-1 bg-gradient-to-r from-school-primary to-school-accent rounded-full mb-6"></div>
+
+      <!-- Encadré "What is Jungle in English?" -->
+      <div class="bg-school-secondary/50 border-l-4 border-school-primary rounded-lg p-6 mb-8 backdrop-blur-sm">
+        <h2 class="text-xl lg:text-2xl font-bold text-school-primary mb-3 flex items-center gap-2">
+          <span class="text-2xl">🌟</span>
+          What is Jungle in English?
+        </h2>
+        <p class="text-base lg:text-lg text-gray-700 leading-relaxed">
+          <strong class="text-school-primary">Jungle in English</strong> is the academy you need to improve your English and overcome the difficulties you’ve always faced.
+        </p>
+      </div>
+
+      <!-- Boutons CTA -->
+      <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-8">
+        <!-- Bouton Get Started -->
+      
+
+        <!-- Bouton Watch Demo -->
+       <button
+  (click)="openVideo()"
+  class="group px-8 py-4 bg-white border-2 border-school-primary text-school-primary rounded-xl font-semibold hover:bg-school-secondary transition-all duration-300 flex items-center justify-center gap-2"
+>
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+  </svg>
+  Watch Demo
+</button>
+      </div>
+
+    </div>
+
+    <!-- Colonne Droite : Image + badges pro -->
+    <div class="relative flex items-center justify-center lg:justify-end animate-fade-in delay-200">
+
+      <!-- Blobs décoratifs en arrière-plan -->
+      <div class="absolute -top-10 -right-10 w-72 h-72 bg-school-accent/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
+      <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-school-primary/10 rounded-full filter blur-3xl animate-pulse-slow animation-delay-2000"></div>
+
+      <div class="relative z-10">
+        <div class="relative">
+
+          <!-- Image principale -->
+          <div class="relative overflow-hidden rounded-3xl shadow-2xl border-4 border-white/50">
+            <img
+              src="assets/Illustration1.png"
+              alt="English Learning Journey"
+              class="w-full h-auto"
+            >
+            <!-- Overlay gradient sur l'image -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-school-primary/10 via-transparent to-school-accent/10 pointer-events-none"></div>
+          </div>
+
+          <!-- ✅ PRO Badge: Students (Left) -->
+          <div class="absolute top-1/2 -left-8 lg:-left-12 -translate-y-1/2 badge-pro badge-green animate-float">
+            <div class="badge-row">
+              <div class="badge-ico">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a4 4 0 00-4-4h-1m-4 6H2v-2a4 4 0 014-4h1m6 6v-2a4 4 0 00-4-4H8m8-4a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+              </div>
+              <div class="badge-text">
+                <p class="badge-title">Students</p>
+                <p class="badge-value">{{ studentCountDisplay }}+</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ✅ PRO Badge: Success (Right - desktop only) -->
+          <div class="absolute top-1/4 -right-8 lg:-right-12 badge-pro badge-white hidden lg:block animate-float animation-delay-1500">
+            <div class="badge-row">
+              <div class="badge-ico badge-ico-dark">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="badge-text">
+                <p class="badge-title">Success</p>
+                <p class="badge-value">{{ successRateDisplay }}%</p>
+              </div>
+            </div>
+          </div>
+
+      
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="relative mt-16 lg:mt-24 animate-fade-in delay-300">
+
+    <div class="relative bg-white rounded-2xl shadow-2xl border border-school-accent/10 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-school-secondary/50 to-transparent opacity-50"></div>
+
+      <div class="relative grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-school-accent/10">
+
+
+      </div>
+    </div>
+
+    <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 h-24 bg-school-primary/5 rounded-full filter blur-3xl -z-10"></div>
+  </div>
+
+</div>
+
+
+
+<!-- TIKTOK VIDEO MODAL -->
+<div *ngIf="videoOpen" class="video-overlay" (click)="closeVideo()">
+  <div class="video-modal" (click)="$event.stopPropagation()">
+
+    <button class="video-close" (click)="closeVideo()">✕</button>
+
+    <div class="tiktok-container">
+      <iframe
+        src="https://www.tiktok.com/embed/v2/7493977706414099718"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+  </div>
+</div>

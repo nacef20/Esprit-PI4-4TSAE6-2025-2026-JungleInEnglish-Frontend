@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Location Tracking</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Multiple Order Location Tracking</h2>
+
+        <div class="controls">
+            <input type="hidden" id="orderIds" value="">
+            <button onclick="startTracking()">Start Tracking</button>
+            <button onclick="stopTracking()" style="background: #dc3545;">Stop Tracking</button>
+        </div>
+
+        <div id="status" class="status">Waiting for input...</div>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        let map;
+        let markers = {}; // orderId -> marker
+        let trackingInterval;
+        const API_BASE_URL = 'http://localhost:8222/api/orders';
+
+        function initMap() {
+            map = L.map('map').setView([0, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+        }
+
+        async function fetchLocation(orderId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${orderId.trim()}/location`);
+                if (!response.ok) return null;
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching location for order ${orderId}`, error);
+                return null;
+            }
+        }
+
+        async function updateTracking() {
+            const inputIds = document.getElementById('orderIds').value.split(',').filter(id => id.trim() !== '');
+            if (inputIds.length === 0) return;
+
+            let activeMarkers = [];
+
+            for (const orderId of inputIds) {
+                const id = orderId.trim();
+                const locationData = await fetchLocation(id);
+
+                if (locationData && locationData.latitude && locationData.longitude) {
+                    const lat = locationData.latitude;
+                    const lng = locationData.longitude;
+                    const address = locationData.address || "Unknown Address";
+
+                    if (!markers[id]) {
+                        markers[id] = L.marker([lat, lng]).addTo(map);
+                    } else {
+                        markers[id].setLatLng([lat, lng]);
+                    }
+
+                    const popupContent = `
+                    <strong>Order ID:</strong> ${id}<br>
+                    <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lng.toFixed(4)}<br>
+                    <strong>Address:</strong> ${address}
+                `;
+                    markers[id].bindPopup(popupContent);
+                    activeMarkers.push(markers[id]);
+                }
+            }
+
+            // Fit bounds to show all markers
+            if (activeMarkers.length > 0) {
+                const group = new L.featureGroup(activeMarkers);
+                // using pad(0.1) gives a 10% margin around the bounds
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+
+            document.getElementById('status').innerText = `Tracking Active - Last updated: ${new Date().toLocaleTimeString()}`;
+            document.getElementById('status').style.color = 'green';
+        }
+
+        function startTracking() {
+            document.getElementById('status').innerText = 'Starting tracking...';
+            document.getElementById('status').style.color = 'blue';
+
+            updateTracking();
+
+            if (trackingInterval) clearInterval(trackingInterval);
+
+            // Bonus: Live tracking simulation
+            trackingInterval = setInterval(() => {
+                updateTracking();
+            }, 5000); // every 5 seconds
+        }
+
+        function stopTracking() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+                document.getElementById('status').innerText = 'Tracking stopped.';
+                document.getElementById('status').style.color = 'red';
+            }
+        }
+
+        window.onload = function () {
+            initMap();
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderIdFromUrl = urlParams.get('orderId');
+
+            if (orderIdFromUrl) {
+                document.getElementById('orderIds').value = orderIdFromUrl;
+                startTracking();
+            }
+        };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,228 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.modal-box {
+  background: var(--bg-card, #fff);
+  border-radius: var(--radius, 12px);
+  padding: 24px;
+  width: 90%;
+  max-width: 520px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+// =============================================
+// HEADER
+// =============================================
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .bar {
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: var(--green-dark, #22c55e);
+    border-radius: 4px;
+  }
+
+  .request-count {
+    background: var(--green-dark, #22c55e);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-sub);
+    transition: var(--transition);
+    &:hover { color: var(--text); }
+  }
+}
+
+// =============================================
+// LISTE DEMANDES
+// =============================================
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.request-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--border, #e5e7eb);
+  transition: var(--transition, 0.2s ease);
+
+  &:hover {
+    background: var(--green-light, #f0fdf4);
+    border-color: var(--green-dark, #22c55e);
+  }
+}
+
+.member-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--green-dark, #22c55e);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  .member-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .member-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+}
+
+// =============================================
+// STATUS BADGE
+// =============================================
+.request-status {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+
+  &.status-pending {
+    background: #fef9c3;
+    color: #a16207;
+  }
+
+  &.status-accepted {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  &.status-rejected {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}
+
+// =============================================
+// ACTIONS
+// =============================================
+.request-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-accept,
+.btn-reject {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition, 0.2s ease);
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.btn-accept {
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #86efac;
+
+  &:hover:not(:disabled) {
+    background: #16a34a;
+    color: #fff;
+  }
+}
+
+.btn-reject {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+
+  &:hover:not(:disabled) {
+    background: #dc2626;
+    color: #fff;
+  }
+}
+
+// =============================================
+// EMPTY STATE
+// =============================================
+.no-requests {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 0;
+  color: var(--text-muted);
+
+  i { font-size: 28px; }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+}

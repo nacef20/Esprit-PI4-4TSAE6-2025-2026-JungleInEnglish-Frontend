@@ -1,0 +1,38 @@
+<div class="user-list">
+  <header class="user-list__header">
+    <h1>Users</h1>
+    <a routerLink="create" class="btn btn--primary">New User</a>
+  </header>
+
+  @if (loading()) {
+    <p class="user-list__loading">Loading…</p>
+  } @else if (users().length === 0) {
+    <p class="user-list__empty">No users yet. <a routerLink="create">Create the first one</a>.</p>
+  } @else {
+    <ul class="user-list__grid">
+      @for (user of users(); track user.id) {
+        <li class="user-card">
+          <div class="user-card__body">
+            <h2 class="user-card__name">{{ user.name }}</h2>
+            <p class="user-card__email">{{ user.email }}</p>
+          </div>
+          <div class="user-card__actions">
+            <a [routerLink]="[user.id, 'edit']" class="btn btn--secondary">Edit</a>
+            <button
+              type="button"
+              class="btn btn--danger"
+              [disabled]="deletingUser()?.id === user.id"
+              (click)="delete(user)"
+            >
+              {{ deletingUser()?.id === user.id ? 'Deleting…' : 'Delete' }}
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (deletingUser(); as user) {
+      <app-confirm-dialog title="Delete User" [message]="'Are you sure you want to delete user \'' + user.name + '\' ?'" (confirm)="doDelete(user)" (cancel)="deletingUser.set(null)" />
+  }
+</div>

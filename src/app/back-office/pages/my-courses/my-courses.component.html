@@ -1,0 +1,90 @@
+<div class="page-container">
+
+  <h2 class="page-title">My Courses</h2>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading your courses...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error-state">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && !error && myCourses.length === 0" class="empty-state">
+    <p>You haven't enrolled in any courses yet.</p>
+  </div>
+
+  <!-- My Courses -->
+  <div class="courses-grid" *ngIf="!loading && !error && myCourses.length">
+
+    <div class="course-card" *ngFor="let c of myCourses">
+
+      <div class="course-image">
+        <img [src]="c.imageUrl" [alt]="c.name">
+      </div>
+
+      <div class="course-content">
+
+        <h4>{{ c.name }}</h4>
+
+        <p class="course-level">
+          {{ c.level }}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Suggested Courses -->
+<div class="suggested-section" *ngIf="isStudent">
+
+    <h3>Suggested Courses</h3>
+
+    <div *ngIf="loadingSuggested" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading suggestions...</p>
+    </div>
+
+    <div *ngIf="!loadingSuggested && suggestedCourses.length === 0" class="empty-state">
+      <p>No suggestions yet.</p>
+    </div>
+
+    <div class="courses-grid" *ngIf="!loadingSuggested && suggestedCourses.length">
+
+      <div class="course-card suggested" *ngFor="let c of suggestedCourses">
+
+        <div class="course-image">
+          <img [src]="c.imageUrl" [alt]="c.name">
+        </div>
+
+        <div class="course-content">
+
+          <h4>{{ c.name }}</h4>
+
+          <p class="course-level">
+            {{ c.level }}
+          </p>
+
+          <button
+            class="btn-enroll"
+            (click)="enroll(c.id!)"
+          >
+            Enroll
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

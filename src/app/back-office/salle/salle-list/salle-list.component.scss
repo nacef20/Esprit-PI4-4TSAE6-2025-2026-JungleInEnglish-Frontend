@@ -1,0 +1,78 @@
+/* Salle List styles - copied from planning-form for consistency */
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+  }
+}
+
+.message {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  &.error-message {
+    background: #fff5f5;
+    color: #e53e3e;
+    border: 1px solid #fed7d7;
+  }
+  &.success-message {
+    background: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #c6f6d5;
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+  }
+  th {
+    background: #f7fafc;
+    font-weight: 700;
+    color: #4a5568;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    background: #4fd1c5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover {
+      background: #38b2ac;
+    }
+  }
+}

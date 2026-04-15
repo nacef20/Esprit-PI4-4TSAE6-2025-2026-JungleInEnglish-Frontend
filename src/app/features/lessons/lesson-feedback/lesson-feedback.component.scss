@@ -1,0 +1,430 @@
+// ── Palette (inherits from app theme) ──────────────────────────────────────
+$teal:        #2D5757;
+$teal-light:  #3d7070;
+$teal-faint:  #eef4f4;
+$accent:      #e8a045;
+$danger:      #e05252;
+$text:        #222;
+$text-muted:  rgba(51, 51, 51, 0.55);
+$border:      rgba(0, 0, 0, 0.08);
+$radius:      14px;
+$radius-sm:   8px;
+
+// ── Section wrapper ─────────────────────────────────────────────────────────
+.feedback-section {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid $border;
+}
+
+// ── Header ──────────────────────────────────────────────────────────────────
+.feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.feedback-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 800;
+  color: $teal;
+  margin: 0;
+
+  &__icon { font-size: 20px; }
+}
+
+.feedback-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: $teal;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 99px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+}
+
+// ── Professor badge ─────────────────────────────────────────────────────────
+.professor-badge-wrap { display: flex; align-items: center; }
+
+.professor-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  &__score {
+    font-weight: 500;
+    font-size: 11px;
+    opacity: 0.75;
+  }
+
+  &--rookie   { background: #e8f5e9; color: #2e7d32; }
+  &--bronze   { background: #fbe9e7; color: #bf360c; }
+  &--silver   { background: #eceff1; color: #455a64; }
+  &--gold     { background: #fff8e1; color: #e65100; }
+  &--platinum { background: #e8eaf6; color: #283593; }
+  &--legend   { background: linear-gradient(135deg, #fff8e1, #fce4ec); color: #6a1b9a; }
+}
+
+// ── Write feedback button ───────────────────────────────────────────────────
+.write-feedback-row {
+  margin-bottom: 20px;
+}
+
+.btn-write {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: $teal;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.1s;
+
+  &:hover  { background: $teal-light; transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+}
+
+// ── Feedback form card ──────────────────────────────────────────────────────
+.feedback-form-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.form-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $teal;
+  margin: 0 0 16px 0;
+}
+
+// ── Star picker ─────────────────────────────────────────────────────────────
+.star-picker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #ddd;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color 0.12s, transform 0.1s;
+
+  &--filled { color: $accent; }
+  &:hover   { transform: scale(1.15); }
+}
+
+.star-label {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $accent;
+}
+
+// ── Textarea ────────────────────────────────────────────────────────────────
+.form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: $text;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.18s;
+
+  &:focus { border-color: $teal; }
+  &::placeholder { color: $text-muted; }
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 11px;
+  color: $text-muted;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.form-error {
+  font-size: 13px;
+  color: $danger;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  padding: 9px 20px;
+  background: transparent;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  cursor: pointer;
+  color: $text-muted;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover { border-color: #aaa; color: $text; }
+}
+
+.btn-submit {
+  padding: 9px 24px;
+  background: $teal;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+
+  &:hover:not(:disabled) { background: $teal-light; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// ── Loading / error / empty ─────────────────────────────────────────────────
+.fb-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: $text-muted;
+  font-size: 14px;
+  padding: 20px 0;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(45, 87, 87, 0.2);
+  border-top-color: $teal;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fb-error {
+  color: $danger;
+  font-size: 14px;
+  padding: 12px 0;
+}
+
+.fb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px 0;
+  color: $text-muted;
+  text-align: center;
+
+  &__icon { font-size: 36px; }
+  p { margin: 0; font-size: 14px; }
+}
+
+// ── Feedback list ───────────────────────────────────────────────────────────
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+// ── Feedback card ───────────────────────────────────────────────────────────
+.feedback-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: $radius;
+  padding: 18px 20px;
+  transition: box-shadow 0.18s;
+
+  &:hover { box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07); }
+
+  &--mine {
+    border-left: 3px solid $teal;
+    background: $teal-faint;
+  }
+
+  // ── Card header
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__date {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  // ── Comment
+  &__comment {
+    font-size: 14px;
+    color: $text;
+    line-height: 1.6;
+    margin: 0 0 14px 0;
+    white-space: pre-wrap;
+  }
+
+  // ── Footer
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+// ── Display stars (read-only) ───────────────────────────────────────────────
+.display-stars { display: flex; gap: 2px; }
+
+.display-star {
+  font-size: 16px;
+  color: #ddd;
+  &--filled { color: $accent; }
+}
+
+// ── Quality chip ────────────────────────────────────────────────────────────
+.quality-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 99px;
+
+  &.quality--high    { background: #e8f5e9; color: #2e7d32; }
+  &.quality--neutral { background: #f5f5f5; color: #666; }
+  &.quality--low     { background: #fce4e4; color: $danger; }
+}
+
+.mine-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: $teal;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+// ── Reactions ───────────────────────────────────────────────────────────────
+.reactions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid $border;
+  background: #fafafa;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  font-family: inherit;
+  color: $text;
+
+  span { font-weight: 600; font-size: 12px; }
+
+  &:hover:not(:disabled) {
+    background: #f0f0f0;
+    border-color: #bbb;
+    transform: translateY(-1px);
+  }
+
+  &--active {
+    background: $teal-faint;
+    border-color: $teal;
+    color: $teal;
+  }
+
+  &--negative.reaction-btn--active {
+    background: #fce4e4;
+    border-color: $danger;
+    color: $danger;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+// ── Delete button ───────────────────────────────────────────────────────────
+.btn-delete-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: $danger;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-family: inherit;
+
+  &:hover {
+    border-color: $danger;
+    background: #fce4e4;
+  }
+}

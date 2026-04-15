@@ -1,0 +1,157 @@
+<div class="form-container">
+  <div class="form-header">
+    <button class="btn-back" (click)="cancel()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back
+    </button>
+    <h1 class="page-title">
+      {{ isEditMode ? 'Edit Objective' : 'New Objective' }}
+    </h1>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">
+    <span class="material-symbols-outlined">error</span>
+    {{ error }}
+  </div>
+
+  <div class="form-card" *ngIf="!loading">
+    <form [formGroup]="objectifForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Code & Titre -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="codeObjectif">Objective Code <span class="required">*</span></label>
+          <input id="codeObjectif" type="text" class="form-control" formControlName="codeObjectif" placeholder="e.g. OBJ-A1-SPEAK-001">
+          <small class="error-text" *ngIf="objectifForm.get('codeObjectif')?.touched && objectifForm.get('codeObjectif')?.invalid">
+            Required format: OBJ-[LEVEL]-[SKILL]-001
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="titre">Title <span class="required">*</span></label>
+          <input id="titre" type="text" class="form-control" formControlName="titre" placeholder="e.g. Introduce yourself in English">
+        </div>
+      </div>
+
+      <!-- Competence & Niveau Difficulte -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="competenceCible">Target Skill <span class="required">*</span></label>
+          <select id="competenceCible" class="form-control" formControlName="competenceCible">
+            <option *ngFor="let c of competences" [value]="c">{{ getCompetenceLabel(c) }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="niveauDifficulte">Difficulty level <span class="required">*</span></label>
+          <select id="niveauDifficulte" class="form-control" formControlName="niveauDifficulte">
+            <option *ngFor="let n of niveaux" [value]="n">{{ getLevelLabel(n) }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Priorite & Statut -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="priorite">Priority (1-5) <span class="required">*</span></label>
+          <input id="priorite" type="number" class="form-control" formControlName="priorite" min="1" max="5">
+        </div>
+
+        <div class="form-group">
+          <label for="statut">Current status <span class="required">*</span></label>
+          <select id="statut" class="form-control" formControlName="statut">
+            <option *ngFor="let s of statuts" [value]="s">{{ getStatusLabel(s) }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group full-width">
+        <label for="description">Description <span class="required">*</span></label>
+        <textarea id="description" class="form-control" rows="3" formControlName="description" placeholder="What should the student be able to do?"></textarea>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dateDebutPrevue">Planned start date</label>
+          <input id="dateDebutPrevue" type="date" class="form-control" formControlName="dateDebutPrevue">
+        </div>
+
+        <div class="form-group">
+          <label for="dateFinPrevue">Planned end date</label>
+          <input id="dateFinPrevue" type="date" class="form-control" formControlName="dateFinPrevue">
+        </div>
+      </div>
+
+      <!-- Duree & Evaluation -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dureeEstimeeHeures">Estimated duration (h)</label>
+          <input id="dureeEstimeeHeures" type="number" class="form-control" formControlName="dureeEstimeeHeures" min="0">
+        </div>
+
+        <div class="form-group">
+          <label for="methodeEvaluation">Evaluation method</label>
+          <select id="methodeEvaluation" class="form-control" formControlName="methodeEvaluation">
+            <option *ngFor="let e of evaluations" [value]="e">{{ getEvaluationLabel(e) }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Prerequis & Supports -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="prerequis">Prerequisites</label>
+          <input id="prerequis" type="text" class="form-control" formControlName="prerequis" placeholder="e.g. Level A1.1">
+        </div>
+
+        <div class="form-group">
+          <label for="supportsPedagogiques">Materials</label>
+          <input id="supportsPedagogiques" type="text" class="form-control" formControlName="supportsPedagogiques" placeholder="e.g. Book page 45, Audio CD1">
+        </div>
+      </div>
+
+      <!-- Success rate -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tauxReussiteGroupe">Current success rate (%)</label>
+          <input id="tauxReussiteGroupe" type="number" class="form-control" formControlName="tauxReussiteGroupe" min="0" max="100">
+        </div>
+
+        <div class="form-group">
+          <label for="nombreSeancesNecessaires">Required sessions</label>
+          <input id="nombreSeancesNecessaires" type="number" class="form-control" formControlName="nombreSeancesNecessaires" min="1">
+        </div>
+      </div>
+
+      <!-- Commentaire -->
+      <div class="form-group full-width">
+        <label for="commentaireProfesseur">Teacher comments</label>
+        <textarea id="commentaireProfesseur" class="form-control" rows="3" formControlName="commentaireProfesseur" placeholder="Optional notes..."></textarea>
+      </div>
+
+      <!-- Groupe assignment -->
+      <div class="form-group full-width">
+        <label for="groupeId">Assign to a Group</label>
+        <select id="groupeId" class="form-control" formControlName="groupeId">
+          <option [ngValue]="null">No group (general objective)</option>
+          <option *ngFor="let g of groupes" [value]="g.idGroupe">{{ g.nom }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="objectifForm.invalid || loading">
+          <span *ngIf="loading" class="spinner-sm"></span>
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading && isEditMode" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading objective...</p>
+  </div>
+</div>

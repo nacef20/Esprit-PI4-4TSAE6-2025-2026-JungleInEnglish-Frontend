@@ -1,0 +1,123 @@
+<div class="analysis-container">
+  <header class="analysis-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">analytics</span>
+      Transfer Impact Analysis
+    </h1>
+  </header>
+
+  <!-- Filtres -->
+  <section class="filters-card">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Start Date</label>
+        <input type="datetime-local" [(ngModel)]="dateDebut" class="form-control">
+      </div>
+      <div class="filter-group">
+        <label>End Date</label>
+        <input type="datetime-local" [(ngModel)]="dateFin" class="form-control">
+      </div>
+      <div class="filter-group">
+        <label>Initiated by</label>
+        <select [(ngModel)]="initiePar" class="form-control">
+          <option [ngValue]="undefined">All</option>
+          <option *ngFor="let i of initiateurs" [value]="i">{{ getInitiatorLabel(i) }}</option>
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button class="btn-primary" (click)="refreshAnalyse()" [disabled]="loading">
+          <span class="material-symbols-outlined">refresh</span>
+          Analyze
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Calculating impact...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    {{ error }}
+  </div>
+
+  <!-- Tableaux -->
+  <div class="analysis-sections" *ngIf="!loading">
+    <article class="content-card">
+      <div class="card-header">
+        <h2>Impact by Source Group</h2>
+        <span class="subtitle">Sorted by transfer count descending</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Source Group ID</th>
+              <th>Reason</th>
+              <th>Initiated by</th>
+              <th class="text-center">Transfers</th>
+              <th class="text-center">Average Impact</th>
+              <th class="text-center">Distribution +/-/=</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let imp of impacts">
+              <td>{{ imp.groupePrecedentId }}</td>
+              <td>{{ getReasonLabel(imp.raisonChangement) }}</td>
+              <td>{{ getInitiatorLabel(imp.initiePar) }}</td>
+              <td class="text-center">{{ imp.nombreTransferts }}</td>
+              <td class="text-center" [ngClass]="getImpactClass(imp.impactMoyenScore)">
+                {{ imp.impactMoyenScore > 0 ? '+' : '' }}{{ imp.impactMoyenScore | number:'1.1-2' }}
+              </td>
+              <td class="text-center">
+                <span class="impact-stats">
+                  <span class="text-success" title="Improvements">↑{{ imp.nombreAmeliorations }}</span>
+                  <span class="text-danger" title="Degradations">↓{{ imp.nombreDegradations }}</span>
+                  <span class="text-muted" title="Neutral">= {{ imp.nombreNeutres }}</span>
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="impacts.length === 0">
+              <td colspan="6" class="empty-row">No transfers found for this period.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="content-card mt-4">
+      <div class="card-header">
+        <h2>Best Destination Groups</h2>
+        <span class="subtitle">Groups that support the progress of received students</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Group Name</th>
+              <th class="text-center">Received Students</th>
+              <th class="text-center">Average Improvement</th>
+              <th class="text-center">Max Progress</th>
+              <th class="text-center">Min Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let dest of destinations">
+              <td><strong>{{ dest.nomGroupe }}</strong></td>
+              <td class="text-center">{{ dest.nombreEtudiantsRecus }}</td>
+              <td class="text-center text-success">+{{ dest.ameliorationMoyenne | number:'1.1-2' }}</td>
+              <td class="text-center text-success">+{{ dest.ameliorationMax }}</td>
+              <td class="text-center text-danger">{{ dest.ameliorationMin > 0 ? '+' : '' }}{{ dest.ameliorationMin }}</td>
+            </tr>
+            <tr *ngIf="destinations.length === 0">
+              <td colspan="5" class="empty-row">No relevant destination history found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="profil-container">
+  <header class="profil-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">person</span>
+      Student Profile #{{ etudiantId }}
+    </h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading student data...</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading">
+    <article class="stat-card" [class.no-group]="!groupeActuel">
+      <div class="stat-icon">
+        <span class="material-symbols-outlined">groups</span>
+      </div>
+      <div class="stat-info" *ngIf="groupeActuel">
+        <span class="label">Current Group</span>
+        <h2 class="value">{{ groupeActuel.groupe.nom }}</h2>
+        <div class="meta">
+          <span class="badge badge-success">Active since {{ groupeActuel.dateAffectation | date }}</span>
+          <span class="code">Code: {{ groupeActuel.groupe.codeGroupe }}</span>
+          <span class="score" *ngIf="groupeActuel.scoreEntree">Entry score: {{ groupeActuel.scoreEntree }}</span>
+        </div>
+      </div>
+      <div class="stat-info" *ngIf="!groupeActuel">
+        <span class="label">Current Group</span>
+        <h2 class="value">No Group</h2>
+        <p class="description">This student currently has no active assignment.</p>
+      </div>
+    </article>
+
+    <article class="content-card mt-4">
+      <div class="card-header">
+        <h2>Group History</h2>
+        <span class="subtitle">Complete history of past and current assignments</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Entry</th>
+              <th>Exit</th>
+              <th class="text-center">Status</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of historique">
+              <td>
+                <div class="group-cell">
+                  <strong>{{ h.groupe.nom }}</strong>
+                  <span>{{ h.groupe.codeGroupe }}</span>
+                </div>
+              </td>
+              <td>{{ h.dateAffectation | date }}</td>
+              <td>{{ h.dateSortie ? (h.dateSortie | date) : '-' }}</td>
+              <td class="text-center">
+                <span class="badge" [ngClass]="getStatutClass(h.statut)">
+                  {{ getStatusLabel(h.statut) }}
+                </span>
+              </td>
+              <td class="comment-cell" [title]="h.commentaire">
+                {{ h.commentaire || '-' }}
+              </td>
+            </tr>
+            <tr *ngIf="historique.length === 0">
+              <td colspan="5" class="empty-row">No assignment history available.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>

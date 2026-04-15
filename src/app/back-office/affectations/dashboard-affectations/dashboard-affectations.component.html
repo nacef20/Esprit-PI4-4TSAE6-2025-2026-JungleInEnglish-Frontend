@@ -2,7 +2,7 @@
   <header class="dashboard-header">
     <h1 class="page-title">
       <span class="material-symbols-outlined">dashboard</span>
-      Dashboard des Affectations
+      Assignment Dashboard
     </h1>
   </header>
 
@@ -12,10 +12,10 @@
         <span class="material-symbols-outlined">person_search</span>
       </div>
       <div class="stat-content">
-        <span class="label">Étudiants sans groupe</span>
+        <span class="label">Students without a group</span>
         <h2 class="value">{{ etudiantsSansGroupe.length }}</h2>
         <button class="btn-text" (click)="showListEtudiants = !showListEtudiants">
-          {{ showListEtudiants ? 'Masquer la liste' : 'Voir les IDs' }}
+          {{ showListEtudiants ? 'Hide list' : 'View IDs' }}
         </button>
         <div class="ids-list" *ngIf="showListEtudiants">
           {{ etudiantsSansGroupe.join(', ') }}
@@ -28,11 +28,11 @@
         <span class="material-symbols-outlined">report_problem</span>
       </div>
       <div class="stat-content">
-        <span class="label">Groupes sans Principal</span>
+        <span class="label">Groups without a principal instructor</span>
         <h2 class="value">{{ groupesSansPrincipal.length }}</h2>
         <div class="mini-list" *ngIf="groupesSansPrincipal.length > 0">
           <span class="mini-item" *ngFor="let g of groupesSansPrincipal | slice:0:3">
-            {{ g?.nom || ('Groupe #' + (g?.idGroupe || '')) }}
+            {{ g?.nom || ('Group #' + (g?.idGroupe || '')) }}
           </span>
           <span *ngIf="groupesSansPrincipal.length > 3">...</span>
         </div>
@@ -42,8 +42,8 @@
 
   <article class="content-card mt-4">
     <div class="card-header">
-      <h2>Charge Horaire des Formateurs</h2>
-      <span class="subtitle">Somme des heures hebdomadaires par formateur</span>
+      <h2>Instructors' Workload</h2>
+      <span class="subtitle">Total weekly hours per instructor</span>
     </div>
 
     <div *ngIf="loading.charge" class="p-4 text-center">
@@ -54,9 +54,9 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>ID Formateur</th>
-            <th class="text-center">Total Heures / Semaine</th>
-            <th class="text-center">Alerte Charge</th>
+            <th>Instructor ID</th>
+            <th class="text-center">Total Hours / Week</th>
+            <th class="text-center">Workload Alert</th>
           </tr>
         </thead>
         <tbody>
@@ -64,17 +64,17 @@
             <td><strong>#{{ row[0] }}</strong></td>
             <td class="text-center">
               <span [class]="getChargeColorClass(row[1])">
-                {{ row[1] || 0 }} heures
+                {{ row[1] || 0 }} hours
               </span>
             </td>
             <td class="text-center">
-              <span *ngIf="row[1] > 20" class="badge badge-danger">Surcharge</span>
-              <span *ngIf="row[1] > 15 && row[1] <= 20" class="badge badge-warning">Élevée</span>
-              <span *ngIf="row[1] <= 15" class="badge badge-success">Optimale</span>
+              <span *ngIf="row[1] > 20" class="badge badge-danger">Overload</span>
+              <span *ngIf="row[1] > 15 && row[1] <= 20" class="badge badge-warning">High</span>
+              <span *ngIf="row[1] <= 15" class="badge badge-success">Optimal</span>
             </td>
           </tr>
           <tr *ngIf="chargeHoraireFormateurs.length === 0">
-            <td colspan="3" class="empty-row">Aucun formateur affecté.</td>
+            <td colspan="3" class="empty-row">No instructor assigned.</td>
           </tr>
         </tbody>
       </table>

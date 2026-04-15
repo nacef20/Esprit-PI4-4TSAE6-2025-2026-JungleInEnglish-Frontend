@@ -56,12 +56,12 @@ currentUserId: string | undefined = undefined;
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Veuillez sélectionner une image (PNG, JPG, WEBP).');
+      alert('Please select an image (PNG, JPG, WEBP).');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('L\'image est trop grande. Maximum 5 MB.');
+      alert('The image is too large. Maximum 5 MB.');
       return;
     }
 
@@ -77,7 +77,7 @@ currentUserId: string | undefined = undefined;
   // ── Soumission du formulaire ─────────────
   submit(): void {
     if (!this.groupName.trim()) {
-      alert('Le nom du groupe est obligatoire.');
+      alert('Group name is required.');
       return;
     }
 
@@ -91,7 +91,7 @@ currentUserId: string | undefined = undefined;
   // ── Création d’un nouveau groupe ─────────
   private createGroup(): void {
     if (!this.selectedFile) {
-      alert('Veuillez sélectionner une image.');
+      alert('Please select an image.');
       return;
     }
 

@@ -77,7 +77,7 @@ export class ReglementGroupeService {
 
   private handleError(error: any): Observable<never> {
     console.error('ReglementGroupeService error:', error);
-    const message = error?.error?.message || error?.message || 'Une erreur est survenue';
+    const message = error?.error?.message || error?.message || 'An error occurred';
     return throwError(() => new Error(message));
   }
 }

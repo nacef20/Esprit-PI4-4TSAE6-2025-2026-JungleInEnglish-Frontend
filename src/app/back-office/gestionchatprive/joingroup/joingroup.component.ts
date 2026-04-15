@@ -26,7 +26,7 @@ demandes: JoinGroupDTO[] = [];
         
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des demandes', err);
+        console.error('Error while loading join requests', err);
       }
     });
   }
@@ -41,7 +41,7 @@ accepterDemande(demande: JoinGroupDTO) {
     next: () => {
       demande.status = 'ACCEPTE';
     },
-    error: (err) => console.error('Erreur lors de l’acceptation', err)
+    error: (err) => console.error('Error while accepting the request', err)
   });
 }
 
@@ -50,7 +50,7 @@ refuserDemande(demande: JoinGroupDTO) {
     next: () => {
       demande.status = 'REFUSE';
     },
-    error: (err) => console.error('Erreur lors du refus', err)
+    error: (err) => console.error('Error while rejecting the request', err)
   });
 }
 
@@ -85,6 +85,15 @@ loadUserDetails() {
     }
 
   });
+}
+
+getStatusLabel(status?: string): string {
+  const labels: { [key: string]: string } = {
+    ATTENTE: 'Pending',
+    ACCEPTE: 'Accepted',
+    REFUSE: 'Rejected'
+  };
+  return status ? (labels[status] || status) : 'Pending';
 }
 
 

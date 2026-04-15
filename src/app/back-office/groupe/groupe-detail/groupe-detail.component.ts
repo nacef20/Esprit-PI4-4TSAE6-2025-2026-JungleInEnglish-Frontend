@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Groupe } from '../../../models/groupe.model';
+import { FormateurEnrichi, Groupe, GroupeEnrichi } from '../../../models/groupe.model';
 import { GroupeService } from '../../../services/groupe.service';
 
 @Component({
@@ -10,9 +10,12 @@ import { GroupeService } from '../../../services/groupe.service';
 })
 export class GroupeDetailComponent implements OnInit {
   groupe: Groupe | null = null;
+  groupeEnrichi: GroupeEnrichi | null = null;
   loading = false;
+  loadingEnriched = false;
   error: string | null = null;
-  activeTab: 'details' | 'members' = 'details';
+  enrichedError: string | null = null;
+  activeTab: 'details' | 'members' | 'formateurs' = 'details';
 
   constructor(
     private route: ActivatedRoute,
@@ -24,11 +27,14 @@ export class GroupeDetailComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loadGroupe(id);
+      this.loadGroupeEnrichi(id);
     }
 
     const tab = this.route.snapshot.queryParamMap.get('tab');
     if (tab === 'members') {
       this.activeTab = 'members';
+    } else if (tab === 'formateurs') {
+      this.activeTab = 'formateurs';
     }
   }
 
@@ -41,8 +47,23 @@ export class GroupeDetailComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Erreur lors du chargement du groupe';
+        this.error = 'Error while loading the group';
         this.loading = false;
+      }
+    });
+  }
+
+  loadGroupeEnrichi(id: number): void {
+    this.loadingEnriched = true;
+    this.enrichedError = null;
+    this.groupeService.getGroupeEnrichi(id).subscribe({
+      next: data => {
+        this.groupeEnrichi = data;
+        this.loadingEnriched = false;
+      },
+      error: () => {
+        this.enrichedError = 'Error while loading enriched instructors';
+        this.loadingEnriched = false;
       }
     });
   }
@@ -56,7 +77,7 @@ export class GroupeDetailComponent implements OnInit {
       return '-';
     }
 
-    return new Date(date).toLocaleDateString('fr-FR', {
+    return new Date(date).toLocaleDateString('en-GB', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -69,5 +90,31 @@ export class GroupeDetailComponent implements OnInit {
     }
 
     return Math.round(((this.groupe.capaciteActuelle || 0) / this.groupe.capaciteMax) * 100);
+  }
+
+  getFormateurDisplayName(formateur: FormateurEnrichi): string {
+    const fullName = [formateur.firstName, formateur.lastName].filter(Boolean).join(' ').trim();
+    return fullName || formateur.username || `Instructor #${formateur.formateurId}`;
+  }
+
+  getStatusLabel(status?: string | null): string {
+    const labels: { [key: string]: string } = {
+      OUVERT: 'Open',
+      COMPLET: 'Full',
+      EN_COURS: 'In progress',
+      TERMINE: 'Completed',
+      ANNULE: 'Canceled',
+      ARCHIVE: 'Archived'
+    };
+    return status ? (labels[status] || status) : '-';
+  }
+
+  getTypeLabel(type?: string | null): string {
+    const labels: { [key: string]: string } = {
+      ETUDIANT: 'Student',
+      CLASSE: 'Class',
+      ADMINISTRATION: 'Administration'
+    };
+    return type ? (labels[type] || type) : '-';
   }
 }

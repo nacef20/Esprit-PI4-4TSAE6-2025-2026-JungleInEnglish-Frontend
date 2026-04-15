@@ -83,7 +83,7 @@ export class ObjectifFormComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = "Erreur lors du chargement de l'objectif";
+        this.error = 'Error while loading the objective';
         this.loading = false;
       }
     });
@@ -110,7 +110,7 @@ export class ObjectifFormComponent implements OnInit {
         this.router.navigate(['/admin/objectif']);
       },
       error: (err) => {
-        this.error = "Une erreur est survenue lors de l'enregistrement";
+        this.error = 'An error occurred while saving the objective';
         this.loading = false;
         console.error(err);
       }
@@ -119,5 +119,48 @@ export class ObjectifFormComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['/admin/objectif']);
+  }
+
+  getCompetenceLabel(competence: string): string {
+    const labels: { [key: string]: string } = {
+      LISTENING: 'Listening',
+      SPEAKING: 'Speaking',
+      READING: 'Reading',
+      WRITING: 'Writing',
+      GRAMMAR: 'Grammar',
+      VOCABULARY: 'Vocabulary'
+    };
+    return labels[competence] || competence;
+  }
+
+  getLevelLabel(level: string): string {
+    const labels: { [key: string]: string } = {
+      FACILE: 'Easy',
+      MOYEN: 'Medium',
+      DIFFICILE: 'Hard',
+      TRES_DIFFICILE: 'Very hard'
+    };
+    return labels[level] || level;
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: { [key: string]: string } = {
+      NON_COMMENCE: 'Not started',
+      EN_COURS: 'In progress',
+      ATTEINT: 'Achieved',
+      PARTIELLEMENT_ATTEINT: 'Partially achieved',
+      NON_ATTEINT: 'Not achieved'
+    };
+    return labels[status] || status;
+  }
+
+  getEvaluationLabel(evaluation: string): string {
+    const labels: { [key: string]: string } = {
+      TEST: 'Test',
+      ORAL: 'Oral',
+      PROJET: 'Project',
+      OBSERVATION: 'Observation'
+    };
+    return labels[evaluation] || evaluation;
   }
 }

@@ -5,7 +5,7 @@
         <span class="material-symbols-outlined main-icon">insights</span>
         Analytics & Performance
       </h1>
-      <p class="subtitle">Vue d'ensemble et santé globale du système de groupes</p>
+      <p class="subtitle">Overview and overall health of the group system</p>
     </div>
     <div class="header-actions">
       <button class="btn-refresh" (click)="loadData()" [disabled]="loading">
@@ -16,7 +16,7 @@
 
   <div *ngIf="loading" class="loading-overlay">
     <div class="spinner"></div>
-    <p>Calcul des métriques en cours...</p>
+    <p>Calculating metrics...</p>
   </div>
 
   <div class="alert alert-error" *ngIf="error">{{ error }}</div>
@@ -29,10 +29,10 @@
         <div class="metric-icon students"><span class="material-symbols-outlined">groups</span></div>
         <div class="metric-info">
           <div class="metric-value">{{ stats.totalEtudiantsAffectes }}</div>
-          <div class="metric-label">Étudiants Actifs</div>
+          <div class="metric-label">Active Students</div>
           <div class="metric-trend" [ngClass]="getTendanceClass()">
             <span class="material-symbols-outlined">{{ getTendanceIcon() }}</span>
-            <span>Tendance {{ stats.tendance }}</span>
+            <span>Trend {{ getTendanceLabel() }}</span>
           </div>
         </div>
       </div>
@@ -41,8 +41,8 @@
         <div class="metric-icon groups"><span class="material-symbols-outlined">category</span></div>
         <div class="metric-info">
           <div class="metric-value">{{ stats.totalGroupesActifs }}</div>
-          <div class="metric-label">Groupes Ouverts</div>
-          <div class="metric-sub">Ratio: {{ stats.ratioEtudiantsParFormateur }} étud./form.</div>
+          <div class="metric-label">Open Groups</div>
+          <div class="metric-sub">Ratio: {{ stats.ratioEtudiantsParFormateur }} stud./inst.</div>
         </div>
       </div>
 
@@ -50,7 +50,7 @@
         <div class="metric-icon health"><span class="material-symbols-outlined">monitoring</span></div>
         <div class="metric-info">
           <div class="metric-value">{{ stats.tauxRemplissageMoyen }}%</div>
-          <div class="metric-label">Remplissage Moyen</div>
+          <div class="metric-label">Average Fill Rate</div>
           <div class="progress-bar-mini">
             <div class="progress-fill" [style.width.%]="stats.tauxRemplissageMoyen"></div>
           </div>
@@ -64,19 +64,19 @@
       <!-- Anomalies Summary Card -->
       <div class="summary-card anomalies-summary" routerLink="alertes">
         <div class="summary-header">
-          <h3>Alertes & Anomalies</h3>
+          <h3>Alerts & Anomalies</h3>
           <span class="material-symbols-outlined">notification_important</span>
         </div>
         <div class="summary-body">
           <div class="anomaly-stat critical">
-            <strong>{{ anomaliesCount.CRITIQUE }}</strong> Critiques
+            <strong>{{ anomaliesCount.CRITIQUE }}</strong> Critical
           </div>
           <div class="anomaly-stat warning">
             <strong>{{ anomaliesCount.WARNING }}</strong> Warnings
           </div>
         </div>
         <div class="summary-footer">
-          <span>Voir le scan complet</span>
+          <span>View the full scan</span>
           <span class="material-symbols-outlined">chevron_right</span>
         </div>
       </div>
@@ -84,15 +84,15 @@
       <!-- Equilibrage Quick Info -->
       <div class="summary-card balance-summary" routerLink="equilibrage">
         <div class="summary-header">
-          <h3>Équilibrage</h3>
+          <h3>Balancing</h3>
           <span class="material-symbols-outlined">balance</span>
         </div>
         <div class="summary-body">
-          <p><strong>{{ stats.groupesSousRemplis }}</strong> groupes sous-remplis detected.</p>
-          <p><strong>{{ stats.groupesQuasiPleins }}</strong> groupes à pleine capacité.</p>
+          <p><strong>{{ stats.groupesSousRemplis }}</strong> underfilled groups detected.</p>
+          <p><strong>{{ stats.groupesQuasiPleins }}</strong> groups near full capacity.</p>
         </div>
         <div class="summary-footer">
-          <span>Optimiser la répartition</span>
+          <span>Optimize distribution</span>
           <span class="material-symbols-outlined">chevron_right</span>
         </div>
       </div>
@@ -100,17 +100,17 @@
       <!-- Progression summary -->
       <div class="summary-card progression-summary" routerLink="sante">
         <div class="summary-header">
-          <h3>Pédagogie</h3>
+          <h3>Pedagogy</h3>
           <span class="material-symbols-outlined">school</span>
         </div>
         <div class="summary-body">
           <div class="big-indicator">
             <span class="val">{{ stats.objectifsEnCours }}</span>
-            <span class="lab">Objectifs en cours</span>
+            <span class="lab">Objectives in progress</span>
           </div>
         </div>
         <div class="summary-footer">
-          <span>Score de santé détaillé</span>
+          <span>Detailed health score</span>
           <span class="material-symbols-outlined">chevron_right</span>
         </div>
       </div>
@@ -125,11 +125,11 @@
       </a>
       <a routerLink="transferts" class="nav-item">
         <span class="material-symbols-outlined">swap_horiz</span>
-        <span>Impact Transferts</span>
+        <span>Transfer Impact</span>
       </a>
       <a routerLink="recommandations" class="nav-item">
         <span class="material-symbols-outlined">recommend</span>
-        <span>Recommandations</span>
+        <span>Recommendations</span>
       </a>
     </div>
 

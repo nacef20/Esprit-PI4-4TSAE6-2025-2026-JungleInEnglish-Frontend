@@ -84,4 +84,14 @@ export class AlertesAnomaliesComponent implements OnInit {
       default: return 'report';
     }
   }
+
+  getTypeLabel(type: string): string {
+    switch (type) {
+      case 'SANS_FORMATEUR': return 'No instructor';
+      case 'CAPACITE_INCOHERENTE': return 'Inconsistent capacity';
+      case 'OBJECTIF_EN_RETARD': return 'Delayed objective';
+      case 'SANS_OBJECTIF': return 'No objective';
+      default: return type.replace(/_/g, ' ');
+    }
+  }
 }

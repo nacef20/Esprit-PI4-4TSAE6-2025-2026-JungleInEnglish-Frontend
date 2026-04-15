@@ -36,7 +36,7 @@ export class EquilibrageService {
 
   private handleError(error: any): Observable<never> {
     console.error('EquilibrageService error:', error);
-    const message = error?.error?.message || error?.message || 'Erreur lors de l\'équilibrage';
+    const message = error?.error?.message || error?.message || 'Error while balancing groups';
     return throwError(() => new Error(message));
   }
 }

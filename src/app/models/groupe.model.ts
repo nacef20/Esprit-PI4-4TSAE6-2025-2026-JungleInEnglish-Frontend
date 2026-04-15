@@ -14,6 +14,34 @@ export interface Groupe {
   updatedAt?: string;
 }
 
+export interface UtilisateurResume {
+  id?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
+
+export interface FormateurEnrichi {
+  formateurId: number;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
+  dateDebut?: string;
+  dateFin?: string;
+  estActif?: boolean;
+  matiere?: string;
+  heuresParSemaine?: number;
+  commentaire?: string;
+}
+
+export interface GroupeEnrichi extends Groupe {
+  nombreFormateursActifs?: number;
+  formateurs?: FormateurEnrichi[];
+}
+
 export enum TypeGroupe {
   ETUDIANT = 'ETUDIANT',
   CLASSE = 'CLASSE',

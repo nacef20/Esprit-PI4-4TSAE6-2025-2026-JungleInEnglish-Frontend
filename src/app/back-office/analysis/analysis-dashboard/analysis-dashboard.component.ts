@@ -75,4 +75,12 @@ export class AnalysisDashboardComponent implements OnInit {
     if (!this.stats) return '';
     return 'tendance-' + this.stats.tendance.toLowerCase();
   }
+
+  getTendanceLabel(): string {
+    switch (this.stats.tendance) {
+      case 'CROISSANCE': return 'Growth';
+      case 'DECROISSANCE': return 'Decline';
+      default: return 'Stable';
+    }
+  }
 }

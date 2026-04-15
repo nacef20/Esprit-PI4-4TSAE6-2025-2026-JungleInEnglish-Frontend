@@ -42,7 +42,7 @@ export class ProfilGroupeEtudiantComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Erreur chargement profil étudiant';
+        this.error = 'Error while loading the student profile';
         this.loading = false;
       }
     });
@@ -59,5 +59,14 @@ export class ProfilGroupeEtudiantComponent implements OnInit {
       default:
         return 'badge-secondary';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: { [key: string]: string } = {
+      ACTIF: 'Active',
+      SUSPENDU: 'Suspended',
+      SORTI: 'Left'
+    };
+    return labels[status] || status;
   }
 }

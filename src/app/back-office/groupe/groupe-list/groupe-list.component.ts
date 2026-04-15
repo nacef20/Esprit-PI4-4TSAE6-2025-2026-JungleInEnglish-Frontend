@@ -43,7 +43,7 @@ export class GroupeListComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.errorMessage = 'Erreur lors du chargement des groupes';
+        this.errorMessage = 'Error while loading groups';
         console.error('Error loading groupes:', error);
         this.isLoading = false;
       }
@@ -107,7 +107,7 @@ export class GroupeListComponent implements OnInit {
           this.selectedGroupe = null;
         },
         error: (error) => {
-          this.errorMessage = 'Erreur lors de la suppression du groupe';
+          this.errorMessage = 'Error while deleting the group';
           console.error('Error deleting groupe:', error);
           this.showDeleteModal = false;
         }
@@ -138,7 +138,7 @@ export class GroupeListComponent implements OnInit {
 
   formatDate(date?: string): string {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('fr-FR', {
+    return new Date(date).toLocaleDateString('en-GB', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -148,5 +148,26 @@ export class GroupeListComponent implements OnInit {
   getCapacitePercent(groupe: Groupe): number {
     if (!groupe.capaciteMax || groupe.capaciteMax === 0) return 0;
     return Math.round(((groupe.capaciteActuelle || 0) / groupe.capaciteMax) * 100);
+  }
+
+  getStatusLabel(status?: string): string {
+    const labels: { [key: string]: string } = {
+      OUVERT: 'Open',
+      COMPLET: 'Full',
+      EN_COURS: 'In progress',
+      TERMINE: 'Completed',
+      ANNULE: 'Canceled',
+      ARCHIVE: 'Archived'
+    };
+    return status ? (labels[status] || status) : '-';
+  }
+
+  getTypeLabel(type?: string): string {
+    const labels: { [key: string]: string } = {
+      ETUDIANT: 'Student',
+      CLASSE: 'Class',
+      ADMINISTRATION: 'Administration'
+    };
+    return type ? (labels[type] || type) : '-';
   }
 }

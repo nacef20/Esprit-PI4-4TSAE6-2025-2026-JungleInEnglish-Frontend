@@ -15,7 +15,7 @@
           <circle cx="11" cy="11" r="8" />
           <path d="M21 21l-4.35-4.35" />
         </svg>
-        <input type="text" class="search-box__input" placeholder="Rechercher..." [(ngModel)]="searchQuery" />
+        <input type="text" class="search-box__input" placeholder="Search..." [(ngModel)]="searchQuery" />
       </div>
     </div>
 
@@ -85,7 +85,7 @@
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
-            <span>Profil</span>
+            <span>Profile</span>
           </a>
           <a class="dropdown-item" (click)="navigateTo('settings')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -93,7 +93,7 @@
               <path
                 d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24" />
             </svg>
-            <span>Paramètres</span>
+            <span>Settings</span>
           </a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item dropdown-item--danger" (click)="logout()">
@@ -102,7 +102,7 @@
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            <span>Déconnexion</span>
+            <span>Sign out</span>
           </a>
         </div>
       </div>

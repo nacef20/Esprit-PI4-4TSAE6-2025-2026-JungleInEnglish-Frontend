@@ -2,10 +2,10 @@
   <div class="form-header">
     <button class="btn-back" (click)="cancel()">
       <span class="material-symbols-outlined">arrow_back</span>
-      Retour
+      Back
     </button>
     <h1 class="page-title">
-      {{ isEditMode ? 'Modifier le Règlement' : 'Nouveau Règlement' }}
+      {{ isEditMode ? 'Edit Rule' : 'New Rule' }}
     </h1>
   </div>
 
@@ -20,88 +20,88 @@
       <!-- Code & Titre -->
       <div class="form-row">
         <div class="form-group">
-          <label for="codeReglement">Code Règlement <span class="required">*</span></label>
-          <input id="codeReglement" type="text" class="form-control" formControlName="codeReglement" placeholder="ex: REG-PRESENCE-001">
+          <label for="codeReglement">Rule Code <span class="required">*</span></label>
+          <input id="codeReglement" type="text" class="form-control" formControlName="codeReglement" placeholder="e.g. REG-PRESENCE-001">
           <small class="error-text" *ngIf="reglementForm.get('codeReglement')?.touched && reglementForm.get('codeReglement')?.invalid">
-            Format requis: REG-[CATEGORIE]-[NUM] (ex: REG-PRESENCE-001)
+            Required format: REG-[CATEGORY]-[NUM] (e.g. REG-PRESENCE-001)
           </small>
         </div>
 
         <div class="form-group">
-          <label for="titre">Titre <span class="required">*</span></label>
-          <input id="titre" type="text" class="form-control" formControlName="titre" placeholder="ex: Ponctualité aux cours">
+          <label for="titre">Title <span class="required">*</span></label>
+          <input id="titre" type="text" class="form-control" formControlName="titre" placeholder="e.g. Class punctuality">
         </div>
       </div>
 
       <!-- Categorie & Sanction -->
       <div class="form-row">
         <div class="form-group">
-          <label for="categorie">Catégorie <span class="required">*</span></label>
+          <label for="categorie">Category <span class="required">*</span></label>
           <select id="categorie" class="form-control" formControlName="categorie">
-            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ getCategoryLabel(cat) }}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="sanction">Sanction associée</label>
+          <label for="sanction">Associated sanction</label>
           <select id="sanction" class="form-control" formControlName="sanction">
-            <option *ngFor="let s of sanctions" [value]="s">{{ s }}</option>
+            <option *ngFor="let s of sanctions" [value]="s">{{ getSanctionLabel(s) }}</option>
           </select>
         </div>
       </div>
 
       <!-- Description -->
       <div class="form-group full-width">
-        <label for="descriptionRegle">Description de la règle <span class="required">*</span></label>
-        <textarea id="descriptionRegle" class="form-control" rows="4" formControlName="descriptionRegle" placeholder="Détaillez la règle ici..."></textarea>
+        <label for="descriptionRegle">Rule description <span class="required">*</span></label>
+        <textarea id="descriptionRegle" class="form-control" rows="4" formControlName="descriptionRegle" placeholder="Describe the rule here..."></textarea>
       </div>
 
       <!-- Consequence & Tolerance -->
       <div class="form-row">
         <div class="form-group">
-          <label for="consequence">Conséquence</label>
-          <input id="consequence" type="text" class="form-control" formControlName="consequence" placeholder="ex: Retrait de points">
+          <label for="consequence">Consequence</label>
+          <input id="consequence" type="text" class="form-control" formControlName="consequence" placeholder="e.g. Point deduction">
         </div>
 
         <div class="form-group">
-          <label for="tolerance">Tolérance</label>
-          <input id="tolerance" type="text" class="form-control" formControlName="tolerance" placeholder="ex: 2 retards tolérés">
+          <label for="tolerance">Tolerance</label>
+          <input id="tolerance" type="text" class="form-control" formControlName="tolerance" placeholder="e.g. 2 tolerated delays">
         </div>
       </div>
 
       <!-- Seuil & Active/Obligatoire -->
       <div class="form-row">
         <div class="form-group">
-          <label for="seuilApplication">Seuil d'application (fois)</label>
+          <label for="seuilApplication">Application threshold (times)</label>
           <input id="seuilApplication" type="number" class="form-control" formControlName="seuilApplication" min="0">
         </div>
 
         <div class="form-group checkbox-group">
           <label class="checkbox-label">
             <input type="checkbox" formControlName="estObligatoire">
-            Règle obligatoire
+            Required rule
           </label>
           <label class="checkbox-label">
             <input type="checkbox" formControlName="estActif">
-            Règle active
+            Active rule
           </label>
         </div>
       </div>
 
       <!-- Groupe Assessment -->
       <div class="form-group full-width">
-        <label for="groupeId">Assigner à un Groupe</label>
+        <label for="groupeId">Assign to a Group</label>
         <select id="groupeId" class="form-control" formControlName="groupeId">
-          <option [ngValue]="null">Aucun groupe (Règle générale)</option>
+          <option [ngValue]="null">No group (general rule)</option>
           <option *ngFor="let g of groupes" [value]="g.idGroupe">{{ g.nom }}</option>
         </select>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn-secondary" (click)="cancel()">Annuler</button>
+        <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
         <button type="submit" class="btn-primary" [disabled]="reglementForm.invalid || loading">
           <span *ngIf="loading" class="spinner-sm"></span>
-          {{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}
+          {{ isEditMode ? 'Update' : 'Save' }}
         </button>
       </div>
     </form>
@@ -109,6 +109,6 @@
 
   <div *ngIf="loading && isEditMode" class="loading-state">
     <div class="spinner"></div>
-    <p>Chargement du règlement...</p>
+    <p>Loading rule...</p>
   </div>
 </div>

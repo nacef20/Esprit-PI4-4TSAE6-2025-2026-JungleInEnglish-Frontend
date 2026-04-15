@@ -70,7 +70,7 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Erreur lors du chargement des membres du groupe';
+        this.error = 'Error while loading group members';
         this.loading = false;
       }
     });
@@ -98,15 +98,15 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
     }
 
     if (this.groupe.statut === StatutGroupe.ANNULE || this.groupe.statut === StatutGroupe.TERMINE) {
-      return `Ce groupe est ${this.groupe.statut.toLowerCase()} : l'affectation d'étudiants est bloquée.`;
+      return `This group is ${this.getGroupStatusLabel(this.groupe.statut).toLowerCase()}: student assignment is blocked.`;
     }
 
     if (this.groupe.capaciteMax !== undefined && this.groupe.capaciteActuelle !== undefined && this.groupe.capaciteActuelle >= this.groupe.capaciteMax) {
-      return `Ce groupe est complet (${this.groupe.capaciteActuelle}/${this.groupe.capaciteMax}).`;
+      return `This group is full (${this.groupe.capaciteActuelle}/${this.groupe.capaciteMax}).`;
     }
 
     if (this.groupe.statut === StatutGroupe.COMPLET) {
-      return 'Ce groupe est complet.';
+      return 'This group is full.';
     }
 
     return '';
@@ -131,12 +131,12 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
     const commentaire = this.newEtudiant.comment.trim();
 
     if (!Number.isFinite(etudiantId) || etudiantId <= 0) {
-      this.error = 'Veuillez renseigner un ID étudiant valide.';
+      this.error = 'Please enter a valid student ID.';
       return;
     }
 
     if (scoreEntree !== undefined && !Number.isFinite(scoreEntree)) {
-      this.error = 'Veuillez renseigner un score d\'entrée valide.';
+      this.error = 'Please enter a valid entry score.';
       return;
     }
 
@@ -145,12 +145,12 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
         const groupeActuelId = groupeActuel?.groupe?.idGroupe;
 
         if (groupeActuelId && groupeActuelId !== this.groupeId) {
-          this.error = `Cet étudiant est déjà actif dans le groupe ${groupeActuel.groupe.codeGroupe}. Utilisez "Changer Groupe".`;
+          this.error = `This student is already active in group ${groupeActuel.groupe.codeGroupe}. Use "Change Group".`;
           return;
         }
 
         if (groupeActuelId && groupeActuelId === this.groupeId) {
-          this.error = 'Cet étudiant est déjà affecté à ce groupe.';
+          this.error = 'This student is already assigned to this group.';
           return;
         }
 
@@ -168,7 +168,7 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
       commentaire
     }).subscribe({
       next: () => {
-        this.showMessage('Étudiant affecté avec succès');
+        this.showMessage('Student assigned successfully');
         this.showAffectEtudiant = false;
         this.loadData();
       },
@@ -178,14 +178,14 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
 
   onSuspendEtudiant(id: number): void {
     this.affectationService.suspendreEtudiant(id).subscribe({
-      next: () => { this.showMessage('Étudiant suspendu'); this.loadData(); },
+      next: () => { this.showMessage('Student suspended'); this.loadData(); },
       error: err => this.error = err.message
     });
   }
 
   onDesaffectEtudiant(id: number): void {
     this.affectationService.desaffecterEtudiant(id).subscribe({
-      next: () => { this.showMessage('Étudiant désaffecté'); this.loadData(); },
+      next: () => { this.showMessage('Student unassigned'); this.loadData(); },
       error: err => this.error = err.message
     });
   }
@@ -204,23 +204,23 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
     const nouveauGroupeId = Number(this.transferEtudiant.newGroupeId);
 
     if (!Number.isFinite(nouveauGroupeId) || nouveauGroupeId <= 0) {
-      this.transferError = 'Veuillez choisir un groupe de destination valide.';
+      this.transferError = 'Please choose a valid destination group.';
       return;
     }
 
     const groupeCible = this.availableGroups.find(g => Number(g.idGroupe) === nouveauGroupeId);
     if (!groupeCible) {
-      this.transferError = 'Le groupe de destination est indisponible ou complet.';
+      this.transferError = 'The destination group is unavailable or full.';
       return;
     }
 
     if (groupeCible.statut === StatutGroupe.ANNULE || groupeCible.statut === StatutGroupe.TERMINE) {
-      this.transferError = `Le groupe ${groupeCible.codeGroupe} ne peut pas recevoir d'étudiants.`;
+      this.transferError = `Group ${groupeCible.codeGroupe} cannot receive students.`;
       return;
     }
 
     if (groupeCible.capaciteMax !== undefined && groupeCible.capaciteActuelle !== undefined && groupeCible.capaciteActuelle >= groupeCible.capaciteMax) {
-      this.transferError = `Le groupe ${groupeCible.codeGroupe} est complet (${groupeCible.capaciteActuelle}/${groupeCible.capaciteMax}).`;
+      this.transferError = `Group ${groupeCible.codeGroupe} is full (${groupeCible.capaciteActuelle}/${groupeCible.capaciteMax}).`;
       return;
     }
 
@@ -232,7 +232,7 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
       commentaire: this.transferEtudiant.comment
     }).subscribe({
       next: () => {
-        this.showMessage('Changement de groupe effectué');
+        this.showMessage('Group change completed');
         this.showChangeGroupe = false;
         this.transferLoading = false;
         this.loadData();
@@ -256,7 +256,7 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
       commentaire: this.newFormateur.comment
     }).subscribe({
       next: () => {
-        this.showMessage('Formateur affecté avec succès');
+        this.showMessage('Instructor assigned successfully');
         this.showAffectFormateur = false;
         this.loadData();
       },
@@ -266,14 +266,14 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
 
   onRetirerFormateur(id: number): void {
     this.affectationService.retirerFormateur(id, this.groupeId).subscribe({
-      next: () => { this.showMessage('Formateur retiré'); this.loadData(); },
+      next: () => { this.showMessage('Instructor removed'); this.loadData(); },
       error: err => this.error = err.message
     });
   }
 
   onChangerRole(id: number, roleselect: any): void {
     this.affectationService.changerRoleFormateur(id, this.groupeId, roleselect.value).subscribe({
-      next: () => { this.showMessage('Rôle mis à jour'); this.loadData(); },
+      next: () => { this.showMessage('Role updated'); this.loadData(); },
       error: err => this.error = err.message
     });
   }
@@ -290,6 +290,58 @@ export class GestionMembreGroupeComponent implements OnInit, OnChanges {
       case 'SORTI': return 'badge-danger';
       default: return 'badge-secondary';
     }
+  }
+
+  getStatusLabel(status?: string): string {
+    const labels: { [key: string]: string } = {
+      ACTIF: 'Active',
+      SUSPENDU: 'Suspended',
+      SORTI: 'Left'
+    };
+    return status ? (labels[status] || status) : '-';
+  }
+
+  getRoleLabel(role?: string): string {
+    const labels: { [key: string]: string } = {
+      PRINCIPAL: 'Principal',
+      ASSISTANT: 'Assistant',
+      REMPLACANT: 'Substitute',
+      OBSERVATEUR: 'Observer'
+    };
+    return role ? (labels[role] || role) : '-';
+  }
+
+  getReasonLabel(reason?: string): string {
+    const labels: { [key: string]: string } = {
+      PROGRESSION: 'Progression',
+      DEROGATION: 'Exception',
+      INCOMPATIBILITE_HORAIRE: 'Schedule conflict',
+      DEMANDE_ETUDIANT: 'Student request',
+      REEQUILIBRAGE: 'Rebalancing'
+    };
+    return reason ? (labels[reason] || reason) : '-';
+  }
+
+  getInitiatorLabel(initiator?: string): string {
+    const labels: { [key: string]: string } = {
+      SYSTEME: 'System',
+      ADMIN: 'Admin',
+      ETUDIANT: 'Student',
+      PROFESSEUR: 'Teacher'
+    };
+    return initiator ? (labels[initiator] || initiator) : '-';
+  }
+
+  getGroupStatusLabel(status?: string | null): string {
+    const labels: { [key: string]: string } = {
+      OUVERT: 'Open',
+      COMPLET: 'Full',
+      EN_COURS: 'In progress',
+      TERMINE: 'Completed',
+      ANNULE: 'Canceled',
+      ARCHIVE: 'Archived'
+    };
+    return status ? (labels[status] || status) : '-';
   }
 
   getRoleClass(role: string): string {

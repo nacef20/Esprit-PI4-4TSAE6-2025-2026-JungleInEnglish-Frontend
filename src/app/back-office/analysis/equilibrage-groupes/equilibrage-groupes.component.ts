@@ -41,7 +41,7 @@ export class EquilibrageGroupesComponent implements OnInit {
 
   genererPlan(): void {
     if (!this.selectedNiveau) {
-      this.error = 'Veuillez sélectionner un niveau.';
+      this.error = 'Please select a level.';
       return;
     }
     this.generating = true;

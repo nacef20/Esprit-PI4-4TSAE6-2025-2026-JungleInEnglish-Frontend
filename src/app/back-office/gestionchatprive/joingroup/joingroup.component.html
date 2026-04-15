@@ -35,7 +35,7 @@
             'status-accepted': demande.status === 'ACCEPTE',
             'status-rejected': demande.status === 'REFUSE'
           }">
-            {{ demande.status || 'ATTENTE' }}
+            {{ getStatusLabel(demande.status) }}
           </div>
 
           <div class="request-actions">

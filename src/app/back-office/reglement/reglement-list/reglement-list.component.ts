@@ -39,7 +39,7 @@ export class ReglementListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Erreur lors du chargement des règlements';
+        this.error = 'Error while loading rules';
         this.loading = false;
         console.error(err);
       }
@@ -86,7 +86,7 @@ export class ReglementListComponent implements OnInit {
           this.reglementToDelete = null;
         },
         error: (err) => {
-          this.error = 'Erreur lors de la suppression';
+          this.error = 'Error while deleting the rule';
           this.showDeleteModal = false;
           console.error(err);
         }
@@ -110,9 +110,32 @@ export class ReglementListComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.error = 'Erreur lors du changement de statut';
+        this.error = 'Error while changing status';
         console.error(err);
       }
     });
+  }
+
+  getCategoryLabel(category: string): string {
+    const labels: { [key: string]: string } = {
+      PRESENCE: 'Attendance',
+      RETARD: 'Tardiness',
+      PARTICIPATION: 'Participation',
+      COMPORTEMENT: 'Behavior',
+      DEVOIRS: 'Homework',
+      MATERIEL: 'Materials',
+      AUTRE: 'Other'
+    };
+    return labels[category] || category;
+  }
+
+  getSanctionLabel(sanction?: string): string {
+    const labels: { [key: string]: string } = {
+      AVERTISSEMENT: 'Warning',
+      EXCLUSION_TEMPORAIRE: 'Temporary exclusion',
+      EXCLUSION_DEFINITIVE: 'Permanent exclusion',
+      AUTRE: 'Other'
+    };
+    return sanction ? (labels[sanction] || sanction) : '-';
   }
 }

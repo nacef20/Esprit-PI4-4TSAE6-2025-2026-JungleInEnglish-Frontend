@@ -85,6 +85,10 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
+.compact {
+  padding: 2rem 1rem;
+}
+
 .grid-layout {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -255,6 +259,65 @@
       font-size: 0.9rem;
     }
   }
+}
+
+.summary-layout {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.formateurs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.formateur-card {
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  &__body p {
+    margin: 0.35rem 0;
+    font-size: 0.95rem;
+    color: #64748b;
+  }
+}
+
+.formateur-name {
+  display: block;
+  color: #1f2937;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.formateur-meta {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.formateur-role {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.empty-formateurs {
+  text-align: center;
 }
 
 @keyframes spin {

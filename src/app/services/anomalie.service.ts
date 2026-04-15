@@ -35,7 +35,7 @@ export class AnomalieService {
 
   private handleError(error: any): Observable<never> {
     console.error('AnomalieService error:', error);
-    const message = error?.error?.message || error?.message || 'Erreur lors du scan des anomalies';
+    const message = error?.error?.message || error?.message || 'Error while scanning anomalies';
     return throwError(() => new Error(message));
   }
 }

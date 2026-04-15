@@ -3,7 +3,7 @@
     <div class="header-left">
       <h1 class="page-title">
         <span class="material-symbols-outlined">report_problem</span>
-        Scan d'Anomalies
+        Anomaly Scan
       </h1>
     </div>
     
@@ -16,22 +16,22 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn-refresh-mini" (click)="loadAlertes()" [disabled]="loading" title="Relancer le scan">
+      <button class="btn-refresh-mini" (click)="loadAlertes()" [disabled]="loading" title="Rerun the scan">
         <span class="material-symbols-outlined" [class.rotating]="loading">refresh</span>
       </button>
     </div>
   </header>
 
   <nav class="tabs-nav" *ngIf="!loading">
-    <button class="tab-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">Tous</button>
-    <button class="tab-btn tab-critique" [class.active]="activeFilter === 'CRITIQUE'" (click)="setFilter('CRITIQUE')">Critiques</button>
+    <button class="tab-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">All</button>
+    <button class="tab-btn tab-critique" [class.active]="activeFilter === 'CRITIQUE'" (click)="setFilter('CRITIQUE')">Critical</button>
     <button class="tab-btn tab-warning" [class.active]="activeFilter === 'WARNING'" (click)="setFilter('WARNING')">Warnings</button>
     <button class="tab-btn tab-info" [class.active]="activeFilter === 'INFO'" (click)="setFilter('INFO')">Infos</button>
   </nav>
 
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Analyse des données en temps réel...</p>
+    <p>Real-time data analysis...</p>
   </div>
 
   <div class="alert alert-error" *ngIf="error && !loading">{{ error }}</div>
@@ -49,7 +49,7 @@
         <div class="alerte-header">
           <div class="alerte-type">
             <span class="material-symbols-outlined type-icon">{{ getTypeIcon(alerte.typeAnomalie) }}</span>
-            {{ alerte.typeAnomalie.replace('_', ' ') }}
+            {{ getTypeLabel(alerte.typeAnomalie) }}
           </div>
           <span class="badge" [ngClass]="getSeveriteClass(alerte.severite)">
             {{ alerte.severite }}
@@ -62,7 +62,7 @@
         </h3>
 
         <div class="retard-badge" *ngIf="alerte.joursRetard && alerte.joursRetard > 0">
-          En retard de {{ alerte.joursRetard }} jours
+          Overdue by {{ alerte.joursRetard }} days
         </div>
 
         <p class="alerte-description">{{ alerte.description }}</p>
@@ -70,21 +70,21 @@
         <div class="alerte-footer">
           <div class="alerte-suggestion" *ngIf="alerte.suggestion">
             <span class="material-symbols-outlined">lightbulb</span>
-            <span>Conseil : {{ alerte.suggestion }}</span>
+            <span>Tip: {{ alerte.suggestion }}</span>
           </div>
 
           <!-- Actions Contextuelles -->
           <button class="btn-action" *ngIf="alerte.typeAnomalie === 'SANS_FORMATEUR'" [routerLink]="['/admin/groupe/details', alerte.idGroupe]" [queryParams]="{ tab: 'members' }">
-            Affecter un formateur
+            Assign an instructor
           </button>
           <button class="btn-action btn-secondary" *ngIf="alerte.typeAnomalie === 'SANS_FORMATEUR'" [routerLink]="['/admin/groupe/details', alerte.idGroupe]">
-            Voir le groupe
+            View group
           </button>
           <button class="btn-action" *ngIf="alerte.typeAnomalie === 'OBJECTIF_EN_RETARD' || alerte.typeAnomalie === 'SANS_OBJECTIF'" routerLink="/admin/objectif">
-            Gérer les objectifs
+            Manage objectives
           </button>
           <button class="btn-action" *ngIf="alerte.typeAnomalie === 'CAPACITE_INCOHERENTE'" routerLink="/admin/groupe">
-            Ajuster capacité
+            Adjust capacity
           </button>
         </div>
       </div>
@@ -93,6 +93,6 @@
 
   <div *ngIf="!loading && filteredAlertes.length === 0" class="empty-state">
     <span class="material-symbols-outlined">check_circle</span>
-    <p>Félicitations ! Aucune anomalie détectée dans cette catégorie.</p>
+    <p>Great news! No anomalies were detected in this category.</p>
   </div>
 </div>

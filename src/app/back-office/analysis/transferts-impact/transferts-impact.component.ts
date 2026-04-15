@@ -46,7 +46,7 @@ export class TransfertsImpactComponent implements OnInit {
           this.loading = false;
         },
         error: (err) => {
-          this.error = 'Erreur lors de l\'analyse d\'impact';
+          this.error = 'Error while running the impact analysis';
           this.loading = false;
         }
       });
@@ -62,5 +62,26 @@ export class TransfertsImpactComponent implements OnInit {
     if (score > 0) return 'text-success';
     if (score < 0) return 'text-danger';
     return '';
+  }
+
+  getInitiatorLabel(value?: string): string {
+    const labels: { [key: string]: string } = {
+      SYSTEME: 'System',
+      ADMIN: 'Admin',
+      ETUDIANT: 'Student',
+      PROFESSEUR: 'Teacher'
+    };
+    return value ? (labels[value] || value) : 'All';
+  }
+
+  getReasonLabel(value?: string): string {
+    const labels: { [key: string]: string } = {
+      PROGRESSION: 'Progression',
+      DEROGATION: 'Exception',
+      INCOMPATIBILITE_HORAIRE: 'Schedule conflict',
+      DEMANDE_ETUDIANT: 'Student request',
+      REEQUILIBRAGE: 'Rebalancing'
+    };
+    return value ? (labels[value] || value) : '-';
   }
 }

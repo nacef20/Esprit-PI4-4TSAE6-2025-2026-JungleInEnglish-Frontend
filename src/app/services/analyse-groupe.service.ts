@@ -113,7 +113,7 @@ export class AnalyseGroupeService {
     const backendError = error?.error?.error;
     const message = backendMessage
       ? (backendError ? `${backendError}: ${backendMessage}` : backendMessage)
-      : (error?.message || 'Une erreur est survenue lors de l\'analyse');
+      : (error?.message || 'An error occurred during the analysis');
     return throwError(() => new Error(message));
   }
 }

@@ -18,41 +18,41 @@
     <div class="section-header">
       <h3>
         <span class="material-symbols-outlined">person_pin</span>
-        Équipe Pédagogique
+        Teaching Team
       </h3>
       <div class="actions">
         <button class="btn-primary" (click)="showAffectFormateur = !showAffectFormateur">
           <span class="material-symbols-outlined">person_add</span>
-          Affecter un formateur
+          Assign Instructor
         </button>
       </div>
     </div>
 
     <div class="alert alert-warning" *ngIf="!formateurPrincipal && !loading">
       <span class="material-symbols-outlined">report_problem</span>
-      Ce groupe n'a pas encore de formateur <strong>PRINCIPAL</strong> affecté.
+      This group does not yet have a <strong>PRINCIPAL</strong> instructor assigned.
     </div>
 
     <div class="inline-form" *ngIf="showAffectFormateur">
-      <input type="number" [(ngModel)]="newFormateur.id" placeholder="ID Formateur" class="form-control">
+      <input type="number" [(ngModel)]="newFormateur.id" placeholder="Instructor ID" class="form-control">
       <select [(ngModel)]="newFormateur.role" class="form-control">
-        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+        <option *ngFor="let r of roles" [value]="r">{{ getRoleLabel(r) }}</option>
       </select>
-      <input type="text" [(ngModel)]="newFormateur.matiere" placeholder="Matière" class="form-control">
-      <input type="number" [(ngModel)]="newFormateur.hours" placeholder="Heures/sem" class="form-control">
-      <button class="btn-success" (click)="onAffectFormateur()">Confirmer</button>
-      <button class="btn-secondary" (click)="showAffectFormateur = false">Annuler</button>
+      <input type="text" [(ngModel)]="newFormateur.matiere" placeholder="Subject" class="form-control">
+      <input type="number" [(ngModel)]="newFormateur.hours" placeholder="Hours/week" class="form-control">
+      <button class="btn-success" (click)="onAffectFormateur()">Confirm</button>
+      <button class="btn-secondary" (click)="showAffectFormateur = false">Cancel</button>
     </div>
 
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
           <tr>
-            <th>ID Formateur</th>
-            <th>Rôle</th>
-            <th>Matière</th>
-            <th class="text-center">Charge</th>
-            <th class="text-center">Statut</th>
+            <th>Instructor ID</th>
+            <th>Role</th>
+            <th>Subject</th>
+            <th class="text-center">Load</th>
+            <th class="text-center">Status</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
@@ -61,22 +61,22 @@
             <td><strong>#{{ f.formateurId }}</strong></td>
             <td>
               <select [value]="f.role" (change)="onChangerRole(f.formateurId, $event.target)" class="role-select">
-                <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+                <option *ngFor="let r of roles" [value]="r">{{ getRoleLabel(r) }}</option>
               </select>
             </td>
             <td>{{ f.matiere || '-' }}</td>
             <td class="text-center">{{ f.heuresParSemaine || 0 }}h</td>
             <td class="text-center">
               <span class="badge" [ngClass]="f.estActif ? 'badge-success' : 'badge-danger'">
-                {{ f.estActif ? 'ACTIF' : 'INACTIF' }}
+                {{ f.estActif ? 'Active' : 'Inactive' }}
               </span>
             </td>
             <td class="text-center">
-              <button class="btn-danger-sm" (click)="onRetirerFormateur(f.formateurId)">Retirer</button>
+              <button class="btn-danger-sm" (click)="onRetirerFormateur(f.formateurId)">Remove</button>
             </td>
           </tr>
           <tr *ngIf="formateurs.length === 0">
-            <td colspan="6" class="empty-row">Aucun formateur affecté.</td>
+            <td colspan="6" class="empty-row">No instructor assigned.</td>
           </tr>
         </tbody>
       </table>
@@ -87,32 +87,32 @@
     <div class="section-header">
       <h3>
         <span class="material-symbols-outlined">groups</span>
-        Étudiants Inscrits
+        Enrolled Students
       </h3>
       <div class="actions">
         <button class="btn-primary" (click)="showAffectEtudiant = !showAffectEtudiant" [disabled]="isStudentAffectationBlocked()">
           <span class="material-symbols-outlined">person_add_alt</span>
-          Affecter un étudiant
+          Assign Student
         </button>
       </div>
     </div>
 
     <div class="inline-form" *ngIf="showAffectEtudiant">
-      <input type="number" [(ngModel)]="newEtudiant.id" placeholder="ID Étudiant" class="form-control">
-      <input type="number" [(ngModel)]="newEtudiant.score" placeholder="Score Entrée" class="form-control">
-      <input type="text" [(ngModel)]="newEtudiant.comment" placeholder="Commentaire" class="form-control">
-      <button class="btn-success" (click)="onAffectEtudiant()">Affecter</button>
-      <button class="btn-secondary" (click)="showAffectEtudiant = false">Annuler</button>
+      <input type="number" [(ngModel)]="newEtudiant.id" placeholder="Student ID" class="form-control">
+      <input type="number" [(ngModel)]="newEtudiant.score" placeholder="Entry score" class="form-control">
+      <input type="text" [(ngModel)]="newEtudiant.comment" placeholder="Comment" class="form-control">
+      <button class="btn-success" (click)="onAffectEtudiant()">Assign</button>
+      <button class="btn-secondary" (click)="showAffectEtudiant = false">Cancel</button>
     </div>
 
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
           <tr>
-            <th>ID Étudiant</th>
-            <th>Affectation</th>
+            <th>Student ID</th>
+            <th>Assignment</th>
             <th class="text-center">Score</th>
-            <th class="text-center">Statut</th>
+            <th class="text-center">Status</th>
             <th class="text-center">Actions</th>
           </tr>
         </thead>
@@ -123,17 +123,17 @@
             <td class="text-center">{{ e.scoreEntree || '-' }}</td>
             <td class="text-center">
               <span class="badge" [ngClass]="getStatutClass(e.statut)">
-                {{ e.statut }}
+                  {{ getStatusLabel(e.statut) }}
               </span>
             </td>
             <td class="text-center actions-group">
-              <button class="btn-table" (click)="openChangeGroupe(e.etudiantId)">Changer Groupe</button>
-              <button class="btn-table warning" *ngIf="e.statut === 'ACTIF'" (click)="onSuspendEtudiant(e.etudiantId)">Suspendre</button>
-              <button class="btn-table danger" (click)="onDesaffectEtudiant(e.etudiantId)">Désaffecter</button>
+              <button class="btn-table" (click)="openChangeGroupe(e.etudiantId)">Change Group</button>
+              <button class="btn-table warning" *ngIf="e.statut === 'ACTIF'" (click)="onSuspendEtudiant(e.etudiantId)">Suspend</button>
+              <button class="btn-table danger" (click)="onDesaffectEtudiant(e.etudiantId)">Unassign</button>
             </td>
           </tr>
           <tr *ngIf="etudiants.length === 0">
-            <td colspan="5" class="empty-row">Aucun étudiant n'est affecté à ce groupe.</td>
+            <td colspan="5" class="empty-row">No student is assigned to this group.</td>
           </tr>
         </tbody>
       </table>
@@ -143,7 +143,7 @@
   <div class="modal-overlay" *ngIf="showChangeGroupe">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Changer de Groupe</h3>
+        <h3>Change Group</h3>
         <button class="close-btn" (click)="showChangeGroupe = false">&times;</button>
       </div>
       <div class="modal-body">
@@ -152,35 +152,35 @@
           {{ transferError }}
         </div>
         <div class="form-group">
-          <label>Nouveau Groupe</label>
+          <label>New Group</label>
           <select [(ngModel)]="transferEtudiant.newGroupeId" class="form-control">
-            <option [ngValue]="undefined" disabled selected>Choisir un groupe</option>
+            <option [ngValue]="undefined" disabled selected>Choose a group</option>
             <option *ngFor="let g of availableGroups" [ngValue]="g.idGroupe">
               {{ g.nom }} ({{ g.codeGroupe }})
             </option>
           </select>
         </div>
         <div class="form-group">
-          <label>Raison du changement</label>
+          <label>Reason for change</label>
           <select [(ngModel)]="transferEtudiant.raison" class="form-control">
-            <option *ngFor="let r of raisons" [value]="r">{{ r }}</option>
+            <option *ngFor="let r of raisons" [value]="r">{{ getReasonLabel(r) }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Initié par</label>
+          <label>Initiated by</label>
           <select [(ngModel)]="transferEtudiant.initie" class="form-control">
-            <option *ngFor="let i of initiateurs" [value]="i">{{ i }}</option>
+            <option *ngFor="let i of initiateurs" [value]="i">{{ getInitiatorLabel(i) }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Commentaire</label>
+          <label>Comment</label>
           <textarea [(ngModel)]="transferEtudiant.comment" class="form-control"></textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" (click)="showChangeGroupe = false">Annuler</button>
+        <button class="btn-secondary" (click)="showChangeGroupe = false">Cancel</button>
         <button type="button" class="btn-primary" (click)="onConfirmTransfer()" [disabled]="transferLoading">
-          {{ transferLoading ? 'Transfert...' : 'Confirmer le transfert' }}
+          {{ transferLoading ? 'Transferring...' : 'Confirm transfer' }}
         </button>
       </div>
     </div>

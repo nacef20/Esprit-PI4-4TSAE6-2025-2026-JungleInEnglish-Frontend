@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Groupe, StatutGroupe, TypeGroupe } from '../models/groupe.model';
+import { Groupe, GroupeEnrichi, StatutGroupe, TypeGroupe } from '../models/groupe.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -28,6 +28,11 @@ export class GroupeService {
 
   getGroupeById(id: number): Observable<Groupe> {
     return this.http.get<Groupe>(`${this.apiUrl}/${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getGroupeEnrichi(id: number): Observable<GroupeEnrichi> {
+    return this.http.get<GroupeEnrichi>(`${this.apiUrl}/${id}/enrichi`)
       .pipe(catchError(this.handleError));
   }
 
@@ -100,7 +105,7 @@ export class GroupeService {
 
   private handleError(error: any): Observable<never> {
     console.error('GroupeService error:', error);
-    const message = error?.error?.message || error?.message || 'Une erreur est survenue';
+    const message = error?.error?.message || error?.message || 'An error occurred';
     return throwError(() => new Error(message));
   }
 }

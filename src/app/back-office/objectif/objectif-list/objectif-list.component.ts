@@ -42,7 +42,7 @@ export class ObjectifListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Erreur lors du chargement des objectifs';
+        this.error = 'Error while loading objectives';
         this.loading = false;
         console.error(err);
       }
@@ -90,7 +90,7 @@ export class ObjectifListComponent implements OnInit {
           this.objectifToDelete = null;
         },
         error: (err) => {
-          this.error = 'Erreur lors de la suppression';
+          this.error = 'Error while deleting the objective';
           this.showDeleteModal = false;
           console.error(err);
         }
@@ -108,7 +108,7 @@ export class ObjectifListComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.error = "Erreur lors de la mise à jour de l'objectif";
+        this.error = 'Error while updating the objective';
         console.error(err);
       }
     });
@@ -116,13 +116,56 @@ export class ObjectifListComponent implements OnInit {
 
   getPriorityLabel(priorite: number): string {
     switch(priorite) {
-      case 1: return 'Critique';
-      case 2: return 'Haute';
-      case 3: return 'Moyenne';
-      case 4: return 'Basse';
-      case 5: return 'Secondaire';
-      default: return 'Inconnue';
+      case 1: return 'Critical';
+      case 2: return 'High';
+      case 3: return 'Medium';
+      case 4: return 'Low';
+      case 5: return 'Secondary';
+      default: return 'Unknown';
     }
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: { [key: string]: string } = {
+      NON_COMMENCE: 'Not started',
+      EN_COURS: 'In progress',
+      ATTEINT: 'Achieved',
+      PARTIELLEMENT_ATTEINT: 'Partially achieved',
+      NON_ATTEINT: 'Not achieved'
+    };
+    return labels[status] || status;
+  }
+
+  getCompetenceLabel(competence: string): string {
+    const labels: { [key: string]: string } = {
+      LISTENING: 'Listening',
+      SPEAKING: 'Speaking',
+      READING: 'Reading',
+      WRITING: 'Writing',
+      GRAMMAR: 'Grammar',
+      VOCABULARY: 'Vocabulary'
+    };
+    return labels[competence] || competence;
+  }
+
+  getLevelLabel(level: string): string {
+    const labels: { [key: string]: string } = {
+      FACILE: 'Easy',
+      MOYEN: 'Medium',
+      DIFFICILE: 'Hard',
+      TRES_DIFFICILE: 'Very hard'
+    };
+    return labels[level] || level;
+  }
+
+  getEvaluationLabel(evaluation: string): string {
+    const labels: { [key: string]: string } = {
+      TEST: 'Test',
+      ORAL: 'Oral',
+      PROJET: 'Project',
+      OBSERVATION: 'Observation'
+    };
+    return labels[evaluation] || evaluation;
   }
 
   getPriorityClass(priorite: number): string {

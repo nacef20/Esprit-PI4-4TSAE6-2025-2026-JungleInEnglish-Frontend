@@ -42,7 +42,7 @@ export class ScoreSanteComponent implements OnInit {
           this.loading = false;
         },
         error: (err) => {
-          this.error = 'Impossible de charger les scores de santé';
+          this.error = 'Unable to load health scores';
           this.loading = false;
         }
       });
@@ -83,6 +83,16 @@ export class ScoreSanteComponent implements OnInit {
       case 'MOYEN': return '#ecc94b';
       case 'BON': return '#38a169';
       default: return '#cbd5e0';
+    }
+  }
+
+  getNiveauLabel(niveau: string): string {
+    switch (niveau) {
+      case 'CRITIQUE': return 'Critical';
+      case 'FAIBLE': return 'Low';
+      case 'MOYEN': return 'Medium';
+      case 'BON': return 'Good';
+      default: return niveau;
     }
   }
 }

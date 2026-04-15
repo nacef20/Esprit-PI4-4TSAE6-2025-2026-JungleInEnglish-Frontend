@@ -91,38 +91,38 @@ groupAdmin: any;
   }
 
 removeMember(member: GroupMemberDTO) {
-  // Vérifie si c'est l'admin
+  // Check if this is the admin
   if (member.userId === this.groupAdmin.userId) {
     Swal.fire({
       icon: 'warning',
-      title: 'Attention',
-      text: "Vous ne pouvez pas supprimer l'admin du groupe !"
+      title: 'Warning',
+      text: 'You cannot remove the group admin.'
     });
     return;
   }
 
-  // Demande confirmation avant suppression
+  // Ask for confirmation before removal
   Swal.fire({
     icon: 'warning',
-    title: 'Do you want to remove this member ?',
+    title: 'Do you want to remove this member?',
     
     showCancelButton: true,
-    confirmButtonText: 'yes, remove',
-    cancelButtonText: 'no, cancel'
+    confirmButtonText: 'Yes, remove',
+    cancelButtonText: 'No, cancel'
   }).then((result) => {
     if (result.isConfirmed) {
-      // Si l'utilisateur confirme, on appelle le service
+      // If the user confirms, call the service
       this.memberGroupService.removeMember(this.groupId, member.userId)
         .subscribe({
           next: () => {
-            // Mettre à jour la liste
+            // Update the list
             this.members = this.members.filter(m => m.userId !== member.userId);
 
-            // Notification succès
+            // Success notification
             Swal.fire({
               icon: 'success',
-              title: 'Membre supprimé !',
-              text: 'the member has been removed successfully.',
+              title: 'Member removed',
+              text: 'The member has been removed successfully.',
               timer: 3000,
               showConfirmButton: false
             });
@@ -132,15 +132,15 @@ removeMember(member: GroupMemberDTO) {
           error: (err) => {
             Swal.fire({
               icon: 'error',
-              title: 'Erreur',
-              text: "Erreur lors de la suppression du membre !"
+              title: 'Error',
+              text: 'Error while removing the member.'
             });
-            console.error("Erreur lors de la suppression du membre", err);
+            console.error('Error while removing the member', err);
           }
         });
     } else {
-      // Si l'utilisateur annule
-      console.log("Suppression annulée");
+      // If the user cancels
+      console.log('Removal canceled');
     }
   });
 }

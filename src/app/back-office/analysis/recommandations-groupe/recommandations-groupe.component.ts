@@ -80,7 +80,7 @@ export class RecommandationsGroupeComponent implements OnInit {
         this.groupes = data;
       },
       error: () => {
-        this.error = 'Impossible de charger la liste des groupes.';
+        this.error = 'Unable to load the group list.';
       }
     });
   }
@@ -98,7 +98,7 @@ export class RecommandationsGroupeComponent implements OnInit {
           this.loading = false;
         },
         error: (err) => {
-          this.error = 'Erreur lors du chargement des recommandations';
+          this.error = 'Error while loading recommendations';
           this.loading = false;
         }
       });
@@ -202,7 +202,7 @@ export class RecommandationsGroupeComponent implements OnInit {
 
   validerFusion(): void {
     if (!this.selectedFusionRec || !this.fusionForm.groupeCibleId) {
-      this.error = 'Veuillez sélectionner un groupe cible pour la fusion.';
+      this.error = 'Please select a target group for the merge.';
       return;
     }
 
@@ -223,7 +223,7 @@ export class RecommandationsGroupeComponent implements OnInit {
 
   executerFusion(): void {
     if (!this.selectedFusionRec || !this.fusionForm.groupeCibleId) {
-      this.error = 'Veuillez sélectionner un groupe cible pour la fusion.';
+      this.error = 'Please select a target group for the merge.';
       return;
     }
 
@@ -233,7 +233,7 @@ export class RecommandationsGroupeComponent implements OnInit {
     this.analyseService.executerFusion(this.buildFusionRequest()).subscribe({
       next: (result) => {
         this.fusionValidationResult = result;
-        this.successMessage = result.message || 'Fusion exécutée avec succès.';
+        this.successMessage = result.message || 'Merge executed successfully.';
         this.executingFusion = false;
         this.loadRecommandations();
         this.loadGroupes();
@@ -247,12 +247,12 @@ export class RecommandationsGroupeComponent implements OnInit {
 
   validerScission(): void {
     if (!this.selectedScissionRec || !this.scissionForm.groupeCibleId) {
-      this.error = 'Veuillez sélectionner un groupe cible pour la scission.';
+      this.error = 'Please select a target group for the split.';
       return;
     }
 
     if (!Number.isFinite(Number(this.scissionForm.nombreEtudiantsADeplacer)) || Number(this.scissionForm.nombreEtudiantsADeplacer) <= 0) {
-      this.error = 'Veuillez indiquer un nombre d\'étudiants à déplacer valide.';
+      this.error = 'Please enter a valid number of students to move.';
       return;
     }
 
@@ -273,12 +273,12 @@ export class RecommandationsGroupeComponent implements OnInit {
 
   executerScission(): void {
     if (!this.selectedScissionRec || !this.scissionForm.groupeCibleId) {
-      this.error = 'Veuillez sélectionner un groupe cible pour la scission.';
+      this.error = 'Please select a target group for the split.';
       return;
     }
 
     if (!Number.isFinite(Number(this.scissionForm.nombreEtudiantsADeplacer)) || Number(this.scissionForm.nombreEtudiantsADeplacer) <= 0) {
-      this.error = 'Veuillez indiquer un nombre d\'étudiants à déplacer valide.';
+      this.error = 'Please enter a valid number of students to move.';
       return;
     }
 
@@ -288,7 +288,7 @@ export class RecommandationsGroupeComponent implements OnInit {
     this.analyseService.executerScission(this.buildScissionRequest()).subscribe({
       next: (result) => {
         this.scissionValidationResult = result;
-        this.successMessage = result.message || 'Scission exécutée avec succès.';
+        this.successMessage = result.message || 'Split executed successfully.';
         this.executingScission = false;
         this.loadRecommandations();
         this.loadGroupes();

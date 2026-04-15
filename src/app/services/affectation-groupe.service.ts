@@ -158,7 +158,7 @@ export class AffectationGroupeService {
 
   private handleError(error: any): Observable<never> {
     console.error('AffectationGroupeService error:', error);
-    const message = error?.error?.message || error?.message || 'Une erreur est survenue lors de l\'opération d\'affectation';
+    const message = error?.error?.message || error?.message || 'An error occurred during the assignment operation';
     return throwError(() => new Error(message));
   }
 

@@ -26,7 +26,7 @@ export class AuditTrailService {
 
   private handleError(error: any): Observable<never> {
     console.error('AuditTrailService error:', error);
-    const message = error?.error?.message || error?.message || 'Erreur lors de l\'audit';
+    const message = error?.error?.message || error?.message || 'Error while running the audit';
     return throwError(() => new Error(message));
   }
 }

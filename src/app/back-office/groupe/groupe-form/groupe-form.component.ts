@@ -61,7 +61,7 @@ export class GroupeFormComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Erreur lors du chargement du groupe';
+        this.errorMessage = 'Error while loading the group';
         this.isLoading = false;
       }
     });
@@ -70,15 +70,15 @@ export class GroupeFormComponent implements OnInit {
   validateForm(): boolean {
     this.errorMessage = '';
     if (!this.codeGroupe.trim()) {
-      this.errorMessage = 'Le code groupe est requis';
+      this.errorMessage = 'Group code is required';
       return false;
     }
     if (!this.nom.trim()) {
-      this.errorMessage = 'Le nom est requis';
+      this.errorMessage = 'Group name is required';
       return false;
     }
     if (this.capaciteMin !== null && this.capaciteMax !== null && this.capaciteMin > this.capaciteMax) {
-      this.errorMessage = 'La capacité minimale ne peut pas dépasser la capacité maximale';
+      this.errorMessage = 'Minimum capacity cannot exceed maximum capacity';
       return false;
     }
     return true;
@@ -105,24 +105,24 @@ export class GroupeFormComponent implements OnInit {
       payload.idGroupe = this.groupeId;
       this.groupeService.updateGroupe(payload).subscribe({
         next: () => {
-          this.successMessage = 'Groupe mis à jour avec succès !';
+          this.successMessage = 'Group updated successfully!';
           this.isLoading = false;
           setTimeout(() => this.router.navigate(['/admin/groupe']), 1500);
         },
         error: (err: any) => {
-          this.errorMessage = 'Erreur lors de la mise à jour : ' + err.message;
+          this.errorMessage = 'Error while updating: ' + err.message;
           this.isLoading = false;
         }
       });
     } else {
       this.groupeService.createGroupe(payload).subscribe({
         next: () => {
-          this.successMessage = 'Groupe créé avec succès !';
+          this.successMessage = 'Group created successfully!';
           this.isLoading = false;
           setTimeout(() => this.router.navigate(['/admin/groupe']), 1500);
         },
         error: (err: any) => {
-          this.errorMessage = 'Erreur lors de la création : ' + err.message;
+          this.errorMessage = 'Error while creating: ' + err.message;
           this.isLoading = false;
         }
       });
@@ -131,5 +131,26 @@ export class GroupeFormComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/admin/groupe']);
+  }
+
+  getTypeLabel(type?: string): string {
+    const labels: { [key: string]: string } = {
+      ETUDIANT: 'Student',
+      CLASSE: 'Class',
+      ADMINISTRATION: 'Administration'
+    };
+    return type ? (labels[type] || type) : '-';
+  }
+
+  getStatusLabel(status?: string): string {
+    const labels: { [key: string]: string } = {
+      OUVERT: 'Open',
+      COMPLET: 'Full',
+      EN_COURS: 'In progress',
+      TERMINE: 'Completed',
+      ANNULE: 'Canceled',
+      ARCHIVE: 'Archived'
+    };
+    return status ? (labels[status] || status) : '-';
   }
 }

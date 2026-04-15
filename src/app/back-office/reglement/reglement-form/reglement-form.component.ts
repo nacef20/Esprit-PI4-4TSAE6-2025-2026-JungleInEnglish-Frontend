@@ -73,7 +73,7 @@ export class ReglementFormComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = "Erreur lors du chargement du règlement";
+        this.error = 'Error while loading the rule';
         this.loading = false;
       }
     });
@@ -100,7 +100,7 @@ export class ReglementFormComponent implements OnInit {
         this.router.navigate(['/admin/reglement']);
       },
       error: (err) => {
-        this.error = "Une erreur est survenue lors de l'enregistrement";
+        this.error = 'An error occurred while saving the rule';
         this.loading = false;
         console.error(err);
       }
@@ -109,5 +109,28 @@ export class ReglementFormComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['/admin/reglement']);
+  }
+
+  getCategoryLabel(category: string): string {
+    const labels: { [key: string]: string } = {
+      PRESENCE: 'Attendance',
+      RETARD: 'Tardiness',
+      PARTICIPATION: 'Participation',
+      COMPORTEMENT: 'Behavior',
+      DEVOIRS: 'Homework',
+      MATERIEL: 'Materials',
+      AUTRE: 'Other'
+    };
+    return labels[category] || category;
+  }
+
+  getSanctionLabel(sanction?: string): string {
+    const labels: { [key: string]: string } = {
+      AVERTISSEMENT: 'Warning',
+      EXCLUSION_TEMPORAIRE: 'Temporary exclusion',
+      EXCLUSION_DEFINITIVE: 'Permanent exclusion',
+      AUTRE: 'Other'
+    };
+    return sanction ? (labels[sanction] || sanction) : '-';
   }
 }

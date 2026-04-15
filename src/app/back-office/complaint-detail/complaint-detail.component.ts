@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Complaint } from '../../models/complaint.model';
 import { ComplaintSentimentResponse, ComplaintTone } from '../../models/complaint-sentiment.model';
@@ -6,6 +7,10 @@ import { ComplaintResponse } from '../../models/response.model';
 import { ComplaintService } from '../../services/complaint.service';
 import { ComplaintResponseService } from '../../services/complaint-response.service';
 import { ResponseAiAssistMode } from '../../models/response-ai-assist.model';
+
+const ALLOWED_ATTACHMENT_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf'];
+const ALLOWED_ATTACHMENT_MIME_TYPES = ['image/png', 'image/jpeg', 'application/pdf'];
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
 
 @Component({
   selector: 'app-complaint-detail',
@@ -28,6 +33,11 @@ export class ComplaintDetailComponent implements OnInit {
   rejectingComplaint = false;
   editingResponseId: number | null = null;
   editResponseMessage = '';
+  newResponseAttachment: File | null = null;
+  newResponseAttachmentError = '';
+  editResponseAttachment: File | null = null;
+  editResponseAttachmentError = '';
+  editRemoveAttachment = false;
 
   successMessage = '';
   errorMessage = '';
@@ -97,9 +107,11 @@ export class ComplaintDetailComponent implements OnInit {
     this.submittingResponse = true;
     const response: ComplaintResponse = { message: this.newResponseMessage };
 
-    this.responseService.create(this.complaintId, response).subscribe({
+    this.responseService.create(this.complaintId, response, this.newResponseAttachment).subscribe({
       next: () => {
         this.newResponseMessage = '';
+        this.newResponseAttachment = null;
+        this.newResponseAttachmentError = '';
         this.submittingResponse = false;
         this.successMessage = 'Response added successfully!';
         this.loadResponses();
@@ -125,18 +137,32 @@ export class ComplaintDetailComponent implements OnInit {
   startEditResponse(response: ComplaintResponse): void {
     this.editingResponseId = response.id!;
     this.editResponseMessage = response.message;
+    this.editResponseAttachment = null;
+    this.editResponseAttachmentError = '';
+    this.editRemoveAttachment = false;
   }
 
   cancelEditResponse(): void {
     this.editingResponseId = null;
     this.editResponseMessage = '';
+    this.editResponseAttachment = null;
+    this.editResponseAttachmentError = '';
+    this.editRemoveAttachment = false;
   }
 
   saveEditResponse(id: number): void {
-    this.responseService.update(id, { message: this.editResponseMessage }).subscribe({
+    this.responseService.update(
+      id,
+      { message: this.editResponseMessage },
+      this.editResponseAttachment,
+      this.editRemoveAttachment
+    ).subscribe({
       next: () => {
         this.editingResponseId = null;
         this.editResponseMessage = '';
+        this.editResponseAttachment = null;
+        this.editResponseAttachmentError = '';
+        this.editRemoveAttachment = false;
         this.successMessage = 'Response updated successfully!';
         this.loadResponses();
         setTimeout(() => this.successMessage = '', 3000);
@@ -194,6 +220,87 @@ export class ComplaintDetailComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/admin/complaints']);
+  }
+
+  onNewResponseAttachmentSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const validationError = this.validateAttachmentInput(input.files?.[0] ?? null);
+
+    if (validationError) {
+      this.newResponseAttachment = null;
+      this.newResponseAttachmentError = validationError;
+      input.value = '';
+      return;
+    }
+
+    this.newResponseAttachmentError = '';
+    this.newResponseAttachment = input.files?.[0] ?? null;
+  }
+
+  clearNewResponseAttachment(): void {
+    this.newResponseAttachment = null;
+    this.newResponseAttachmentError = '';
+  }
+
+  onEditResponseAttachmentSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const validationError = this.validateAttachmentInput(input.files?.[0] ?? null);
+
+    if (validationError) {
+      this.editResponseAttachment = null;
+      this.editResponseAttachmentError = validationError;
+      input.value = '';
+      return;
+    }
+
+    this.editResponseAttachmentError = '';
+    this.editResponseAttachment = input.files?.[0] ?? null;
+    this.editRemoveAttachment = false;
+  }
+
+  clearEditResponseAttachment(): void {
+    this.editResponseAttachment = null;
+    this.editResponseAttachmentError = '';
+  }
+
+  markEditAttachmentForRemoval(): void {
+    this.editRemoveAttachment = true;
+    this.editResponseAttachment = null;
+    this.editResponseAttachmentError = '';
+  }
+
+  downloadComplaintAttachment(): void {
+    if (!this.complaint?.id) {
+      return;
+    }
+
+    this.complaintService.downloadAttachment(this.complaint.id).subscribe({
+      next: (response) => {
+        const fallbackName = this.complaint?.attachmentFileName || 'complaint-attachment';
+        this.triggerDownloadFromResponse(response, fallbackName);
+      },
+      error: (error) => {
+        this.errorMessage = this.getBackendErrorMessage(error, 'Unable to download complaint attachment.');
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
+  }
+
+  downloadResponseAttachment(responseItem: ComplaintResponse): void {
+    if (!responseItem.id) {
+      return;
+    }
+
+    this.responseService.downloadAttachment(responseItem.id).subscribe({
+      next: (response) => {
+        const fallbackName = responseItem.attachmentFileName || `response-${responseItem.id}-attachment`;
+        this.triggerDownloadFromResponse(response, fallbackName);
+      },
+      error: (error) => {
+        this.errorMessage = this.getBackendErrorMessage(error, 'Unable to download response attachment.');
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
   }
 
   getStatusLabel(status: string): string {
@@ -461,6 +568,52 @@ export class ComplaintDetailComponent implements OnInit {
     }
 
     return `${polished} ${fallbackSuffix}`.trim();
+  }
+
+  private validateAttachmentInput(file: File | null): string {
+    if (!file) {
+      return '';
+    }
+
+    const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const mimeType = (file.type ?? '').toLowerCase();
+    const extensionAllowed = ALLOWED_ATTACHMENT_EXTENSIONS.includes(extension);
+    const mimeAllowed = !mimeType || ALLOWED_ATTACHMENT_MIME_TYPES.includes(mimeType);
+
+    if (!extensionAllowed || !mimeAllowed) {
+      return 'Only PNG, JPG/JPEG, and PDF files are allowed.';
+    }
+
+    if (file.size > MAX_ATTACHMENT_SIZE) {
+      return 'File size must be 5 MB or less.';
+    }
+
+    return '';
+  }
+
+  private triggerDownloadFromResponse(response: HttpResponse<Blob>, fallbackName: string): void {
+    if (!response.body) {
+      return;
+    }
+
+    const header = response.headers.get('content-disposition') || '';
+    const fileName = this.extractFilenameFromDisposition(header) || fallbackName;
+    const blobUrl = URL.createObjectURL(response.body);
+    const anchor = document.createElement('a');
+    anchor.href = blobUrl;
+    anchor.download = fileName;
+    anchor.click();
+    URL.revokeObjectURL(blobUrl);
+  }
+
+  private extractFilenameFromDisposition(contentDisposition: string): string {
+    const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]);
+    }
+
+    const simpleMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
+    return simpleMatch?.[1] ?? '';
   }
 }
 

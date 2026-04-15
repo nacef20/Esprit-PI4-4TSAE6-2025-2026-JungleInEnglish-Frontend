@@ -1,3 +1,5 @@
+import { ComplaintResponse } from './response.model';
+
 export enum ComplaintStatus {
   EN_ATTENTE = 'EN_ATTENTE',
   TRAITEE = 'TRAITEE',
@@ -11,5 +13,8 @@ export interface Complaint {
   status: ComplaintStatus;
   createdAt?: string;
   updatedAt?: string;
-  responses?: Response[];
+  attachmentFileName?: string;
+  attachmentContentType?: string;
+  attachmentSize?: number;
+  responses?: ComplaintResponse[];
 }

@@ -41,6 +41,25 @@
       <div class="bg-gray-50 rounded-xl p-5">
         <p class="text-gray-600 leading-relaxed">{{ complaint.description }}</p>
       </div>
+
+      <!-- Complaint attachment -->
+      <div *ngIf="complaint.attachmentFileName" class="rounded-xl border border-emerald-100 bg-emerald-50 p-4 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-emerald-700 truncate">{{ complaint.attachmentFileName }}</p>
+          <p class="text-xs text-emerald-600">Complaint attachment</p>
+        </div>
+        <button
+          (click)="downloadComplaintAttachment()"
+          class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all">
+          <span class="material-symbols-outlined text-base">download</span>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="downloadError" class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+      <span class="material-symbols-outlined text-base">error</span>
+      {{ downloadError }}
     </div>
 
     <!-- Responses -->
@@ -69,6 +88,16 @@
               <span class="text-xs text-gray-400">{{ response.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
             </div>
             <p class="text-gray-600 leading-relaxed">{{ response.message }}</p>
+
+            <div *ngIf="response.attachmentFileName" class="mt-3 flex items-center justify-between gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2">
+              <p class="text-xs text-blue-700 truncate"><strong>{{ response.attachmentFileName }}</strong></p>
+              <button
+                (click)="downloadResponseAttachment(response)"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 transition-all">
+                <span class="material-symbols-outlined text-base">download</span>
+                Download
+              </button>
+            </div>
           </div>
         </div>
       </div>

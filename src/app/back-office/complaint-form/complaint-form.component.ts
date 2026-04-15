@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComplaintService } from '../../services/complaint.service';
@@ -9,6 +10,10 @@ interface ParsedAiPayload {
   title?: string;
   description?: string;
 }
+
+const ALLOWED_ATTACHMENT_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf'];
+const ALLOWED_ATTACHMENT_MIME_TYPES = ['image/png', 'image/jpeg', 'application/pdf'];
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
 
 @Component({
   selector: 'app-complaint-form',
@@ -25,6 +30,10 @@ export class ComplaintFormComponent implements OnInit {
   aiLoading = false;
   successMessage = '';
   errorMessage = '';
+  attachmentError = '';
+  selectedAttachment: File | null = null;
+  removeAttachment = false;
+  currentAttachmentFileName = '';
 
   constructor(
     private fb: FormBuilder,
@@ -47,6 +56,7 @@ export class ComplaintFormComponent implements OnInit {
       this.complaintService.getById(this.complaintId).subscribe({
         next: (complaint) => {
           this.complaintForm.patchValue(complaint);
+          this.currentAttachmentFileName = complaint.attachmentFileName ?? '';
         },
         error: () => {
           this.errorMessage = 'Complaint not found.';
@@ -62,8 +72,8 @@ export class ComplaintFormComponent implements OnInit {
 
     const complaint = this.complaintForm.value;
     const request = this.isEdit && this.complaintId
-      ? this.complaintService.update(this.complaintId, complaint)
-      : this.complaintService.create(complaint);
+      ? this.complaintService.update(this.complaintId, complaint, this.selectedAttachment, this.removeAttachment)
+      : this.complaintService.create(complaint, this.selectedAttachment);
 
     request.subscribe({
       next: () => {
@@ -79,6 +89,73 @@ export class ComplaintFormComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['/admin/complaints']);
+  }
+
+  onAttachmentSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    this.attachmentError = '';
+    if (!file) {
+      this.selectedAttachment = null;
+      return;
+    }
+
+    const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const mimeType = (file.type ?? '').toLowerCase();
+    const extensionAllowed = ALLOWED_ATTACHMENT_EXTENSIONS.includes(extension);
+    const mimeAllowed = !mimeType || ALLOWED_ATTACHMENT_MIME_TYPES.includes(mimeType);
+
+    if (!extensionAllowed || !mimeAllowed) {
+      this.selectedAttachment = null;
+      this.attachmentError = 'Only PNG, JPG/JPEG, and PDF files are allowed.';
+      input.value = '';
+      return;
+    }
+
+    if (file.size > MAX_ATTACHMENT_SIZE) {
+      this.selectedAttachment = null;
+      this.attachmentError = 'File size must be 5 MB or less.';
+      input.value = '';
+      return;
+    }
+
+    this.selectedAttachment = file;
+    this.removeAttachment = false;
+  }
+
+  clearSelectedAttachment(): void {
+    this.selectedAttachment = null;
+    this.attachmentError = '';
+  }
+
+  markCurrentAttachmentForRemoval(): void {
+    this.removeAttachment = true;
+    this.currentAttachmentFileName = '';
+  }
+
+  undoRemoveCurrentAttachment(): void {
+    this.removeAttachment = false;
+  }
+
+  downloadCurrentAttachment(): void {
+    if (!this.complaintId) {
+      return;
+    }
+
+    this.complaintService.downloadAttachment(this.complaintId).subscribe({
+      next: (response) => {
+        const fallbackName = this.currentAttachmentFileName || 'complaint-attachment';
+        this.triggerDownloadFromResponse(response, fallbackName);
+      },
+      error: (error) => {
+        this.errorMessage = this.getBackendErrorMessage(error, 'Unable to download attachment.');
+      }
+    });
+  }
+
+  hasCurrentAttachment(): boolean {
+    return this.isEdit && !!this.currentAttachmentFileName && !this.removeAttachment;
   }
 
   generateText(): void {
@@ -369,6 +446,31 @@ export class ComplaintFormComponent implements OnInit {
     }
 
     return 'A complaint has been submitted. Please investigate the issue and provide an appropriate resolution.';
+  }
+
+  private triggerDownloadFromResponse(response: HttpResponse<Blob>, fallbackName: string): void {
+    if (!response.body) {
+      return;
+    }
+
+    const header = response.headers.get('content-disposition') || '';
+    const fileName = this.extractFilenameFromDisposition(header) || fallbackName;
+    const blobUrl = URL.createObjectURL(response.body);
+    const anchor = document.createElement('a');
+    anchor.href = blobUrl;
+    anchor.download = fileName;
+    anchor.click();
+    URL.revokeObjectURL(blobUrl);
+  }
+
+  private extractFilenameFromDisposition(contentDisposition: string): string {
+    const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
+    if (utf8Match?.[1]) {
+      return decodeURIComponent(utf8Match[1]);
+    }
+
+    const simpleMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
+    return simpleMatch?.[1] ?? '';
   }
 }
 

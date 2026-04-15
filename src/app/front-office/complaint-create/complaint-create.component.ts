@@ -10,6 +10,10 @@ interface ParsedAiPayload {
   description?: string;
 }
 
+const ALLOWED_ATTACHMENT_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf'];
+const ALLOWED_ATTACHMENT_MIME_TYPES = ['image/png', 'image/jpeg', 'application/pdf'];
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024;
+
 @Component({
   selector: 'app-complaint-create',
   templateUrl: './complaint-create.component.html',
@@ -22,6 +26,8 @@ export class ComplaintCreateComponent implements OnInit {
   aiLoading = false;
   successMessage = '';
   errorMessage = '';
+  attachmentError = '';
+  selectedAttachment: File | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +52,7 @@ export class ComplaintCreateComponent implements OnInit {
       status: ComplaintStatus.EN_ATTENTE
     };
 
-    this.complaintService.create(complaint).subscribe({
+    this.complaintService.create(complaint, this.selectedAttachment).subscribe({
       next: () => {
         this.successMessage = 'Complaint submitted successfully!';
         setTimeout(() => this.router.navigate(['/my-complaints']), 1500);
@@ -60,6 +66,43 @@ export class ComplaintCreateComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['/my-complaints']);
+  }
+
+  onAttachmentSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    this.attachmentError = '';
+    if (!file) {
+      this.selectedAttachment = null;
+      return;
+    }
+
+    const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const mimeType = (file.type ?? '').toLowerCase();
+    const extensionAllowed = ALLOWED_ATTACHMENT_EXTENSIONS.includes(extension);
+    const mimeAllowed = !mimeType || ALLOWED_ATTACHMENT_MIME_TYPES.includes(mimeType);
+
+    if (!extensionAllowed || !mimeAllowed) {
+      this.selectedAttachment = null;
+      this.attachmentError = 'Only PNG, JPG/JPEG, and PDF files are allowed.';
+      input.value = '';
+      return;
+    }
+
+    if (file.size > MAX_ATTACHMENT_SIZE) {
+      this.selectedAttachment = null;
+      this.attachmentError = 'File size must be 5 MB or less.';
+      input.value = '';
+      return;
+    }
+
+    this.selectedAttachment = file;
+  }
+
+  clearAttachment(): void {
+    this.selectedAttachment = null;
+    this.attachmentError = '';
   }
 
   generateText(): void {

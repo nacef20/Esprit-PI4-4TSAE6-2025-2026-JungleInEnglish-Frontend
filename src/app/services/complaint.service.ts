@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Complaint, ComplaintStatus } from '../models/complaint.model';
 import { ComplaintAiAssistRequest, ComplaintAiAssistResponse } from '../models/complaint-ai-assist.model';
@@ -22,11 +22,20 @@ export class ComplaintService {
     return this.http.get<Complaint>(`${this.apiUrl}/${id}`);
   }
 
-  create(complaint: Complaint): Observable<Complaint> {
+  create(complaint: Complaint, attachment?: File | null): Observable<Complaint> {
+    if (attachment) {
+      return this.http.post<Complaint>(this.apiUrl, this.buildComplaintFormData(complaint, attachment));
+    }
+
     return this.http.post<Complaint>(this.apiUrl, complaint);
   }
 
-  update(id: number, complaint: Complaint): Observable<Complaint> {
+  update(id: number, complaint: Complaint, attachment?: File | null, removeAttachment = false): Observable<Complaint> {
+    if (attachment || removeAttachment) {
+      const formData = this.buildComplaintFormData(complaint, attachment ?? undefined);
+      return this.http.put<Complaint>(`${this.apiUrl}/${id}?removeAttachment=${removeAttachment}`, formData);
+    }
+
     return this.http.put<Complaint>(`${this.apiUrl}/${id}`, complaint);
   }
 
@@ -66,7 +75,25 @@ export class ComplaintService {
     return this.http.post<ComplaintSentimentResponse>(`${this.apiUrl}/ai/sentiment`, payload);
   }
 
+  downloadAttachment(id: number): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.apiUrl}/${id}/attachment`, {
+      observe: 'response',
+      responseType: 'blob'
+    });
+  }
+
   downloadAdminReportPdf(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/stats/admin-report/pdf`, { responseType: 'blob' });
+  }
+
+  private buildComplaintFormData(complaint: Complaint, attachment?: File): FormData {
+    const formData = new FormData();
+    formData.append('complaint', new Blob([JSON.stringify(complaint)], { type: 'application/json' }));
+
+    if (attachment) {
+      formData.append('attachment', attachment);
+    }
+
+    return formData;
   }
 }

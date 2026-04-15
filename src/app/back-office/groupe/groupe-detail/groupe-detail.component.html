@@ -1,0 +1,128 @@
+<div class="detail-container">
+  <div class="detail-header">
+    <button class="btn-back" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back
+    </button>
+
+    <div class="title-section" *ngIf="groupe">
+      <div>
+        <span class="eyebrow">Group</span>
+        <h1 class="page-title">{{ groupe.nom }}</h1>
+      </div>
+      <span class="badge badge-info">{{ groupe.codeGroupe }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading group...</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="detail-content" *ngIf="!loading && groupe">
+    <nav class="nav-tabs">
+      <button class="tab-item" [class.active]="activeTab === 'details'" (click)="activeTab = 'details'">
+        General Information
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'members'" (click)="activeTab = 'members'">
+        Member Management
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'formateurs'" (click)="activeTab = 'formateurs'">
+        Enriched Instructors
+      </button>
+    </nav>
+
+    <section class="tab-panel" *ngIf="activeTab === 'details'">
+      <div class="grid-layout">
+        <div class="info-card">
+          <h3>Status & Type</h3>
+          <p><strong>Status:</strong> {{ getStatusLabel(groupe.statut) }}</p>
+          <p><strong>Type:</strong> {{ getTypeLabel(groupe.type) }}</p>
+          <p><strong>Level ID:</strong> {{ groupe.niveauId ?? '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Capacity</h3>
+          <p><strong>Current:</strong> {{ groupe.capaciteActuelle || 0 }} students</p>
+          <p><strong>Maximum:</strong> {{ groupe.capaciteMax || '-' }} seats</p>
+          <p><strong>Minimum:</strong> {{ groupe.capaciteMin || '-' }} seats</p>
+          <div class="progress-block" *ngIf="groupe.capaciteMax">
+            <div class="progress-label">
+              <span>Occupancy</span>
+              <span>{{ getProgressPercent() }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="getProgressPercent()"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card full-width">
+            <h3>Schedule</h3>
+            <p><strong>Start date:</strong> {{ formatDate(groupe.dateDebut) }}</p>
+            <p><strong>End date:</strong> {{ formatDate(groupe.dateFin) }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" *ngIf="activeTab === 'members'">
+      <app-gestion-membre-groupe [groupe]="groupe" [groupeId]="groupe.idGroupe!"></app-gestion-membre-groupe>
+    </section>
+
+    <section class="tab-panel" *ngIf="activeTab === 'formateurs'">
+      <div *ngIf="loadingEnriched" class="loading-state compact">
+        <div class="spinner"></div>
+        <p>Loading enriched instructors...</p>
+      </div>
+
+      <div class="alert alert-error" *ngIf="enrichedError">
+        {{ enrichedError }}
+      </div>
+
+      <ng-container *ngIf="!loadingEnriched && groupeEnrichi">
+        <div class="grid-layout summary-layout">
+          <div class="info-card">
+            <h3>User service resolution</h3>
+            <p><strong>Active instructors:</strong> {{ groupeEnrichi.nombreFormateursActifs || 0 }}</p>
+            <p><strong>Group code:</strong> {{ groupeEnrichi.codeGroupe }}</p>
+            <p><strong>Status:</strong> {{ getStatusLabel(groupeEnrichi.statut) }}</p>
+          </div>
+          <div class="info-card full-width" *ngIf="groupeEnrichi.formateurs?.length">
+            <h3>Enriched instructors</h3>
+            <div class="formateurs-grid">
+              <article class="formateur-card" *ngFor="let formateur of groupeEnrichi.formateurs">
+                <div class="formateur-card__header">
+                  <div>
+                    <span class="formateur-name">{{ getFormateurDisplayName(formateur) }}</span>
+                    <p class="formateur-meta">User ID: {{ formateur.formateurId }}</p>
+                  </div>
+                  <span class="formateur-role">{{ formateur.role || 'N/A' }}</span>
+                </div>
+
+                <div class="formateur-card__body">
+                  <p><strong>Username:</strong> {{ formateur.username || '-' }}</p>
+                  <p><strong>Email:</strong> {{ formateur.email || '-' }}</p>
+                  <p><strong>Subject:</strong> {{ formateur.matiere || '-' }}</p>
+                  <p><strong>Hours/week:</strong> {{ formateur.heuresParSemaine ?? '-' }}</p>
+                  <p><strong>Start:</strong> {{ formatDate(formateur.dateDebut) }}</p>
+                  <p><strong>End:</strong> {{ formatDate(formateur.dateFin) }}</p>
+                  <p><strong>Active:</strong> {{ formateur.estActif ? 'Yes' : 'No' }}</p>
+                  <p *ngIf="formateur.commentaire"><strong>Comment:</strong> {{ formateur.commentaire }}</p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="info-card full-width empty-formateurs" *ngIf="!groupeEnrichi.formateurs?.length">
+            <h3>No active instructors</h3>
+            <p>The userservice backend returned no active instructors for this group.</p>
+          </div>
+        </div>
+      </ng-container>
+    </section>
+  </div>
+</div>

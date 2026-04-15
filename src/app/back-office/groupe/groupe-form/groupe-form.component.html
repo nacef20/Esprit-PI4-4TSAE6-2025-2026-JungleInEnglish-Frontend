@@ -1,0 +1,166 @@
+<div class="form-container">
+  <div class="form-header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back
+    </button>
+    <h1 class="page-title">
+      {{ isEditMode ? 'Edit Group' : 'New Group' }}
+    </h1>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMessage">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    {{ successMessage }}
+  </div>
+
+  <!-- Form -->
+  <div class="form-card" *ngIf="!isLoading">
+    <form (ngSubmit)="onSubmit()" #groupeForm="ngForm">
+
+      <!-- Code Groupe & Nom -->
+      <div class="form-row">
+        <div class="form-group">
+            <label for="codeGroupe">Group Code <span class="required">*</span></label>
+          <input
+            id="codeGroupe"
+            type="text"
+            class="form-control"
+            [(ngModel)]="codeGroupe"
+            name="codeGroupe"
+              placeholder="ex: A1-MORNING-01"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+            <label for="nom">Group Name <span class="required">*</span></label>
+          <input
+            id="nom"
+            type="text"
+            class="form-control"
+            [(ngModel)]="nom"
+            name="nom"
+              placeholder="ex: Morning Beginners Group"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Type & Statut -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="type">Type <span class="required">*</span></label>
+          <select id="type" class="form-control" [(ngModel)]="selectedType" name="type">
+            <option *ngFor="let t of typeValues" [value]="t">{{ getTypeLabel(t) }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="statut">Status <span class="required">*</span></label>
+          <select id="statut" class="form-control" [(ngModel)]="selectedStatut" name="statut">
+            <option *ngFor="let s of statutValues" [value]="s">{{ getStatusLabel(s) }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Capacités -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="capaciteMin">Minimum Capacity</label>
+          <input
+            id="capaciteMin"
+            type="number"
+            class="form-control"
+            [(ngModel)]="capaciteMin"
+            name="capaciteMin"
+            placeholder="ex: 5"
+            min="0"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="capaciteMax">Maximum Capacity</label>
+          <input
+            id="capaciteMax"
+            type="number"
+            class="form-control"
+            [(ngModel)]="capaciteMax"
+            name="capaciteMax"
+            placeholder="ex: 20"
+            min="0"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="niveauId">Level ID</label>
+          <input
+            id="niveauId"
+            type="number"
+            class="form-control"
+            [(ngModel)]="niveauId"
+            name="niveauId"
+            placeholder="Level ID"
+            min="1"
+          />
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dateDebut">Start Date</label>
+          <input
+            id="dateDebut"
+            type="date"
+            class="form-control"
+            [(ngModel)]="dateDebut"
+            name="dateDebut"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="dateFin">End Date</label>
+          <input
+            id="dateFin"
+            type="date"
+            class="form-control"
+            [(ngModel)]="dateFin"
+            name="dateFin"
+          />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <span *ngIf="isLoading" class="spinner-sm"></span>
+          {{ isEditMode ? 'Update Group' : 'Create Group' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading && isEditMode">
+    <div class="spinner"></div>
+    <p>Loading group...</p>
+  </div>
+</div>

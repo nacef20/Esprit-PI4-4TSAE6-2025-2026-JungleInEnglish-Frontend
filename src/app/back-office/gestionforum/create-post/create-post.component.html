@@ -1,0 +1,97 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-panel">
+
+    <!-- CLOSE BTN -->
+    <button class="btn-close" (click)="cancel()">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <!-- HEADER -->
+    <div class="modal-header">
+      <div class="modal-tag">{{ modalTag }}</div>
+      <h2 class="modal-title">{{ modalHeading }}</h2>
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="error" class="alert-error">{{ error }}</div>
+
+    <!-- AUTHOR -->
+    <div class="author-info">
+      <div class="avatar-lg">{{ currentUserInitial }}</div>
+      <div>
+        <div class="author-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+        <div class="visibility">🌍 Public</div>
+      </div>
+    </div>
+
+    <!-- CONTENT TEXTE (visible sans média) -->
+    <ng-container *ngIf="!mediaPreview">
+      <div class="field">
+        <textarea
+          placeholder="Écrivez quelque chose…"
+          [(ngModel)]="content"
+          class="textarea-content"
+          rows="4">
+        </textarea>
+      </div>
+    </ng-container>
+
+    <!-- PREVIEW MEDIA -->
+    <div *ngIf="mediaPreview" class="media-preview">
+      <img *ngIf="isImageFile()" [src]="mediaPreview" alt="preview">
+      <video *ngIf="isVideoFile()" controls>
+        <source [src]="mediaPreview">
+      </video>
+      <button class="btn-remove-media" (click)="removeMedia()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <input
+        type="text"
+        placeholder="Ajouter un titre..."
+        [(ngModel)]="title"
+        class="input-title-overlay">
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <label class="tool-btn" *ngIf="!mediaPreview || isImageFile()">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        <span>Photo</span>
+        <input type="file" accept="image/*" hidden (change)="onMediaSelected($event)">
+      </label>
+
+      <label class="tool-btn" *ngIf="!mediaPreview || isVideoFile()">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="5" width="15" height="14" rx="2"/>
+          <path d="M17 9l5-3v12l-5-3V9z"/>
+        </svg>
+        <span>Vidéo</span>
+        <input type="file" accept="video/*" hidden (change)="onMediaSelected($event)">
+      </label>
+
+      <div class="toolbar-sep"></div>
+      <span class="visibility-label">🌍 Tout le monde</span>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancel()">Annuler</button>
+      <button
+        class="btn-submit"
+        [disabled]="!canSubmit() || loading"
+        (click)="submit()">
+        <span *ngIf="!loading">{{ submitLabel }}</span>
+        <span *ngIf="loading" class="spinner-sm"></span>
+      </button>
+    </div>
+
+  </div>
+</div>

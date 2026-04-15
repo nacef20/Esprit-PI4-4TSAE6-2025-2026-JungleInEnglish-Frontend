@@ -16,6 +16,13 @@
         {{ exportingPdf ? 'Generating PDF...' : 'Export Admin PDF' }}
       </button>
 
+      <button (click)="exportAdminReportExcel()" [disabled]="exportingExcel"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+        <span *ngIf="!exportingExcel" class="material-symbols-outlined text-base">table_view</span>
+        <span *ngIf="exportingExcel" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+        {{ exportingExcel ? 'Generating Excel...' : 'Export Admin Excel' }}
+      </button>
+
       <button (click)="onPeriodChange('DAY')"
         class="px-3 py-1.5 text-sm rounded-full border transition-all"
         [ngClass]="selectedPeriod === 'DAY' ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">

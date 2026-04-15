@@ -86,6 +86,10 @@ export class ComplaintService {
     return this.http.get(`${this.apiUrl}/stats/admin-report/pdf`, { responseType: 'blob' });
   }
 
+  downloadAdminReportExcel(): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/stats/admin-report/excel`, { responseType: 'blob' });
+  }
+
   private buildComplaintFormData(complaint: Complaint, attachment?: File): FormData {
     const formData = new FormData();
     formData.append('complaint', new Blob([JSON.stringify(complaint)], { type: 'application/json' }));

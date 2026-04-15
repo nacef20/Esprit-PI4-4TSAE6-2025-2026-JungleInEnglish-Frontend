@@ -19,6 +19,7 @@ export class ComplaintStatsDashboardComponent implements OnInit {
   stats: ComplaintDashboardStats | null = null;
   loading = false;
   exportingPdf = false;
+  exportingExcel = false;
   selectedPeriod: ComplaintStatsPeriod = 'MONTH';
 
   statusChartData: ChartData<'doughnut'> = { labels: [], datasets: [] };
@@ -97,6 +98,28 @@ export class ComplaintStatsDashboardComponent implements OnInit {
       },
       error: () => {
         this.exportingPdf = false;
+      }
+    });
+  }
+
+  exportAdminReportExcel(): void {
+    if (this.exportingExcel) {
+      return;
+    }
+
+    this.exportingExcel = true;
+    this.complaintService.downloadAdminReportExcel().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `complaints-admin-report-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
+        this.exportingExcel = false;
+      },
+      error: () => {
+        this.exportingExcel = false;
       }
     });
   }

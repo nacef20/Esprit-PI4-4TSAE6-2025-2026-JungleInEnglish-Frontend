@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import {  BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
 // Même structure que ton DTO côté backend
 export interface MessageGroup {
   id: number;
@@ -19,7 +20,7 @@ export interface MessageGroup {
 })
 export class MessageGroupService {
 
-   private apiUrl = 'http://localhost:8222/messageGroup';
+  private apiUrl = `${environment.apiBaseUrl}/messageGroup`;
   private wsUrl  = 'http://localhost:7070/ws';
 
     private messagesSubject = new BehaviorSubject<MessageGroup[]>([]);

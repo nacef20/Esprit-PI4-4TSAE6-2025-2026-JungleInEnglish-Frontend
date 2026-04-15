@@ -25,5 +25,6 @@ export enum StatutGroupe {
   COMPLET = 'COMPLET',
   EN_COURS = 'EN_COURS',
   TERMINE = 'TERMINE',
-  ANNULE = 'ANNULE'
+  ANNULE = 'ANNULE',
+  ARCHIVE = 'ARCHIVE'
 }

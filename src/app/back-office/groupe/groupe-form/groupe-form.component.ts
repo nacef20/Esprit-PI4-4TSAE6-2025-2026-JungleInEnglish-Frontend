@@ -51,9 +51,9 @@ export class GroupeFormComponent implements OnInit {
       next: (data: Groupe) => {
         this.codeGroupe = data.codeGroupe || '';
         this.nom = data.nom || '';
-        this.niveauId = data.niveauId || null;
-        this.capaciteMin = data.capaciteMin || null;
-        this.capaciteMax = data.capaciteMax || null;
+        this.niveauId = data.niveauId ?? null;
+        this.capaciteMin = data.capaciteMin ?? null;
+        this.capaciteMax = data.capaciteMax ?? null;
         this.dateDebut = data.dateDebut ? data.dateDebut.toString().substring(0, 10) : '';
         this.dateFin = data.dateFin ? data.dateFin.toString().substring(0, 10) : '';
         this.selectedType = (data.type as TypeGroupe) || TypeGroupe.ETUDIANT;
@@ -92,9 +92,9 @@ export class GroupeFormComponent implements OnInit {
     const payload: Groupe = {
       codeGroupe: this.codeGroupe.trim(),
       nom: this.nom.trim(),
-      niveauId: this.niveauId || undefined,
-      capaciteMin: this.capaciteMin || undefined,
-      capaciteMax: this.capaciteMax || undefined,
+      niveauId: this.niveauId ?? undefined,
+      capaciteMin: this.capaciteMin ?? undefined,
+      capaciteMax: this.capaciteMax ?? undefined,
       dateDebut: this.dateDebut || undefined,
       dateFin: this.dateFin || undefined,
       type: this.selectedType,

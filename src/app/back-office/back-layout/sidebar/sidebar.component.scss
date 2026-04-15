@@ -306,6 +306,25 @@ $transition-fast: all 0.2s ease;
   }
 }
 
+.nav-divider--compact {
+  padding-top: 14px;
+}
+
+.nav-item--compact {
+  .nav-link--compact {
+    margin: 2px 12px;
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 12px;
+
+    .nav-link__icon--small {
+      width: 18px;
+      height: 18px;
+      margin-right: 10px;
+    }
+  }
+}
+
 // Footer Info
 .footer-info {
   display: flex;

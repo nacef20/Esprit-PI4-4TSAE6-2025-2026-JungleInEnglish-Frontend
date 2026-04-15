@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Groupe, StatutGroupe, TypeGroupe } from '../models/groupe.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupeService {
 
-  private apiUrl = 'http://localhost:8089/pi/groupes';
+  private apiUrl = `${environment.apiBaseUrl}/pi/groupes`;
+  private advancedApiUrl = `${environment.apiBaseUrl}/pi`;
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -67,6 +69,33 @@ export class GroupeService {
   updateStatutGroupe(id: number, statut: StatutGroupe): Observable<Groupe> {
     return this.http.put<Groupe>(`${this.apiUrl}/update-statut/${id}/${statut}`, {})
       .pipe(catchError(this.handleError));
+  }
+
+  requestAdvanced<T>(method: 'GET' | 'POST' | 'PUT' | 'DELETE', path: string, body?: unknown, params?: Record<string, unknown>): Observable<T> {
+    const httpParams = this.buildHttpParams(params);
+    const url = `${this.advancedApiUrl}${path}`;
+
+    return this.http.request<T>(method, url, {
+      body,
+      params: httpParams
+    }).pipe(catchError(this.handleError));
+  }
+
+  private buildHttpParams(params?: Record<string, unknown>): HttpParams | undefined {
+    if (!params) {
+      return undefined;
+    }
+
+    let httpParams = new HttpParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '') {
+        return;
+      }
+
+      httpParams = httpParams.set(key, String(value));
+    });
+
+    return httpParams;
   }
 
   private handleError(error: any): Observable<never> {

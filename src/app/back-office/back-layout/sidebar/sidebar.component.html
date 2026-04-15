@@ -1,21 +1,24 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
+
+  <!-- Toggle Button at Top -->
   <div class="sidebar__header">
-    <button
-      class="sidebar__toggle"
-      (click)="toggleSidebar()"
+    <button class="sidebar__toggle" (click)="toggleSidebar()"
       [attr.aria-label]="isCollapsed ? 'Ouvrir le menu' : 'Fermer le menu'">
       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 640 640">
-        <path
-          fill="hsla(162, 72%, 65%, 1.00)"
+        <path fill="hsla(162, 72%, 65%, 1.00)"
           d="M96 160C96 142.3 110.3 128 128 128L512 128C529.7 128 544 142.3 544 160C544 177.7 529.7 192 512 192L128 192C110.3 192 96 177.7 96 160zM96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320zM544 480C544 497.7 529.7 512 512 512L128 512C110.3 512 96 497.7 96 480C96 462.3 110.3 448 128 448L512 448C529.7 448 544 462.3 544 480z" />
       </svg>
     </button>
   </div>
 
+  <!-- Navigation Menu -->
   <nav class="sidebar__nav">
     <ul class="nav-list">
+
+      <!-- Dashboard -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/dashboard'" [routerLink]="['/dashboard']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/dashboard'" [routerLink]="['/dashboard']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7" />
@@ -29,12 +32,15 @@
         </a>
       </li>
 
+      <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Courses Management</span>
       </li>
 
+      <!-- Courses Management -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/courses'" [routerLink]="['/admin/courses']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/courses'" [routerLink]="['/admin/courses']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
@@ -46,8 +52,10 @@
         </a>
       </li>
 
+      <!-- Lessons Management -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/lessons'" [routerLink]="['/admin/lessons']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/lessons'" [routerLink]="['/admin/lessons']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -87,6 +95,7 @@
         </a>
       </li>
 
+      <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Shop Management</span>
       </li>
@@ -152,13 +161,15 @@
         </a>
       </li>
 
-
+      <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Quiz Management</span>
       </li>
 
+      <!-- Quizzes -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/quizzes'" [routerLink]="['/admin/quizzes']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/quizzes'" [routerLink]="['/admin/quizzes']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M9 11l3 3L22 4" />
@@ -170,8 +181,10 @@
         </a>
       </li>
 
+      <!-- AI Quiz Generator -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/quizzes/ai'" [routerLink]="['/admin/quizzes/ai']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/quizzes/ai'" [routerLink]="['/admin/quizzes/ai']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -184,8 +197,10 @@
         </a>
       </li>
 
+      <!-- Analytics & Attempts -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/attempts'" [routerLink]="['/admin/attempts']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/attempts'" [routerLink]="['/admin/attempts']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M18 20V10" />
@@ -198,12 +213,15 @@
         </a>
       </li>
 
+      <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Student View</span>
       </li>
 
+      <!-- Student Quizzes -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/student-quizzes'" [routerLink]="['/admin/student-quizzes']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/student-quizzes'"
+          [routerLink]="['/admin/student-quizzes']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -215,8 +233,10 @@
         </a>
       </li>
 
+      <!-- Attempt History -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/admin/student-attempts'" [routerLink]="['/admin/student-attempts']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/admin/student-attempts'"
+          [routerLink]="['/admin/student-attempts']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
@@ -228,12 +248,15 @@
         </a>
       </li>
 
+      <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Communication</span>
       </li>
 
+      <!-- Chat Privé -->
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['gestionchatprive']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <a class="nav-link" [routerLink]="['gestionchatprive']" routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -244,11 +267,14 @@
         </a>
       </li>
 
+      <!-- Forum -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute === '/forum'" [routerLink]="['/forum']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute === '/forum'" [routerLink]="['/forum']"
+          routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              <path
+                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
             </svg>
           </div>
           <span class="nav-link__text">Forum</span>
@@ -256,8 +282,15 @@
         </a>
       </li>
 
+      <!-- Divider -->
+      <li class="nav-divider">
+        <span class="nav-divider__text">Planning & Groupes</span>
+      </li>
+
+      <!-- Planning -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning')" [routerLink]="['/admin/planning']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning')"
+          [routerLink]="['/admin/planning']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -271,8 +304,10 @@
         </a>
       </li>
 
+      <!-- Génération Auto -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning/generate')" [routerLink]="['/admin/planning/generate']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning/generate')"
+          [routerLink]="['/admin/planning/generate']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -283,8 +318,10 @@
         </a>
       </li>
 
+      <!-- Charge Hebdo -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning/weekly-load')" [routerLink]="['/admin/planning/weekly-load']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning/weekly-load')"
+          [routerLink]="['/admin/planning/weekly-load']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -297,8 +334,10 @@
         </a>
       </li>
 
+      <!-- Réplication Semestre -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning/semester-replicate')" [routerLink]="['/admin/planning/semester-replicate']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/planning/semester-replicate')"
+          [routerLink]="['/admin/planning/semester-replicate']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="4" width="18" height="18" rx="2"></rect>
@@ -313,8 +352,10 @@
         </a>
       </li>
 
+      <!-- Groupes -->
       <li class="nav-item">
-        <a class="nav-link" [class.active]="currentRoute.includes('/admin/groupe')" [routerLink]="['/admin/groupe']" routerLinkActive="active">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/groupe')"
+          [routerLink]="['/admin/groupe']" routerLinkActive="active">
           <div class="nav-link__icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -328,6 +369,99 @@
         </a>
       </li>
 
+      <li class="nav-divider">
+        <span class="nav-divider__text">Analyse & Rapports</span>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/affectations/dashboard')" [routerLink]="['/admin/affectations/dashboard']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">dashboard</span>
+          </div>
+          <span class="nav-link__text">TDB Affectations</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse')" [routerLink]="['/admin/analyse']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">space_dashboard</span>
+          </div>
+          <span class="nav-link__text">Dashboard Analyse</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse/transferts')" [routerLink]="['/admin/analyse/transferts']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">analytics</span>
+          </div>
+          <span class="nav-link__text">Impact Transferts</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse/alertes')" [routerLink]="['/admin/analyse/alertes']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">report</span>
+          </div>
+          <span class="nav-link__text">Anomalies</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse/audit')" [routerLink]="['/admin/analyse/audit']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">history</span>
+          </div>
+          <span class="nav-link__text">Audit Trail</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse/equilibrage')" [routerLink]="['/admin/analyse/equilibrage']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">swap_horiz</span>
+          </div>
+          <span class="nav-link__text">Équilibrage</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse/sante')" [routerLink]="['/admin/analyse/sante']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">health_metrics</span>
+          </div>
+          <span class="nav-link__text">Santé des Groupes</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [class.active]="currentRoute.includes('/admin/analyse/recommandations')" [routerLink]="['/admin/analyse/recommandations']"
+          routerLinkActive="active">
+          <div class="nav-link__icon">
+            <span class="material-symbols-outlined">lightbulb</span>
+          </div>
+          <span class="nav-link__text">Recommandation</span>
+          <div class="nav-link__indicator"></div>
+        </a>
+      </li>
+
+      <!-- Divider -->
       <li class="nav-divider">
         <span class="nav-divider__text">Events Management</span>
       </li>
@@ -365,9 +499,11 @@
           <div class="nav-link__indicator"></div>
         </a>
       </li>
+
     </ul>
   </nav>
 
+  <!-- Footer Section -->
   <div class="sidebar__footer">
     <div class="footer-info">
       <div class="footer-info__icon">
@@ -380,4 +516,5 @@
       <span class="footer-info__text">Centre d'aide</span>
     </div>
   </div>
-</aside>
+
+</aside> 

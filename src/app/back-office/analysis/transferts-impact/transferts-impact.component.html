@@ -1,0 +1,128 @@
+<div class="analysis-container">
+  <header class="analysis-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">analytics</span>
+      Analyse d'Impact des Transferts
+    </h1>
+  </header>
+
+  <!-- Filtres -->
+  <section class="filters-card">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Date Début</label>
+        <input type="datetime-local" [(ngModel)]="dateDebut" class="form-control">
+      </div>
+      <div class="filter-group">
+        <label>Date Fin</label>
+        <input type="datetime-local" [(ngModel)]="dateFin" class="form-control">
+      </div>
+      <div class="filter-group">
+        <label>Initié par</label>
+        <select [(ngModel)]="initiePar" class="form-control">
+          <option [ngValue]="undefined">Tous</option>
+          <option *ngFor="let i of initiateurs" [value]="i">{{ i }}</option>
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button class="btn-primary" (click)="refreshAnalyse()" [disabled]="loading">
+          <span class="material-symbols-outlined">refresh</span>
+          Analyser
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Calcul de l'impact en cours...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-error">
+    {{ error }}
+  </div>
+
+  <!-- Tableaux -->
+  <div class="analysis-sections" *ngIf="!loading">
+    
+    <!-- Groupes Sources -->
+    <article class="content-card">
+      <div class="card-header">
+        <h2>Impact par Groupe Source</h2>
+        <span class="subtitle">Classé par nombre de transferts décroissant</span>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Groupe Source ID</th>
+              <th>Raison</th>
+              <th>Initié par</th>
+              <th class="text-center">Nb Transferts</th>
+              <th class="text-center">Impact Moyen</th>
+              <th class="text-center">Répartition +/-/=</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let imp of impacts">
+              <td><strong>#{{ imp.groupePrecedentId }}</strong></td>
+              <td>{{ imp.raisonChangement }}</td>
+              <td>{{ imp.initiePar }}</td>
+              <td class="text-center">{{ imp.nombreTransferts }}</td>
+              <td class="text-center" [ngClass]="getImpactClass(imp.impactMoyenScore)">
+                {{ imp.impactMoyenScore > 0 ? '+' : '' }}{{ imp.impactMoyenScore | number:'1.1-2' }}
+              </td>
+              <td class="text-center">
+                <span class="impact-stats">
+                  <span class="text-success" title="Améliorations">↑{{ imp.nombreAmeliorations }}</span>
+                  <span class="text-danger" title="Dégradations">↓{{ imp.nombreDegradations }}</span>
+                  <span class="text-muted" title="Neutres">= {{ imp.nombreNeutres }}</span>
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="impacts.length === 0">
+              <td colspan="6" class="empty-row">Aucun transfert trouvé pour cette période.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- Meilleurs Groupes Destination -->
+    <article class="content-card mt-4">
+      <div class="card-header">
+        <h2>Meilleurs Groupes Destination</h2>
+        <span class="subtitle">Groupes favorisant la progression des étudiants reçus</span>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom Groupe</th>
+              <th class="text-center">Étudiants Reçus</th>
+              <th class="text-center">Amélioration Moyenne</th>
+              <th class="text-center">Max Progression</th>
+              <th class="text-center">Min Progression</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let dest of destinations">
+              <td><strong>{{ dest.nomGroupe }}</strong></td>
+              <td class="text-center">{{ dest.nombreEtudiantsRecus }}</td>
+              <td class="text-center text-success">
+                +{{ dest.ameliorationMoyenne | number:'1.1-2' }}
+              </td>
+              <td class="text-center text-success">+{{ dest.ameliorationMax }}</td>
+              <td class="text-center text-danger">{{ dest.ameliorationMin > 0 ? '+' : '' }}{{ dest.ameliorationMin }}</td>
+            </tr>
+            <tr *ngIf="destinations.length === 0">
+              <td colspan="5" class="empty-row">Aucun historique de destination pertinent trouvé.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>

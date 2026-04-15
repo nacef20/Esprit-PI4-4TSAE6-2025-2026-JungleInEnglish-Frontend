@@ -1,0 +1,73 @@
+<div class="detail-container">
+  <div class="detail-header">
+    <button class="btn-back" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Retour
+    </button>
+
+    <div class="title-section" *ngIf="groupe">
+      <div>
+        <span class="eyebrow">Groupe</span>
+        <h1 class="page-title">{{ groupe.nom }}</h1>
+      </div>
+      <span class="badge badge-info">{{ groupe.codeGroupe }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement du groupe...</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="detail-content" *ngIf="!loading && groupe">
+    <nav class="nav-tabs">
+      <button class="tab-item" [class.active]="activeTab === 'details'" (click)="activeTab = 'details'">
+        Informations Générales
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'members'" (click)="activeTab = 'members'">
+        Gestion des Membres
+      </button>
+    </nav>
+
+    <section class="tab-panel" *ngIf="activeTab === 'details'">
+      <div class="grid-layout">
+        <div class="info-card">
+          <h3>Statut & Type</h3>
+          <p><strong>Statut:</strong> {{ groupe.statut || '-' }}</p>
+          <p><strong>Type:</strong> {{ groupe.type || '-' }}</p>
+          <p><strong>Niveau ID:</strong> {{ groupe.niveauId ?? '-' }}</p>
+        </div>
+
+        <div class="info-card">
+          <h3>Capacité</h3>
+          <p><strong>Actuelle:</strong> {{ groupe.capaciteActuelle || 0 }} étudiants</p>
+          <p><strong>Maximale:</strong> {{ groupe.capaciteMax || '-' }} places</p>
+          <p><strong>Minimale:</strong> {{ groupe.capaciteMin || '-' }} places</p>
+          <div class="progress-block" *ngIf="groupe.capaciteMax">
+            <div class="progress-label">
+              <span>Occupation</span>
+              <span>{{ getProgressPercent() }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="getProgressPercent()"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card full-width">
+          <h3>Calendrier</h3>
+          <p><strong>Date début:</strong> {{ formatDate(groupe.dateDebut) }}</p>
+          <p><strong>Date fin:</strong> {{ formatDate(groupe.dateFin) }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" *ngIf="activeTab === 'members'">
+      <app-gestion-membre-groupe [groupe]="groupe" [groupeId]="groupe.idGroupe!"></app-gestion-membre-groupe>
+    </section>
+  </div>
+</div>

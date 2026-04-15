@@ -1,0 +1,114 @@
+<div class="form-container">
+  <div class="form-header">
+    <button class="btn-back" (click)="cancel()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Retour
+    </button>
+    <h1 class="page-title">
+      {{ isEditMode ? 'Modifier le Règlement' : 'Nouveau Règlement' }}
+    </h1>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">
+    <span class="material-symbols-outlined">error</span>
+    {{ error }}
+  </div>
+
+  <div class="form-card" *ngIf="!loading">
+    <form [formGroup]="reglementForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Code & Titre -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="codeReglement">Code Règlement <span class="required">*</span></label>
+          <input id="codeReglement" type="text" class="form-control" formControlName="codeReglement" placeholder="ex: REG-PRESENCE-001">
+          <small class="error-text" *ngIf="reglementForm.get('codeReglement')?.touched && reglementForm.get('codeReglement')?.invalid">
+            Format requis: REG-[CATEGORIE]-[NUM] (ex: REG-PRESENCE-001)
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="titre">Titre <span class="required">*</span></label>
+          <input id="titre" type="text" class="form-control" formControlName="titre" placeholder="ex: Ponctualité aux cours">
+        </div>
+      </div>
+
+      <!-- Categorie & Sanction -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="categorie">Catégorie <span class="required">*</span></label>
+          <select id="categorie" class="form-control" formControlName="categorie">
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sanction">Sanction associée</label>
+          <select id="sanction" class="form-control" formControlName="sanction">
+            <option *ngFor="let s of sanctions" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group full-width">
+        <label for="descriptionRegle">Description de la règle <span class="required">*</span></label>
+        <textarea id="descriptionRegle" class="form-control" rows="4" formControlName="descriptionRegle" placeholder="Détaillez la règle ici..."></textarea>
+      </div>
+
+      <!-- Consequence & Tolerance -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="consequence">Conséquence</label>
+          <input id="consequence" type="text" class="form-control" formControlName="consequence" placeholder="ex: Retrait de points">
+        </div>
+
+        <div class="form-group">
+          <label for="tolerance">Tolérance</label>
+          <input id="tolerance" type="text" class="form-control" formControlName="tolerance" placeholder="ex: 2 retards tolérés">
+        </div>
+      </div>
+
+      <!-- Seuil & Active/Obligatoire -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="seuilApplication">Seuil d'application (fois)</label>
+          <input id="seuilApplication" type="number" class="form-control" formControlName="seuilApplication" min="0">
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="estObligatoire">
+            Règle obligatoire
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="estActif">
+            Règle active
+          </label>
+        </div>
+      </div>
+
+      <!-- Groupe Assessment -->
+      <div class="form-group full-width">
+        <label for="groupeId">Assigner à un Groupe</label>
+        <select id="groupeId" class="form-control" formControlName="groupeId">
+          <option [ngValue]="null">Aucun groupe (Règle générale)</option>
+          <option *ngFor="let g of groupes" [value]="g.idGroupe">{{ g.nom }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="reglementForm.invalid || loading">
+          <span *ngIf="loading" class="spinner-sm"></span>
+          {{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading && isEditMode" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement du règlement...</p>
+  </div>
+</div>

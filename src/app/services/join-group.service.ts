@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 export interface JoinGroupDTO {
@@ -18,7 +19,7 @@ export interface JoinGroupDTO {
 })
 export class JoinGroupService {
 
- private apiUrl = 'http://localhost:8222/joinGroup';
+ private apiUrl = `${environment.apiBaseUrl}/joinGroup`;
 
   constructor(private http: HttpClient) {}
 

@@ -39,7 +39,7 @@ export class GroupeListComponent implements OnInit {
     this.groupeService.getAllGroupes().subscribe({
       next: (data) => {
         this.groupes = data;
-        this.filteredGroupes = data;
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -74,6 +74,12 @@ export class GroupeListComponent implements OnInit {
 
   createGroupe(): void {
     this.router.navigate(['/admin/groupe/create']);
+  }
+
+  viewDetails(id: number | undefined): void {
+    if (id) {
+      this.router.navigate(['/admin/groupe/details', id]);
+    }
   }
 
   editGroupe(id: number | undefined): void {
@@ -115,7 +121,8 @@ export class GroupeListComponent implements OnInit {
       'COMPLET': 'statut-complet',
       'EN_COURS': 'statut-en-cours',
       'TERMINE': 'statut-termine',
-      'ANNULE': 'statut-annule'
+      'ANNULE': 'statut-annule',
+      'ARCHIVE': 'statut-archive'
     };
     return statut ? (classes[statut] || '') : '';
   }

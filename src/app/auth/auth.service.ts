@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { getKeycloak } from './keycloak.config';
-import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-constructor(private http: HttpClient) {}
+constructor() {}
   login(redirectUri?: string): void {
     getKeycloak().login({
       redirectUri: redirectUri || window.location.origin + window.location.pathname
@@ -63,7 +63,7 @@ constructor(private http: HttpClient) {}
   }
 
   getMe() {
-    return this.http.get<any>('http://localhost:8222/api/users/me');
+    return of(this.getUserInfo());
   }
 
   currentUser() {

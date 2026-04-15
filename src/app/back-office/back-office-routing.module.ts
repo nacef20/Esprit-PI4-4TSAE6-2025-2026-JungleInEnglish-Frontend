@@ -29,152 +29,81 @@ const routes: Routes = [
     path: '',
     component: BackOfficeComponent,
     children: [
-      {
-        path: 'courses',
-        component: CoursesManagementComponent
-      },
-      {
-        path: 'lessons',
-        component: LessonsManagementComponent
-      },
-      {
-        path: 'my-courses',
-        component: MyCoursesComponent
-      },
-      {
-        path: 'analytics/feedback',
-        component: FeedbackAnalyticsComponent
-      },
-      {
-        path: 'quizzes',
-        component: QuizListComponent
-      },
-      {
-        path: 'quizzes/new',
-        component: QuizFormComponent
-      },
-      {
-        path: 'quizzes/edit/:id',
-        component: QuizFormComponent
-      },
-      {
-        path: 'attempts',
-        component: AttemptListComponent
-      },
-      {
-        path: 'attempts/:attemptId',
-        component: AttemptDetailComponent
-      },
-      {
-        path: 'quizzes/ai',
-        component: AiQuizGeneratorComponent
-      },
-      {
-        path: 'quizzes/:quizId/questions',
-        component: QuestionListComponent
-      },
-      {
-        path: 'quizzes/:quizId/questions/new',
-        component: QuestionFormComponent
-      },
-      {
-        path: 'quizzes/:quizId/questions/edit/:questionId',
-        component: QuestionFormComponent
-      },
-      {
-        path: 'questions/:questionId/choices',
-        component: ChoiceListComponent
-      },
-      {
-        path: 'questions/:questionId/choices/new',
-        component: ChoiceFormComponent
-      },
-      {
-        path: 'questions/:questionId/choices/edit/:choiceId',
-        component: ChoiceFormComponent
-      },
-
-      {
-        path: 'student-quizzes',
-        component: QuizStudentListComponent
-      },
-      {
-        path: 'student-quizzes/pass/:id',
-        component: QuizPassComponent
-      },
-      {
-        path: 'student-attempts',
-        component: AttemptHistoryComponent
-      },
-      {
-        path: 'student-attempts/:attemptId',
-        component: AttemptDetailStudentComponent
-      },
+      { path: 'courses', component: CoursesManagementComponent },
+      { path: 'lessons', component: LessonsManagementComponent },
+      { path: 'my-courses', component: MyCoursesComponent },
+      { path: 'analytics/feedback', component: FeedbackAnalyticsComponent },
+      { path: 'quizzes', component: QuizListComponent },
+      { path: 'quizzes/new', component: QuizFormComponent },
+      { path: 'quizzes/edit/:id', component: QuizFormComponent },
+      { path: 'attempts', component: AttemptListComponent },
+      { path: 'attempts/:attemptId', component: AttemptDetailComponent },
+      { path: 'quizzes/ai', component: AiQuizGeneratorComponent },
+      { path: 'quizzes/:quizId/questions', component: QuestionListComponent },
+      { path: 'quizzes/:quizId/questions/new', component: QuestionFormComponent },
+      { path: 'quizzes/:quizId/questions/edit/:questionId', component: QuestionFormComponent },
+      { path: 'questions/:questionId/choices', component: ChoiceListComponent },
+      { path: 'questions/:questionId/choices/new', component: ChoiceFormComponent },
+      { path: 'questions/:questionId/choices/edit/:choiceId', component: ChoiceFormComponent },
+      { path: 'student-quizzes', component: QuizStudentListComponent },
+      { path: 'student-quizzes/pass/:id', component: QuizPassComponent },
+      { path: 'student-attempts', component: AttemptHistoryComponent },
+      { path: 'student-attempts/:attemptId', component: AttemptDetailStudentComponent },
       {
         path: 'gestionchatprive',
-        loadChildren: () =>
-          import('./gestionchatprive/gestionchatprive.module')
-            .then(m => m.GestionchatpriveModule)
+        loadChildren: () => import('./gestionchatprive/gestionchatprive.module').then(m => m.GestionchatpriveModule)
       },
       {
         path: 'planning',
-        loadChildren: () =>
-          import('./planning/planning.module').then(m => m.PlanningModule)
+        loadChildren: () => import('./planning/planning.module').then(m => m.PlanningModule)
       },
       {
         path: 'salle',
-        loadChildren: () =>
-          import('./salle/salle.module').then(m => m.SalleModule)
+        loadChildren: () => import('./salle/salle.module').then(m => m.SalleModule)
       },
       {
         path: 'groupe',
-        loadChildren: () =>
-          import('./groupe/groupe.module').then(m => m.GroupeModule)
+        loadChildren: () => import('./groupe/groupe.module').then(m => m.GroupeModule)
       },
-      // Shop Admin Integration
+      {
+        path: 'analyse',
+        loadChildren: () => import('./analysis/analysis.module').then(m => m.AnalysisModule)
+      },
+      {
+        path: 'reglement',
+        loadChildren: () => import('./reglement/reglement.module').then(m => m.ReglementModule)
+      },
+      {
+        path: 'objectif',
+        loadChildren: () => import('./objectif/objectif.module').then(m => m.ObjectifModule)
+      },
+      {
+        path: 'affectations',
+        loadChildren: () => import('./affectations/affectation.module').then(m => m.AffectationModule)
+      },
       {
         path: 'shop',
         canActivate: [shopAuthGuard, shopAdminGuard],
         children: [
           { path: '', loadComponent: () => import('../shop/features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
-
           { path: 'products', loadComponent: () => import('../shop/features/admin/admin-product-list/admin-product-list.component').then(m => m.AdminProductListComponent) },
           { path: 'products/create', loadComponent: () => import('../shop/features/products/product-form/product-form.component').then(m => m.ProductFormComponent) },
           { path: 'products/:id/edit', loadComponent: () => import('../shop/features/products/product-form/product-form.component').then(m => m.ProductFormComponent) },
-
           { path: 'orders', loadComponent: () => import('../shop/features/orders/order-admin/order-admin.component').then(m => m.OrderAdminComponent) },
           { path: 'inventory', loadComponent: () => import('../shop/features/admin/inventory-dashboard/inventory-dashboard.component').then(m => m.InventoryDashboardComponent) },
-
           { path: 'categories', loadComponent: () => import('../shop/features/categories/category-list/category-list.component').then(m => m.CategoryListComponent) },
           { path: 'categories/create', loadComponent: () => import('../shop/features/categories/category-form/category-form.component').then(m => m.CategoryFormComponent) },
           { path: 'categories/:id/edit', loadComponent: () => import('../shop/features/categories/category-form/category-form.component').then(m => m.CategoryFormComponent) },
-
           { path: 'users', loadComponent: () => import('../shop/features/users/user-list/user-list.component').then(m => m.UserListComponent) },
           { path: 'users/create', loadComponent: () => import('../shop/features/users/user-form/user-form.component').then(m => m.UserFormComponent) },
           { path: 'users/:id/edit', loadComponent: () => import('../shop/features/users/user-form/user-form.component').then(m => m.UserFormComponent) },
         ]
       },
-      {
-        path: 'events',
-        component: EventListComponent
-      },
-      {
-        path: 'events/new',
-        component: EventFormComponent
-      },
-      {
-        path: 'events/edit/:id',
-        component: EventFormComponent
-      },
-      {
-        path: 'events/scan',
-        component: QrScannerComponent
-      },
-      {
-        path: '',
-        redirectTo: 'courses',
-        pathMatch: 'full'
-      }
+      { path: 'events', component: EventListComponent },
+      { path: 'events/new', component: EventFormComponent },
+      { path: 'events/edit/:id', component: EventFormComponent },
+      { path: 'events/scan', component: QrScannerComponent },
+      { path: '', redirectTo: 'courses', pathMatch: 'full' }
     ]
   }
 ];

@@ -22,7 +22,7 @@ export class SidebarComponent {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        this.currentRoute = event.url;
+        this.currentRoute = event.urlAfterRedirects || event.url;
         // Fermer le menu mobile après navigation
         if (window.innerWidth <= 768) {
           this.closeMobileMenu();
@@ -33,7 +33,7 @@ export class SidebarComponent {
   ngOnInit(): void {
     // Charger l'état du sidebar depuis localStorage
     this.loadSidebarState();
-
+    
     // Définir la route courante
     this.currentRoute = this.router.url;
 

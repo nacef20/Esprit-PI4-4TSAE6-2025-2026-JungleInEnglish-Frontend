@@ -1,0 +1,161 @@
+<div class="analysis-container dashboard-fade-in">
+  <header class="analysis-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">history</span>
+      Audit & Traçabilité
+    </h1>
+  </header>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'PARCOURS'" (click)="setTab('PARCOURS')">
+      <span class="material-symbols-outlined">route</span> Parcours Étudiant
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'RETENTION'" (click)="setTab('RETENTION')">
+      <span class="material-symbols-outlined">bar_chart</span> Rétention Groupes
+    </button>
+  </nav>
+
+  <!-- ═══════ PARCOURS ÉTUDIANT ═══════ -->
+  <div *ngIf="activeTab === 'PARCOURS'">
+    <div class="search-bar">
+      <label>Rechercher un élève :</label>
+      <input type="number" [(ngModel)]="etudiantIdSearch" placeholder="Entrez l'ID de l'étudiant..."
+             class="form-control" (keyup.enter)="rechercherParcours()">
+      <button class="btn-primary" (click)="rechercherParcours()" [disabled]="parcoursLoading">
+        <span class="material-symbols-outlined" *ngIf="!parcoursLoading">search</span>
+        {{ parcoursLoading ? 'Recherche...' : 'Rechercher' }}
+      </button>
+    </div>
+
+    <div class="alert alert-error" *ngIf="parcoursError">{{ parcoursError }}</div>
+
+    <!-- Résumé -->
+    <div class="parcours-resume" *ngIf="parcours.length > 0">
+      <div class="resume-card">
+        <div class="resume-value"><span class="material-symbols-outlined">groups</span> {{ parcours.length }}</div>
+        <div class="resume-label">Groupe(s) traversé(s)</div>
+      </div>
+      <div class="resume-card">
+        <div class="resume-value"><span class="material-symbols-outlined">timer</span> {{ getTotalDuree() }}j</div>
+        <div class="resume-label">Temps total en formation</div>
+      </div>
+      <div class="resume-card" [ngClass]="getScoreEvolutionClass(getTotalEvolution())">
+        <div class="resume-value">
+          <span class="material-symbols-outlined">{{ getScoreEvolutionIcon(getTotalEvolution()) }}</span>
+          {{ getTotalEvolution() > 0 ? '+' : '' }}{{ getTotalEvolution() }}
+        </div>
+        <div class="resume-label">Progression globale</div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" *ngIf="parcours.length > 0">
+      <div *ngFor="let etape of parcours; let i = index; let last = last" class="timeline-item">
+        <div class="timeline-connector">
+          <div class="timeline-dot" [ngClass]="getStatutClass(etape.statut)"></div>
+          <div class="timeline-line" *ngIf="!last"></div>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <h3>{{ etape.nomGroupe }} <small>({{ etape.codeGroupe }})</small></h3>
+            <span class="badge" [ngClass]="getStatutClass(etape.statut)">{{ etape.statut }}</span>
+          </div>
+          
+          <div class="timeline-dates">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span>{{ etape.dateAffectation | date:'dd MMM yyyy' }}</span>
+            <span *ngIf="etape.dateSortie"> → {{ etape.dateSortie | date:'dd MMM yyyy' }}</span>
+            <span class="duree">{{ etape.dureeSejour }} jours</span>
+          </div>
+
+          <div class="timeline-scores" *ngIf="etape.scoreEntree != null">
+            <div class="score-box">
+              <small>Entrée</small>
+              <strong>{{ etape.scoreEntree }}</strong>
+            </div>
+            <span class="material-symbols-outlined">arrow_forward</span>
+            <div class="score-box" *ngIf="etape.scoreApres != null">
+              <small>Sortie</small>
+              <strong>{{ etape.scoreApres }}</strong>
+            </div>
+            <span class="evolution" [ngClass]="getScoreEvolutionClass(etape.evolutionScore)" *ngIf="etape.scoreApres != null">
+              <span class="material-symbols-outlined">{{ getScoreEvolutionIcon(etape.evolutionScore) }}</span>
+              {{ etape.evolutionScore > 0 ? '+' : '' }}{{ etape.evolutionScore }}
+            </span>
+          </div>
+
+          <div class="timeline-raison" *ngIf="etape.raisonChangement">
+            <span class="material-symbols-outlined">info</span>
+            <span>Raison : {{ etape.raisonChangement }}</span>
+          </div>
+
+          <div class="timeline-comment" *ngIf="etape.commentaire">
+            {{ etape.commentaire }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="parcours.length === 0 && !parcoursLoading" class="empty-state">
+      <span class="material-symbols-outlined">person_search</span>
+      <p>Entrez un ID étudiant pour visualiser son parcours complet.</p>
+    </div>
+  </div>
+
+  <!-- ═══════ RÉTENTION GROUPES ═══════ -->
+  <div *ngIf="activeTab === 'RETENTION'">
+    <div class="search-bar">
+      <label>Seuil minimum d'affectations :</label>
+      <input type="number" [(ngModel)]="seuilMinimum" class="form-control small" min="1">
+      <button class="btn-primary" (click)="loadRetention()" [disabled]="retentionLoading">
+        <span class="material-symbols-outlined" *ngIf="!retentionLoading">sync</span>
+        Actualiser
+      </button>
+    </div>
+
+    <div *ngIf="retentionLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Analyse des données de rétention...</p>
+    </div>
+
+    <div class="alert alert-error" *ngIf="retentionError">{{ retentionError }}</div>
+
+    <article class="content-card" *ngIf="!retentionLoading && retentionStats.length > 0">
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Groupe</th>
+              <th class="text-center">Effectif Total</th>
+              <th class="text-center">Actifs</th>
+              <th class="text-center">Abandons/Sorties</th>
+              <th class="text-center">Durée Moy.</th>
+              <th class="text-center">Taux Rétention</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let stat of retentionStats">
+              <td><strong>{{ stat.nomGroupe }}</strong></td>
+              <td class="text-center">{{ stat.totalAffectations }}</td>
+              <td class="text-center">{{ stat.nombreActifs }}</td>
+              <td class="text-center">{{ stat.nombreSortis + stat.nombreSuspendus }}</td>
+              <td class="text-center">{{ stat.dureeMoyenneJours | number:'1.0-1' }} j</td>
+              <td class="text-center">
+                <div class="retention-bar">
+                  <div class="retention-fill" [ngClass]="getRetentionClass(stat.tauxRetention)"
+                       [style.width.%]="stat.tauxRetention"></div>
+                </div>
+                <span class="retention-value">{{ stat.tauxRetention }}% de rétention</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <div *ngIf="!retentionLoading && retentionStats.length === 0" class="empty-state">
+      <span class="material-symbols-outlined">analytics</span>
+      <p>Aucune donnée de rétention disponible pour ce seuil.</p>
+    </div>
+  </div>
+</div>

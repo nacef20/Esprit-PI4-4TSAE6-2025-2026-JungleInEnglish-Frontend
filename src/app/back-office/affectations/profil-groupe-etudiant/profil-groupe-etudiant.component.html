@@ -1,0 +1,83 @@
+<div class="profil-container">
+  <header class="profil-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">person</span>
+      Profil Étudiant #{{ etudiantId }}
+    </h1>
+  </header>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des données de l'étudiant...</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading">
+    <article class="stat-card" [class.no-group]="!groupeActuel">
+      <div class="stat-icon">
+        <span class="material-symbols-outlined">groups</span>
+      </div>
+      <div class="stat-info" *ngIf="groupeActuel">
+        <span class="label">Groupe Actuel</span>
+        <h2 class="value">{{ groupeActuel.groupe.nom }}</h2>
+        <div class="meta">
+          <span class="badge badge-success">Actif depuis le {{ groupeActuel.dateAffectation | date }}</span>
+          <span class="code">Code: {{ groupeActuel.groupe.codeGroupe }}</span>
+          <span class="score" *ngIf="groupeActuel.scoreEntree">Score entrée: {{ groupeActuel.scoreEntree }}</span>
+        </div>
+      </div>
+      <div class="stat-info" *ngIf="!groupeActuel">
+        <span class="label">Groupe Actuel</span>
+        <h2 class="value">Sans Groupe</h2>
+        <p class="description">Cet étudiant n'a aucune affectation active pour le moment.</p>
+      </div>
+    </article>
+
+    <article class="content-card mt-4">
+      <div class="card-header">
+        <h2>Historique des groupes</h2>
+        <span class="subtitle">Historique complet des affectations passées et présentes</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Groupe</th>
+              <th>Entrée</th>
+              <th>Sortie</th>
+              <th class="text-center">Statut</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of historique">
+              <td>
+                <div class="group-cell">
+                  <strong>{{ h.groupe.nom }}</strong>
+                  <span>{{ h.groupe.codeGroupe }}</span>
+                </div>
+              </td>
+              <td>{{ h.dateAffectation | date }}</td>
+              <td>{{ h.dateSortie ? (h.dateSortie | date) : '-' }}</td>
+              <td class="text-center">
+                <span class="badge" [ngClass]="getStatutClass(h.statut)">
+                  {{ h.statut }}
+                </span>
+              </td>
+              <td class="comment-cell" [title]="h.commentaire">
+                {{ h.commentaire || '-' }}
+              </td>
+            </tr>
+            <tr *ngIf="historique.length === 0">
+              <td colspan="5" class="empty-row">Aucun historique d'affectation disponible.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>

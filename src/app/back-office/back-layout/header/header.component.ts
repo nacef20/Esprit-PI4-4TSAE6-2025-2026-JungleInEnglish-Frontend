@@ -13,7 +13,7 @@ export class HeaderComponent {
 
   userName: string = 'chirine dardouri';
   userRole: string = 'Administrateur';
-  userAvatar: string = 'assets/avatar.jpg'; // Chemin vers votre image
+  userAvatar: string = 'assets/utilisateur.png'; // Image par défaut disponible dans les assets
 
   // UI state
   isUserMenuOpen: boolean = false;

@@ -1,0 +1,140 @@
+﻿<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-4">
+  <div class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <button (click)="cancel()" class="p-2 hover:bg-white rounded-lg transition-all shadow-sm bg-white/80">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">edit_document</span>
+        Submit a Complaint
+      </h1>
+    </div>
+
+    <!-- Success -->
+    <div *ngIf="successMessage"
+      class="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 animate-fade-in">
+      <span class="material-symbols-outlined">check_circle</span>
+      {{ successMessage }}
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorMessage"
+      class="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 animate-fade-in">
+      <span class="material-symbols-outlined">error</span>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="complaintForm" (ngSubmit)="onSubmit()"
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
+
+      <!-- Title -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="material-symbols-outlined text-sm align-middle mr-1 text-[#0ea37a]">title</span>
+          Complaint title *
+        </label>
+        <input formControlName="title" type="text" placeholder="Example: Problem accessing a course..."
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+        <p *ngIf="titleError" class="mt-2 text-xs text-red-600">{{ titleError }}</p>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="material-symbols-outlined text-sm align-middle mr-1 text-[#0ea37a]">description</span>
+          Detailed description *
+        </label>
+        <div class="flex items-center gap-2 mb-2">
+          <button type="button" (click)="generateText()" [disabled]="aiLoading || submitting"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0ea37a]/10 text-[#0ea37a] text-sm font-medium hover:bg-[#0ea37a]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-base">auto_awesome</span>
+            Generate Text
+          </button>
+          <button type="button" (click)="improveDescription()" [disabled]="aiLoading || submitting"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 text-sm font-medium hover:bg-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined text-base">edit_note</span>
+            Improve Description
+          </button>
+          <span *ngIf="aiLoading" class="text-xs text-gray-500 inline-flex items-center gap-1">
+            <span class="animate-spin rounded-full h-3 w-3 border border-gray-400 border-t-transparent"></span>
+            AI is generating...
+          </span>
+        </div>
+        <textarea formControlName="description" rows="6"
+          placeholder="Describe your issue in detail so we can resolve it quickly..."
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all resize-none"></textarea>
+        <p *ngIf="descriptionError" class="mt-2 text-xs text-red-600">{{ descriptionError }}</p>
+      </div>
+
+      <!-- Attachment -->
+      <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">
+          <span class="material-symbols-outlined text-sm align-middle mr-1 text-[#0ea37a]">attach_file</span>
+          Attachment (optional)
+        </label>
+
+        <div class="w-full px-4 py-2.5 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 flex items-center gap-3">
+          <label for="complaint-attachment"
+            class="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#0ea37a]/10 text-[#0ea37a] font-medium cursor-pointer hover:bg-[#0ea37a]/20 transition-all">
+            Choose file
+          </label>
+
+          <span class="text-sm text-gray-700 truncate">
+            {{ selectedAttachment?.name || 'No file chosen' }}
+          </span>
+
+          <button
+            *ngIf="selectedAttachment"
+            type="button"
+            (click)="clearAttachment(); attachmentInput.value = ''"
+            class="ml-auto inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 transition-all">
+            <span class="material-symbols-outlined text-base">close</span>
+            Remove
+          </button>
+
+          <input
+            id="complaint-attachment"
+            #attachmentInput
+            type="file"
+            accept=".png,.jpg,.jpeg,.pdf"
+            (change)="onAttachmentSelected($event)"
+            class="hidden" />
+        </div>
+
+        <p class="text-xs text-gray-500 mt-2">Allowed formats: PNG, JPG/JPEG, PDF (max 5 MB).</p>
+
+        <p *ngIf="selectedAttachment" class="mt-2 text-xs text-emerald-600">{{ selectedAttachment.size / 1024 | number:'1.0-0' }} KB</p>
+
+        <p *ngIf="attachmentError" class="mt-2 text-xs text-red-600">{{ attachmentError }}</p>
+      </div>
+
+      <!-- Info box -->
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-blue-500 mt-0.5">info</span>
+        <p class="text-sm text-blue-700">
+          Your complaint will be submitted with the status <strong>"Pending"</strong>.
+          You will receive a response once it is processed.
+        </p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+        <button type="submit" [disabled]="submitting || complaintForm.invalid"
+          class="flex items-center gap-2 px-8 py-3 bg-[#0ea37a] text-white rounded-xl hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-md hover:shadow-lg">
+          <span *ngIf="submitting" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+          <span *ngIf="!submitting" class="material-symbols-outlined">send</span>
+          {{ submitting ? 'Sending...' : 'Submit' }}
+        </button>
+        <button type="button" (click)="cancel()"
+          class="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all font-medium">
+          <span class="material-symbols-outlined">close</span>
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+

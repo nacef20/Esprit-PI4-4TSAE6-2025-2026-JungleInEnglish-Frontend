@@ -1,0 +1,136 @@
+<div class="courses-page-wrap">
+
+<div class="courses-container">
+  <!-- Header with 3D effect -->
+  <div class="text-center mb-16 transform-3d">
+    <div class="inline-block relative">
+      <h2 class="text-4xl lg:text-5xl font-bold text-school-primary mb-4 relative z-10">
+        Explore Our Courses
+        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-school-accent rounded-full">
+        </div>
+      </h2>
+      <div class="absolute -top-4 -right-4 w-16 h-16 bg-school-accent/20 rounded-full blur-xl"></div>
+    </div>
+    <p class="text-lg text-school-text/70 mt-6 max-w-2xl mx-auto">
+      Browse and explore our comprehensive course catalog designed to enhance your learning journey
+    </p>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-3d">
+    <div class="spinner-3d">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring"></div>
+    </div>
+    <p class="mt-6 text-school-text/70 text-lg">Loading amazing courses...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error-container-glass">
+    <div class="glass-card p-8 text-center max-w-md mx-auto">
+      <p class="error-message text-school-text mb-6">{{ error }}</p>
+      <button (click)="loadCourses()"
+        class="retry-btn-3d px-6 py-3 bg-school-primary text-white rounded-xl font-semibold">
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <!-- No Data -->
+  <div *ngIf="!loading && !error && courses.length === 0" class="no-data-3d">
+    <p class="text-xl text-school-text/70">No courses available.</p>
+  </div>
+
+  <!-- Courses Grid -->
+  <div *ngIf="!loading && !error && courses.length > 0" class="courses-grid-3d">
+    <div *ngFor="let course of courses" class="course-card-3d group">
+      <div class="card-inner relative">
+        <div class="card-front">
+
+          <!-- Image -->
+          <div class="course-image-3d relative overflow-hidden">
+            <img [src]="course.imageUrl || getDefaultImage()" [alt]="course.name"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+
+            <div class="absolute top-4 right-4 glass-badge">
+              <span [ngClass]="getLevelBadgeClass(course.level)"
+                class="level-badge-3d px-4 py-2 rounded-full text-xs font-bold">
+                {{ course.level }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="course-content-3d p-6">
+            <h3 class="text-xl font-bold text-school-primary mb-3">
+              {{ course.name }}
+            </h3>
+
+            <p class="text-school-text/70 text-sm mb-4">
+              {{ course.description }}
+            </p>
+
+            <div class="course-meta-3d flex items-center gap-4 py-4 border-t border-school-text/10">
+              <span class="text-school-text/60 text-sm">⏱ {{ course.duration }}</span>
+              <span *ngIf="course.date" class="text-school-text/60 text-sm">
+                {{ course.date | date:'MMM d, yyyy' }}
+              </span>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="course-actions-3d flex gap-3 mt-6">
+<button type="button"
+        class="btn-3d-primary flex-1"
+        (click)="debugClick(course); openCourseDetails(course)">
+  View Details
+</button>
+
+              <button class="btn-3d-secondary flex-1">
+                Enroll Now
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= COURSE DETAILS OVERLAY ================= -->
+<div *ngIf="showCourseOverlay"
+  class="fixed inset-0 z-[99999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+  (click)="closeCourseDetails()">
+
+  <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()"
+    *ngIf="selectedCourse as c">
+
+    <div class="p-6 border-b flex items-start justify-between">
+      <div class="flex gap-4">
+        <img class="w-28 h-20 rounded-xl object-cover" [src]="c.imageUrl || getDefaultImage()" [alt]="c.name">
+
+        <div>
+          <h2 class="text-2xl font-extrabold text-school-primary">{{ c.name }}</h2>
+          <p class="text-school-text/70 mt-1">{{ c.description }}</p>
+          <div class="flex gap-3 mt-3 text-sm text-school-text/60">
+            <span>⏱ {{ c.duration }}</span>
+            <span>🎯 {{ c.level }}</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="p-2 rounded-xl hover:bg-gray-100" (click)="closeCourseDetails()">✖</button>
+    </div>
+
+    <div class="p-6">
+      <app-lessons-public *ngIf="c.id != null" [courseId]="+c.id">
+      </app-lessons-public>
+    </div>
+
+  </div>
+
+</div>
+</div>

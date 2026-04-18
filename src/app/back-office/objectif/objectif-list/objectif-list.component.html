@@ -1,0 +1,152 @@
+<div class="groupe-container">
+  <!-- Header -->
+  <header class="groupe-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">target</span>
+        Pedagogical Objectives
+      </h1>
+      <button class="btn-primary" (click)="onAdd()">
+        <span class="material-symbols-outlined">add</span>
+        New Objective
+      </button>
+    </div>
+  </header>
+
+  <!-- Search and Filters -->
+  <section class="filters-section">
+    <div class="search-bar">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearch()" 
+        placeholder="Search by title or code..."
+        class="search-input">
+    </div>
+
+    <div class="filter-controls">
+      <select [(ngModel)]="selectedStatut" (change)="onFilterChange()" class="filter-select">
+        <option value="ALL">All statuses</option>
+        <option *ngFor="let s of statuts" [value]="s">{{ getStatusLabel(s) }}</option>
+      </select>
+      <select [(ngModel)]="selectedCompetence" (change)="onFilterChange()" class="filter-select">
+        <option value="ALL">All skills</option>
+        <option *ngFor="let c of competences" [value]="c">{{ getCompetenceLabel(c) }}</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Error and Loading States -->
+  <div *ngIf="error" class="error-message">
+    <span class="material-symbols-outlined">error</span>
+    {{ error }}
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading objectives...</p>
+  </div>
+
+  <!-- Cards Grid -->
+  <div *ngIf="!loading && filteredObjectifs.length > 0" class="groupe-grid">
+    <article *ngFor="let objectif of filteredObjectifs" class="groupe-card">
+      <div class="card-header">
+        <div class="card-badges">
+          <span class="badge competence-badge">
+            {{ getCompetenceLabel(objectif.competenceCible) }}
+          </span>
+          <span class="badge" [ngClass]="objectif.statut.toLowerCase()">
+            {{ getStatusLabel(objectif.statut) }}
+          </span>
+          <span class="badge" [ngClass]="getPriorityClass(objectif.priorite)">
+            P{{ objectif.priorite }}: {{ getPriorityLabel(objectif.priorite) }}
+          </span>
+        </div>
+        <div class="card-actions">
+          <button class="action-btn edit-btn" (click)="onEdit(objectif.idObjectif!)" title="Edit">
+            <span class="material-symbols-outlined">edit</span>
+          </button>
+          <button class="action-btn delete-btn" (click)="confirmDelete(objectif.idObjectif!)" title="Delete">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h2 class="card-title">{{ objectif.titre }}</h2>
+        <div class="card-code">
+          <span class="material-symbols-outlined">tag</span>
+          {{ objectif.codeObjectif }}
+        </div>
+
+        <!-- Success rate bar -->
+        <div class="capacity-bar">
+          <div class="capacity-label">
+            <span>Success rate</span>
+            <span>{{ objectif.tauxReussiteGroupe || 0 }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="objectif.tauxReussiteGroupe || 0"
+                 [ngClass]="{'progress-high': (objectif.tauxReussiteGroupe || 0) < 50, 'progress-full': (objectif.tauxReussiteGroupe || 0) >= 80}">
+            </div>
+          </div>
+        </div>
+
+        <div class="card-details">
+          <div class="detail-item">
+            <span class="material-symbols-outlined">signal_cellular_alt</span>
+            <strong>Level:</strong> {{ getLevelLabel(objectif.niveauDifficulte) }}
+          </div>
+          <div *ngIf="objectif.dureeEstimeeHeures" class="detail-item">
+            <span class="material-symbols-outlined">schedule</span>
+            <strong>Duration:</strong> {{ objectif.dureeEstimeeHeures }}h ({{ objectif.nombreSeancesNecessaires || 0 }} sessions)
+          </div>
+          <div *ngIf="objectif.methodeEvaluation" class="detail-item">
+            <span class="material-symbols-outlined">assignment_turned_in</span>
+            <strong>Evaluation:</strong> {{ getEvaluationLabel(objectif.methodeEvaluation) }}
+          </div>
+          <div *ngIf="objectif.groupe" class="detail-item">
+            <span class="material-symbols-outlined">groups</span>
+            <strong>Group:</strong> {{ objectif.groupe.nom }}
+          </div>
+        </div>
+
+        <div class="card-footer-actions">
+          <button *ngIf="objectif.statut !== 'ATTEINT'" 
+                  class="btn-status-activate" 
+                  (click)="marquerCommeAtteint(objectif.idObjectif!)">
+            Mark as achieved
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && filteredObjectifs.length === 0" class="empty-state">
+    <span class="material-symbols-outlined empty-icon" style="font-size: 4rem;">target</span>
+    <h3>No objectives found</h3>
+    <p>Define pedagogical objectives for your groups.</p>
+    <button class="btn-primary" (click)="onAdd()">
+      <span class="material-symbols-outlined">add</span>
+      Add an objective
+    </button>
+  </div>
+
+  <!-- Delete Modal -->
+  <div *ngIf="showDeleteModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="material-symbols-outlined" style="color: #f56565; font-size: 2rem;">warning</span>
+        <h3>Confirm deletion</h3>
+      </div>
+      <p>Are you sure you want to delete this objective?</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="showDeleteModal = false">Cancel</button>
+        <button class="btn-danger" (click)="onDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

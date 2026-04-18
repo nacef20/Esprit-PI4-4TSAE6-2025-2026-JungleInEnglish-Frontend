@@ -1,0 +1,56 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button (click)="goBack()" class="p-2 hover:bg-gray-100 rounded-lg transition-all">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">help_outline</span>
+        Questions for Quiz #{{ quizId }}
+      </h1>
+    </div>
+    <button (click)="addQuestion()"
+      class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all">
+      <span class="material-symbols-outlined text-xl">add</span>
+      New Question
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="questions.length === 0" class="text-center py-16 text-gray-400">
+    <span class="material-symbols-outlined text-5xl mb-4 block">quiz</span>
+    <p class="text-lg">No questions for this quiz</p>
+  </div>
+
+  <!-- Questions list -->
+  <div class="space-y-4">
+    <div *ngFor="let question of questions; let i = index"
+      class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-bold text-[#0ea37a] bg-[#0ea37a]/10 px-2 py-0.5 rounded-full">Q{{ i + 1 }}</span>
+            <span class="text-xs text-gray-400">{{ question.points }} pts</span>
+          </div>
+          <p class="text-gray-800 font-medium">{{ question.content }}</p>
+        </div>
+        <div class="flex items-center gap-1 ml-4">
+          <button (click)="manageChoices(question.id!)"
+            class="flex items-center gap-1 text-sm px-3 py-1.5 bg-[#0ea37a]/10 text-[#0ea37a] rounded-lg hover:bg-[#0ea37a]/20 transition-all font-medium">
+            <span class="material-symbols-outlined text-base">list</span>
+            Choices
+          </button>
+          <button (click)="editQuestion(question.id!)"
+            class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all">
+            <span class="material-symbols-outlined text-xl">edit</span>
+          </button>
+          <button (click)="deleteQuestion(question.id!)"
+            class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all">
+            <span class="material-symbols-outlined text-xl">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

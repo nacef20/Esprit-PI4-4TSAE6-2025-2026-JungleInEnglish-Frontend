@@ -1,0 +1,246 @@
+<div class="analysis-container">
+  <header class="analysis-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">lightbulb</span>
+      Restructuring Recommendations
+    </h1>
+    <div class="stat-summary">
+      <div class="stat-item text-fusion"><strong>{{ stats.FUSION }}</strong> merge candidates</div>
+      <div class="divider"></div>
+      <div class="stat-item text-scission"><strong>{{ stats.SCISSION }}</strong> split candidates</div>
+    </div>
+  </header>
+
+  <!-- Filtre Onglets -->
+  <nav class="tabs-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'ALL'" (click)="setTab('ALL')">All ({{ allRecommandations.length }})</button>
+    <button class="tab-btn" [class.active]="activeTab === 'FUSION'" (click)="setTab('FUSION')">Merge ({{ stats.FUSION }})</button>
+    <button class="tab-btn" [class.active]="activeTab === 'SCISSION'" (click)="setTab('SCISSION')">Split ({{ stats.SCISSION }})</button>
+  </nav>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Generating recommendations...</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error && !loading">
+    {{ error }}
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMessage && !loading">
+    {{ successMessage }}</div>
+
+  <!-- Contenu -->
+  <article class="content-card" *ngIf="!loading">
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Headcount</th>
+            <th class="text-center">Fill Rate</th>
+            <th class="text-center">Active Objectives</th>
+            <th class="text-center">Workload</th>
+            <th class="text-center">Type</th>
+            <th>Reason</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rec of filteredRecommandations">
+            <td>
+              <div class="group-info">
+                <span class="nom">{{ rec.nom }}</span>
+                <span class="code">{{ rec.codeGroupe }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="capacity-info">
+                <strong>{{ rec.capaciteActuelle }}</strong> / {{ rec.capaciteMax }}
+              </span>
+              <small class="min-cap">Min: {{ rec.capaciteMin }}</small>
+            </td>
+            <td class="text-center">
+              <div class="fill-progress-wrapper">
+                <div class="progress-bar-bg small">
+                  <div class="progress-bar-fill"
+                       [style.width.%]="rec.tauxRemplissage"
+                       [style.background-color]="getFillColor(rec.tauxRemplissage)">
+                  </div>
+                </div>
+                <span class="score-small">{{ rec.tauxRemplissage | number:'1.0-0' }}%</span>
+              </div>
+            </td>
+            <td class="text-center">
+              <span class="badge badge-objectifs">{{ rec.objectifsEnCours }}</span>
+            </td>
+            <td class="text-center"><strong>{{ rec.chargeHoraireTotale }}h</strong></td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="getTypeClass(rec.typeRecommandation)">
+                {{ rec.typeRecommandation }}
+              </span>
+            </td>
+            <td class="raison-col" [title]="rec.raisonRecommandation">
+              {{ rec.raisonRecommandation }}
+            </td>
+            <td class="text-center">
+              <button
+                class="btn-fusion"
+                *ngIf="canOpenFusion(rec)"
+                (click)="openFusionModal(rec)">
+                Merge
+              </button>
+              <button
+                class="btn-scission"
+                *ngIf="canOpenScission(rec)"
+                (click)="openScissionModal(rec)">
+                Split
+              </button>
+              <span *ngIf="!canOpenFusion(rec) && !canOpenScission(rec)" class="text-muted">-</span>
+            </td>
+          </tr>
+          <tr *ngIf="filteredRecommandations.length === 0">
+            <td colspan="8" class="empty-row">No candidate identified for this type.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <div class="modal-overlay" *ngIf="showFusionModal && selectedFusionRec">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Recommended group merge</h3>
+        <button class="close-btn" (click)="closeFusionModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p>
+          <strong>Source:</strong>
+          {{ selectedFusionRec.nom }} ({{ selectedFusionRec.codeGroupe }})
+        </p>
+
+        <div class="form-group">
+          <label>Target group</label>
+          <select [(ngModel)]="fusionForm.groupeCibleId" class="form-control">
+            <option [ngValue]="undefined">Select a group</option>
+            <option *ngFor="let g of getGroupesCibles(selectedFusionRec)" [ngValue]="g.idGroupe">
+              {{ g.nom }} ({{ g.codeGroupe }})
+            </option>
+          </select>
+        </div>
+
+        <div class="checkbox-grid">
+          <label><input type="checkbox" [(ngModel)]="fusionForm.transfererEtudiants"> Transfer students</label>
+          <label><input type="checkbox" [(ngModel)]="fusionForm.transfererFormateurs"> Transfer instructors</label>
+          <label><input type="checkbox" [(ngModel)]="fusionForm.transfererObjectifs"> Transfer objectives</label>
+          <label><input type="checkbox" [(ngModel)]="fusionForm.transfererReglements"> Transfer rules</label>
+        </div>
+
+        <div class="form-group">
+          <label>Comment</label>
+          <textarea [(ngModel)]="fusionForm.commentaire" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Admin ID (triggeredBy)</label>
+          <input type="number" [(ngModel)]="fusionForm.declenchePar" class="form-control">
+        </div>
+
+        <div class="result-card" *ngIf="fusionValidationResult">
+          <div><strong>Status:</strong> {{ fusionValidationResult.statut }}</div>
+          <div><strong>Message:</strong> {{ fusionValidationResult.message }}</div>
+          <div>
+            <strong>Transferable students:</strong>
+            {{ fusionValidationResult.nombreEtudiantsTransferes }}
+          </div>
+          <div *ngIf="fusionValidationResult.etudiantsNonTransferes.length">
+            <strong>Not transferred:</strong>
+            {{ fusionValidationResult.etudiantsNonTransferes.join(', ') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeFusionModal()">Close</button>
+        <button class="btn-primary" [disabled]="validatingFusion || executingFusion" (click)="validerFusion()">
+          {{ validatingFusion ? 'Validating...' : 'Validate merge' }}
+        </button>
+        <button class="btn-danger" [disabled]="executingFusion || validatingFusion" (click)="executerFusion()">
+          {{ executingFusion ? 'Executing...' : 'Execute merge' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="showScissionModal && selectedScissionRec">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Recommended group split</h3>
+        <button class="close-btn" (click)="closeScissionModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p>
+          <strong>Source:</strong>
+          {{ selectedScissionRec.nom }} ({{ selectedScissionRec.codeGroupe }})
+        </p>
+
+        <div class="form-group">
+          <label>Target group</label>
+          <select [(ngModel)]="scissionForm.groupeCibleId" class="form-control">
+            <option [ngValue]="undefined">Select a group</option>
+            <option *ngFor="let g of getGroupesCibles(selectedScissionRec)" [ngValue]="g.idGroupe">
+              {{ g.nom }} ({{ g.codeGroupe }})
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Number of students to move</label>
+          <input type="number" min="1" [(ngModel)]="scissionForm.nombreEtudiantsADeplacer" class="form-control">
+        </div>
+
+        <div class="checkbox-grid">
+          <label><input type="checkbox" [(ngModel)]="scissionForm.transfererEtudiants"> Move students</label>
+          <label><input type="checkbox" [(ngModel)]="scissionForm.transfererFormateurs"> Copy instructors</label>
+          <label><input type="checkbox" [(ngModel)]="scissionForm.transfererObjectifs"> Copy objectives</label>
+          <label><input type="checkbox" [(ngModel)]="scissionForm.transfererReglements"> Copy rules</label>
+        </div>
+
+        <div class="form-group">
+          <label>Comment</label>
+          <textarea [(ngModel)]="scissionForm.commentaire" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Admin ID (triggeredBy)</label>
+          <input type="number" [(ngModel)]="scissionForm.declenchePar" class="form-control">
+        </div>
+
+        <div class="result-card" *ngIf="scissionValidationResult">
+          <div><strong>Status:</strong> {{ scissionValidationResult.statut }}</div>
+          <div><strong>Message:</strong> {{ scissionValidationResult.message }}</div>
+          <div>
+            <strong>Students moved:</strong>
+            {{ scissionValidationResult.nombreEtudiantsTransferes }}
+          </div>
+          <div *ngIf="scissionValidationResult.etudiantsNonTransferes.length">
+            <strong>Not moved:</strong>
+            {{ scissionValidationResult.etudiantsNonTransferes.join(', ') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeScissionModal()">Close</button>
+        <button class="btn-primary" [disabled]="validatingScission || executingScission" (click)="validerScission()">
+          {{ validatingScission ? 'Validating...' : 'Validate split' }}
+        </button>
+        <button class="btn-danger" [disabled]="executingScission || validatingScission" (click)="executerScission()">
+          {{ executingScission ? 'Executing...' : 'Execute split' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

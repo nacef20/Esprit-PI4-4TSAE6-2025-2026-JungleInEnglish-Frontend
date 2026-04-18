@@ -1,0 +1,83 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">dashboard</span>
+      Assignment Dashboard
+    </h1>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card" [class.loading]="loading.etudiants">
+      <div class="stat-icon etudiants">
+        <span class="material-symbols-outlined">person_search</span>
+      </div>
+      <div class="stat-content">
+        <span class="label">Students without a group</span>
+        <h2 class="value">{{ etudiantsSansGroupe.length }}</h2>
+        <button class="btn-text" (click)="showListEtudiants = !showListEtudiants">
+          {{ showListEtudiants ? 'Hide list' : 'View IDs' }}
+        </button>
+        <div class="ids-list" *ngIf="showListEtudiants">
+          {{ etudiantsSansGroupe.join(', ') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card" [class.loading]="loading.groupes">
+      <div class="stat-icon groupes">
+        <span class="material-symbols-outlined">report_problem</span>
+      </div>
+      <div class="stat-content">
+        <span class="label">Groups without a principal instructor</span>
+        <h2 class="value">{{ groupesSansPrincipal.length }}</h2>
+        <div class="mini-list" *ngIf="groupesSansPrincipal.length > 0">
+          <span class="mini-item" *ngFor="let g of groupesSansPrincipal | slice:0:3">
+            {{ g?.nom || ('Group #' + (g?.idGroupe || '')) }}
+          </span>
+          <span *ngIf="groupesSansPrincipal.length > 3">...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <article class="content-card mt-4">
+    <div class="card-header">
+      <h2>Instructors' Workload</h2>
+      <span class="subtitle">Total weekly hours per instructor</span>
+    </div>
+
+    <div *ngIf="loading.charge" class="p-4 text-center">
+      <div class="spinner-sm"></div>
+    </div>
+
+    <div class="table-wrapper" *ngIf="!loading.charge">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Instructor ID</th>
+            <th class="text-center">Total Hours / Week</th>
+            <th class="text-center">Workload Alert</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of chargeHoraireFormateurs">
+            <td><strong>#{{ row[0] }}</strong></td>
+            <td class="text-center">
+              <span [class]="getChargeColorClass(row[1])">
+                {{ row[1] || 0 }} hours
+              </span>
+            </td>
+            <td class="text-center">
+              <span *ngIf="row[1] > 20" class="badge badge-danger">Overload</span>
+              <span *ngIf="row[1] > 15 && row[1] <= 20" class="badge badge-warning">High</span>
+              <span *ngIf="row[1] <= 15" class="badge badge-success">Optimal</span>
+            </td>
+          </tr>
+          <tr *ngIf="chargeHoraireFormateurs.length === 0">
+            <td colspan="3" class="empty-row">No instructor assigned.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</div>

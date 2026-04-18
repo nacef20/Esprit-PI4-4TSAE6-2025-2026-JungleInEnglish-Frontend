@@ -1,0 +1,135 @@
+<div class="bg-gradient-to-b from-gray-100 to-white w-full py-14" id="pricing">
+
+  <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto flex flex-col w-full text-center">
+
+    <!-- ================= TITLE ================= -->
+    <div class="flex flex-col w-full">
+
+      <app-scroll-animation>
+        <h3 class="text-2xl sm:text-3xl lg:text-4xl font-medium text-black-600 leading-relaxed">
+          Choose Your Plan
+        </h3>
+
+        <p class="leading-normal w-10/12 sm:w-7/12 lg:w-6/12 mx-auto my-2">
+          Let's choose the package that is best for you and explore it happily
+          and cheerfully.
+        </p>
+      </app-scroll-animation>
+
+      <!-- ================= PLANS ================= -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 py-8">
+
+        <app-scroll-animation
+          *ngFor="let plan of plans"
+          className="flex justify-center"
+        >
+
+          <div
+            class="flex flex-col justify-center items-center border-2 border-gray-200 rounded-xl py-6 px-8 hover:scale-105 transition duration-200 bg-white"
+          >
+
+            <div class="mt-6">
+              <img [src]="plan.image" class="w-32 h-auto" />
+            </div>
+
+            <p class="text-lg text-black-600 font-medium capitalize my-6">
+              {{ plan.name }}
+            </p>
+
+            <ul class="flex flex-col list-inside items-start text-left text-gray-600 flex-grow">
+              <li
+                *ngFor="let feature of plan.features"
+                class="my-2"
+              >
+                ✔ {{ feature }}
+              </li>
+            </ul>
+
+            <div class="flex flex-col w-full justify-center mt-10">
+              <p class="text-2xl text-black-600 text-center mb-4 font-semibold">
+                {{ plan.price }}
+              </p>
+
+              <button
+                class="border border-orange-500 text-orange-500 px-6 py-2 rounded-full hover:bg-orange-500 hover:text-white transition"
+              >
+                Select
+              </button>
+            </div>
+
+          </div>
+
+        </app-scroll-animation>
+
+      </div>
+    </div>
+
+    <!-- ================= GLOBAL NETWORK ================= -->
+    <div class="flex flex-col w-full my-16">
+
+      <app-scroll-animation>
+        <h3
+          class="text-2xl sm:text-3xl lg:text-4xl font-medium text-black-600 leading-relaxed w-9/12 sm:w-6/12 lg:w-4/12 mx-auto">
+          Huge Global Network of Fast VPN
+        </h3>
+
+        <p class="leading-normal mx-auto my-4 w-10/12 sm:w-7/12 lg:w-6/12">
+          See LaslesVPN everywhere to make it easier for you when you move
+          locations.
+        </p>
+      </app-scroll-animation>
+
+      <app-scroll-animation>
+        <div class="py-12 w-full px-8 mt-8">
+          <img src="assets/HugeGlobal.svg" class="w-full h-auto" />
+        </div>
+      </app-scroll-animation>
+
+      <!-- ================= LOGOS ================= -->
+      <app-scroll-animation>
+        <div class="w-full flex justify-evenly items-center mt-6 flex-wrap">
+
+          <img src="assets/Icon/amazon.png" class="h-14 w-auto mt-4" />
+          <img src="assets/Icon/netflix.png" class="h-14 w-auto mt-4" />
+          <img src="assets/Icon/reddit.png" class="h-12 w-auto mt-4" />
+          <img src="assets/Icon/discord.png" class="h-14 w-auto mt-4" />
+          <img src="assets/Icon/spotify.png" class="h-12 w-auto mt-4" />
+
+        </div>
+      </app-scroll-animation>
+
+    </div>
+
+    <!-- ================= SUBSCRIBE BOX ================= -->
+    <div class="relative w-full mt-20">
+
+      <app-scroll-animation>
+
+        <div class="absolute rounded-xl py-10 px-10 w-full flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg z-10">
+
+          <div class="flex flex-col text-left w-10/12 sm:w-7/12 lg:w-5/12 mb-6 sm:mb-0">
+            <h5 class="text-black-600 text-xl sm:text-2xl lg:text-3xl leading-relaxed font-medium">
+              Subscribe Now for <br /> Get Special Features!
+            </h5>
+            <p>Let's subscribe with us and find the fun.</p>
+          </div>
+
+          <button
+            class="bg-orange-500 text-white px-8 py-3 rounded-lg hover:bg-orange-600 transition"
+          >
+            Get Started
+          </button>
+
+        </div>
+
+        <div
+          class="absolute bg-black opacity-5 w-11/12 rounded-lg h-60 top-0 mt-8 mx-auto left-0 right-0"
+          style="filter: blur(114px);"
+        ></div>
+
+      </app-scroll-animation>
+
+    </div>
+
+  </div>
+</div>

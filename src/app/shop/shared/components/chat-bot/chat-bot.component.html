@@ -1,0 +1,53 @@
+<div class="chatbot-container" [class.open]="isOpen()">
+    <!-- Chat Button -->
+    <button class="chatbot-toggle" (click)="toggleChat()" *ngIf="!isOpen()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <!-- Chat Window -->
+    <div class="chatbot-window" *ngIf="isOpen()">
+        <div class="chatbot-header">
+            <div class="header-info">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg>
+                <span>AI Assistant</span>
+            </div>
+            <button class="close-btn" (click)="toggleChat()">&times;</button>
+        </div>
+
+        <div class="chatbot-messages" #scrollMe>
+            <div *ngFor="let msg of messages()" class="message-row" [class.user]="msg.user">
+                <div class="message-bubble">{{ msg.text }}</div>
+            </div>
+            
+            <div *ngIf="isLoading()" class="message-row">
+                <div class="message-bubble typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chatbot-input">
+            <input 
+                type="text" 
+                [ngModel]="userInput()" 
+                (ngModelChange)="userInput.set($event)"
+                (keydown.enter)="sendMessage()" 
+                placeholder="Ask me about products..." 
+                [disabled]="isLoading()"
+            />
+            <button class="send-btn" (click)="sendMessage()" [disabled]="isLoading() || !userInput().trim()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>

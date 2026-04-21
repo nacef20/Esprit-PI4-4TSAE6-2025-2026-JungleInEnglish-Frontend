@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Annotation profile for GestionGroupeChat" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="GestionGroupeChat" />
+      </profile>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="config-server" />
+        <module name="reclamationreponse" />
+        <module name="Gestion_Planning" />
+        <module name="discovery" />
+        <module name="gateway" />
+        <module name="userservice" />
+      </profile>
+      <profile name="Annotation profile for jungle-in-english-backend" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="jungle-in-english-backend" />
+      </profile>
+      <profile name="Annotation profile for forumService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.5.5.Final/mapstruct-processor-1.5.5.Final.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="forumService" />
+      </profile>
+      <profile name="Annotation profile for recrutement-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.34/lombok-1.18.34.jar" />
+        </processorPath>
+        <module name="Gestion_Groups" />
+        <module name="recrutement-service" />
+        <module name="Quiz_Microservice" />
+        <module name="TaskManger" />
+      </profile>
+      <profile name="Annotation profile for todomodule" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="eventmodule" />
+        <module name="coursesService" />
+        <module name="feedbackService" />
+        <module name="lessonsService" />
+        <module name="eventmodule (2)" />
+        <module name="todomodule" />
+        <module name="eventmodule (1)" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GestionGroupeChat" options="-parameters" />
+      <module name="Gestion_Groups" options="-parameters" />
+      <module name="Gestion_Planning" options="-parameters" />
+      <module name="Quiz_Microservice" options="-parameters" />
+      <module name="TaskManger" options="-parameters" />
+      <module name="config-server" options="-parameters" />
+      <module name="coursesService" options="-parameters" />
+      <module name="discovery" options="-parameters" />
+      <module name="eventmodule" options="-parameters" />
+      <module name="eventmodule (1)" options="-parameters" />
+      <module name="eventmodule (2)" options="-parameters" />
+      <module name="feedbackService" options="-parameters" />
+      <module name="forumService" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="jungle-in-english-backend" options="-parameters" />
+      <module name="lessonsService" options="-parameters" />
+      <module name="reclamationreponse" options="-parameters" />
+      <module name="recrutement-service" options="-parameters" />
+      <module name="todomodule" options="-parameters" />
+      <module name="userservice" options="-parameters" />
+    </option>
+  </component>
+</project>

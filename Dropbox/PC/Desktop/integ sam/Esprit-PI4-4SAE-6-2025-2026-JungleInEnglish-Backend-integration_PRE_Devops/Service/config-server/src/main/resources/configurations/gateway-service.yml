@@ -1,0 +1,241 @@
+server:
+  port: 8222
+
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        # Route pour les API REST
+        - id: chatgroup-service-api
+          uri: lb://chatgroup-service
+          predicates:
+            - Path=/chatPrivee/**
+
+        - id: chatgroup-service-message
+          uri: lb://chatgroup-service
+          predicates:
+            - Path=/messageGroup/**
+
+        - id: chatgroup-service-message
+          uri: lb://chatgroup-service
+          predicates:
+            - Path=/joinGroup/**
+
+        # Route pour les fichiers statiques
+        - id: chatgroup-service-static
+          uri: http://localhost:7070
+          predicates:
+            - Path=/uploads/**
+
+
+        - id: user-service-api
+          uri: lb://userservice
+          predicates:
+            - Path=/api/users/**
+
+        - id: chatgroup-service-group
+          uri: lb://chatgroup-service
+          predicates:
+          - Path=/membreGroupChat/**
+
+        - id: forum-service-post
+          uri: lb://forum-service
+          predicates:
+            - Path=/posts/**
+
+        - id: forum-service-comments
+          uri: lb://forum-service
+          predicates:
+            - Path=/comments/**
+
+        - id: forum-service-reaction
+          uri: lb://forum-service
+          predicates:
+            - Path=/reactions/**
+
+
+        - id: courses-service-api
+          uri: lb://courses-service
+          predicates:
+            - Path=/api/courses/**
+
+        - id: lessons-service-api
+          uri: lb://lessons-service
+          predicates:
+            - Path=/api/lessons/**
+
+        - id: feedback-service
+          uri: lb://feedback-service
+          predicates:
+            - Path=/api/feedbacks/**, /api/professor-badges/**
+
+
+
+
+        - id: ai-quiz-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/quizzes/ai/**
+
+        - id: attempt-answer-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/attempt-answers/**
+
+        - id: attempt-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/attempts/**
+
+        - id: certificate-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/certificates/**
+
+        - id: choice-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/choices/**
+
+        - id: question-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/questions/**
+
+        - id: quiz-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/quizzes/**
+
+        - id: stats-service-api
+          uri: lb://quiz-microservice
+          predicates:
+            - Path=/api/stats/**
+
+        - id: planing-service-api
+          uri: lb://gestionPlanning
+          predicates:
+              - Path=/creneaux/**
+
+        - id: planing-service-api
+          uri: lb://gestionPlanning
+          predicates:
+            - Path=/plannings/advanced/**
+
+        - id: planing-service-api
+          uri: lb://gestionPlanning
+          predicates:
+            - Path=/salles/**
+
+        - id: planing-service-api
+          uri: lb://gestionPlanning
+          predicates:
+            - Path=/plannings/**
+
+        # ── Shop Service Routes ──────────────────────────────────
+        - id: shop-service-products
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/products/**
+
+        - id: shop-service-categories
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/categories/**
+
+        - id: shop-service-cart
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/cart/**
+
+        - id: shop-service-orders
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/orders/**
+
+        - id: shop-service-payments
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/payments/**
+
+        - id: shop-service-inventory
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/inventory/**
+
+        - id: shop-service-admin
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/admin/**
+
+        - id: shop-service-bot
+          uri: lb://shop-service
+          predicates:
+            - Path=/api/shop/bot/**
+
+        - id: shop-service-images
+          uri: lb://shop-service
+          predicates:
+            - Path=/img/**
+
+        - id: event-service-api
+          uri: lb://eventmodule
+          predicates:
+            - Path=/api/evenements/**, /api/event-feedbacks/**, /api/participations/**
+
+        - id: event-service-uploads
+          uri: lb://eventmodule
+          predicates:
+            - Path=/uploads/events/**
+
+        - id: event-responses
+          uri: lb://eventmodule
+          predicates:
+            - Path=/api/responses/**
+
+        - id: event-complaints
+          uri: lb://eventmodule
+          predicates:
+             - Path=/api/complaints/**
+
+        - id: gestion-groups-service
+          uri: lb://gestion-groups-service
+          predicates:
+            - Path=/pi/groupes/**, /pi/affectations/**, /pi/analyse/**, /pi/equilibrage/**, /pi/fusion/**, /pi/scission/**, /pi/alertes/**, /pi/audit/**, /pi/reglements/**, /pi/objectifs/**
+
+        - id: recruitment-service-jobs
+          uri: lb://recrutement-service
+          predicates:
+            - Path=/api/jobs/**
+
+        - id: recruitment-service-cv
+          uri: lb://recrutement-service
+          predicates:
+            - Path=/api/cvs/**
+
+        - id: recruitment-service-stats
+          uri: lb://recrutement-service
+          predicates:
+            - Path=/api/statistiques/**
+
+        # ── Todo Service Routes ──────────────────────────────────
+        - id: todomodule-api
+          uri: lb://todomodule
+          predicates:
+            - Path=/api/todos/**, /api/reminders/**, /api/analytics/**, /api/todo-users/**

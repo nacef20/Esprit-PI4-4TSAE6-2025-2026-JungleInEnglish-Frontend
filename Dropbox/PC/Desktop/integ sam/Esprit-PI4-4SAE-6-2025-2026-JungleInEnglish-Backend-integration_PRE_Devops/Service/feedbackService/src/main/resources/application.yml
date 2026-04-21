@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: feedback-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+moderation:
+  cooldown-minutes: 5  
+  cooldown-check-ms: 60000   # scheduler runs every 1 min

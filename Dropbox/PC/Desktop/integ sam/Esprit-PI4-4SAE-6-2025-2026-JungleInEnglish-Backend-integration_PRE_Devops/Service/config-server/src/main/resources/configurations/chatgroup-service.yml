@@ -1,0 +1,22 @@
+server:
+  port: 7070
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/chatdb5?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: ""
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: llama2

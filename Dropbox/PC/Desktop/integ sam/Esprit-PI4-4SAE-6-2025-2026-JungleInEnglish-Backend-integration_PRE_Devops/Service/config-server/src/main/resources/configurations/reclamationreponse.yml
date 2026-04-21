@@ -1,0 +1,81 @@
+
+
+
+spring:
+  cloud:
+    config:
+      fail-fast: true
+      import-check:
+        enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/reclamationreponse?createDatabaseIfNotExist=true
+    username: root
+    password: ""
+
+  servlet:
+    multipart:
+      max-file-size: 6MB
+      max-request-size: 6MB
+
+server:
+  port: 8087
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+
+complaint:
+  bad-words-enabled: true
+  bad-words-replacement: "***"
+  bad-words:
+    - idiot
+    - idiote
+    - imbecile
+    - debile
+    - abruti
+    - abrutie
+    - stupide
+    - nul
+    - nulle
+    - con
+    - connard
+    - connasse
+    - batard
+    - batarde
+    - salope
+    - encule
+    - enculee
+    - fdp
+    - putain
+    - merde
+    - bordel
+    - moron
+    - jerk
+    - trash
+    - dumb
+    - stupid
+    - bastard
+    - bitch
+    - asshole
+    - damn
+    - shit
+    - fuck
+
+attachments:
+  max-size-bytes: 5242880
+
+gemini:
+  model: gemini-2.5-flash
+  api-key: "AIzaSyAHrIeqcP4uj0iQTWQuR-QwXSYPGVDurrw"
+  fallback-models:
+    - gemini-2.0-flash
+    - gemini-1.5-flash
+  max-retries: 2

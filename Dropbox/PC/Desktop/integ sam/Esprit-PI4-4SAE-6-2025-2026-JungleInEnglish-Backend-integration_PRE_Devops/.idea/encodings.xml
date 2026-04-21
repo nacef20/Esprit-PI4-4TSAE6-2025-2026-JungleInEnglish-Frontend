@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$USER_HOME$/Dropbox/PC/Desktop/integ sam/Esprit-PI4-4SAE-6-2025-2026-JungleInEnglish-Backend-integration-gs/Service/eventmodule/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/GestionGroupeChat/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/Gestion_Groups/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/Gestion_Planning/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/Quiz_Microservice/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/config-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/coursesService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/discovery/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/eventmodule/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/feedbackService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/forumService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/gestiondoto/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/gestionrecrutment/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/lessonsService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/reclamationreponse/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/shop-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Service/userservice/src/main/java" charset="UTF-8" />
+  </component>
+</project>

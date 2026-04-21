@@ -1,0 +1,324 @@
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  CANDIDATE PORTAL — Premium Job Board                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="job-portal">
+
+  <!-- ── Top-right nav buttons ─────────────────────────────────── -->
+  <div class="top-nav-btns">
+    <a routerLink="/" class="dashboard-fab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Home
+    </a>
+    <a routerLink="/admin" class="dashboard-fab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      Dashboard
+    </a>
+  </div>
+
+  <!-- ── Global Error Banner ────────────────────────────────────── -->
+  <div *ngIf="error" class="error-banner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    {{ error }}
+    <button (click)="error=null">✕</button>
+  </div>
+
+  <!-- ── HERO SECTION ───────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero__bg-orb hero__bg-orb--1"></div>
+    <div class="hero__bg-orb hero__bg-orb--2"></div>
+    <div class="hero__bg-orb hero__bg-orb--3"></div>
+
+    <div class="hero__content">
+      <div class="hero__badge">
+        <span class="hero__badge-dot"></span>
+        {{ filteredOffers.length }} Open Positions
+      </div>
+
+      <h1 class="hero__title">
+        Find Your<br>
+        <span class="hero__title-gradient">Dream Career.</span>
+      </h1>
+
+      <p class="hero__subtitle">
+        Upload your CV and let our AI find your perfect match. Real scores, real opportunities.
+      </p>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <div class="search-bar__field">
+          <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            id="job-search"
+            type="text"
+            [(ngModel)]="searchQuery"
+            (input)="filterJobs()"
+            class="search-bar__input"
+            placeholder="Job title or keywords...">
+        </div>
+        <div class="search-bar__divider"></div>
+        <div class="search-bar__field">
+          <svg class="search-bar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          <input
+            id="location-search"
+            type="text"
+            [(ngModel)]="locationQuery"
+            (input)="filterJobs()"
+            class="search-bar__input"
+            placeholder="City or remote...">
+        </div>
+        <button class="search-bar__btn" (click)="filterJobs()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-num">{{ jobOffers.length }}</span>
+          <span class="hero__stat-label">Open Roles</span>
+        </div>
+        <div class="hero__stat-sep"></div>
+        <div class="hero__stat">
+          <span class="hero__stat-num">AI</span>
+          <span class="hero__stat-label">Powered Matching</span>
+        </div>
+        <div class="hero__stat-sep"></div>
+        <div class="hero__stat">
+          <span class="hero__stat-num">Instant</span>
+          <span class="hero__stat-label">Score Feedback</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MAIN CONTENT ───────────────────────────────────────────── -->
+  <main class="main-layout">
+
+    <!-- Sidebar Filters -->
+    <aside class="filters">
+      <h3 class="filters__title">Filters</h3>
+
+      <div class="filter-group">
+        <h4 class="filter-group__label">Employment Type</h4>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleType('FULL_TIME', $any($event.target).checked)"><span>Full-time</span></label>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleType('PART_TIME', $any($event.target).checked)"><span>Part-time</span></label>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleType('REMOTE', $any($event.target).checked)"><span>Remote</span></label>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleType('CONTRACT', $any($event.target).checked)"><span>Contract</span></label>
+      </div>
+
+      <div class="filter-group">
+        <h4 class="filter-group__label">Experience Level</h4>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleLevel('JUNIOR', $any($event.target).checked)"><span>Junior</span></label>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleLevel('MID_LEVEL', $any($event.target).checked)"><span>Mid-level</span></label>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleLevel('SENIOR', $any($event.target).checked)"><span>Senior</span></label>
+      </div>
+
+      <div class="filter-group">
+        <h4 class="filter-group__label">AI Match Score</h4>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleScore('70+', $any($event.target).checked)"><span>70%+ Excellent</span></label>
+        <label class="filter-check"><input type="checkbox" class="filter-check__input" (change)="toggleScore('40+', $any($event.target).checked)"><span>40%+ Good</span></label>
+      </div>
+
+      <button class="btn btn--ghost btn--sm" style="width:100%;margin-top:.5rem" (click)="clearAllFilters()">
+        Clear All Filters
+      </button>
+    </aside>
+
+    <!-- Job Listings -->
+    <section class="job-list">
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="state-loader">
+        <div class="spinner"></div>
+        <p>Fetching opportunities...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && filteredOffers.length === 0" class="state-empty">
+        <div class="state-empty__icon">🔍</div>
+        <h3>No roles found</h3>
+        <p>Try adjusting your search or removing filters.</p>
+        <button (click)="clearAllFilters()" class="btn btn--ghost">Clear Filters</button>
+      </div>
+
+      <!-- Job Count -->
+      <div *ngIf="!loading && filteredOffers.length > 0" class="job-list__header">
+        <span class="job-list__count">{{ filteredOffers.length }} role{{ filteredOffers.length !== 1 ? 's' : '' }} found</span>
+        <span class="job-list__sub">Sorted by relevance</span>
+      </div>
+
+      <!-- ── JOB CARDS ─────────────────────────────────────────── -->
+      <div class="job-card-wrap" *ngFor="let job of filteredOffers">
+        <article class="job-card" [class.job-card--applied]="appliedJobs[job.id!]?.applied">
+
+          <!-- Applied ribbon -->
+          <div *ngIf="appliedJobs[job.id!]?.applied" class="job-card__ribbon">Applied</div>
+
+          <!-- Card Header -->
+          <div class="job-card__header">
+            <div class="job-card__logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+              </svg>
+            </div>
+            <div class="job-card__meta">
+              <h2 class="job-card__title">{{ job.title }}</h2>
+              <div class="job-card__tags">
+                <span *ngIf="job.location" class="tag tag--location">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  {{ job.location }}
+                </span>
+                <span *ngIf="job.employmentType" class="tag tag--type">{{ job.employmentType }}</span>
+                <span *ngIf="job.experienceLevel" class="tag tag--level">{{ job.experienceLevel }}</span>
+                <span *ngIf="job.salary" class="tag tag--salary">
+                  {{ job.salary | number }} {{ job.currency || 'USD' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Score Badge (top-right) -->
+            <div *ngIf="appliedJobs[job.id!]?.score !== null && appliedJobs[job.id!]?.score !== undefined" class="score-badge" [style.--score-color]="getScoreColor(appliedJobs[job.id!]!.score!)">
+              <svg class="score-badge__ring" viewBox="0 0 36 36">
+                <circle class="score-badge__track" cx="18" cy="18" r="15.9" fill="none" stroke-width="3"/>
+                <circle class="score-badge__fill" cx="18" cy="18" r="15.9" fill="none" stroke-width="3"
+                  stroke-dasharray="100" [style.stroke-dashoffset]="100 - (appliedJobs[job.id!]!.score!)"/>
+              </svg>
+              <span class="score-badge__num">{{ appliedJobs[job.id!]!.score }}%</span>
+            </div>
+
+            <!-- Pending Badge (applied, no score yet) -->
+            <div *ngIf="appliedJobs[job.id!]?.applied && appliedJobs[job.id!]?.score === null" class="score-badge score-badge--pending">
+              <svg class="score-badge__ring" viewBox="0 0 36 36">
+                <circle class="score-badge__track" cx="18" cy="18" r="15.9" fill="none" stroke-width="3"/>
+              </svg>
+              <span class="score-badge__pending-icon">⏳</span>
+            </div>
+          </div>
+
+          <!-- Score Label Row -->
+          <div *ngIf="appliedJobs[job.id!]?.score !== null && appliedJobs[job.id!]?.score !== undefined" class="score-row">
+            <div class="score-row__bar-wrap">
+              <div class="score-row__bar" [style.width.%]="appliedJobs[job.id!]!.score!" [style.background]="getScoreColor(appliedJobs[job.id!]!.score!)"></div>
+            </div>
+            <span class="score-row__label" [style.color]="getScoreColor(appliedJobs[job.id!]!.score!)">
+              {{ getScoreLabel(appliedJobs[job.id!]!.score!) }}
+            </span>
+          </div>
+
+          <!-- Pending Score Notice -->
+          <div *ngIf="appliedJobs[job.id!]?.applied && appliedJobs[job.id!]?.score === null" class="score-row score-row--pending">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            AI is analyzing your CV — check back soon
+          </div>
+
+          <!-- Skills Preview -->
+          <div *ngIf="job.requiredSkills && job.requiredSkills.length > 0" class="skills-row">
+            <span *ngFor="let skill of job.requiredSkills.slice(0, 5)" class="skill-chip">{{ skill }}</span>
+            <span *ngIf="job.requiredSkills.length > 5" class="skill-chip skill-chip--more">+{{ job.requiredSkills.length - 5 }}</span>
+          </div>
+
+          <!-- Description (expandable) -->
+          <div *ngIf="expandedJobId === job.id" class="job-card__desc">
+            <p>{{ job.description }}</p>
+            <div *ngIf="job.closingDate" class="closing-date">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Closes {{ job.closingDate | date:'mediumDate' }}
+            </div>
+          </div>
+
+          <!-- Actions Footer -->
+          <div class="job-card__footer">
+            <button class="btn btn--ghost btn--sm" (click)="toggleDetails(job.id!)">
+              {{ expandedJobId === job.id ? 'Hide Details' : 'View Details' }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" [style.transform]="expandedJobId === job.id ? 'rotate(180deg)' : ''"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+
+            <!-- Not Applied -->
+            <label *ngIf="!appliedJobs[job.id!]?.applied" class="btn btn--primary apply-btn" [class.btn--loading]="applyingForJobId === job.id">
+              <input type="file" class="sr-only" (change)="onFileSelected($event, job.id!)" accept=".pdf" [disabled]="applyingForJobId === job.id">
+              <span *ngIf="applyingForJobId !== job.id" class="apply-btn__content">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Apply Now
+              </span>
+              <span *ngIf="applyingForJobId === job.id" class="apply-btn__loading">
+                <span class="spinner spinner--sm"></span>
+                Analyzing...
+              </span>
+            </label>
+
+            <!-- Already Applied -->
+            <button *ngIf="appliedJobs[job.id!]?.applied" class="btn btn--applied" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Applied
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  AI MATCH SCORE REVEAL MODAL                                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div *ngIf="showScoreAnimation" class="score-modal-backdrop" (click)="showScoreAnimation=false">
+  <div class="score-modal" (click)="$event.stopPropagation()">
+    <!-- Particle burst -->
+    <div class="score-modal__particles">
+      <span *ngFor="let p of [1,2,3,4,5,6,7,8]" class="particle" [class]="'particle--' + p"></span>
+    </div>
+
+    <div class="score-modal__header">
+      <span class="score-modal__chip">AI Analysis Complete</span>
+    </div>
+
+    <!-- Circular Score Graph -->
+    <div class="score-ring-wrap">
+      <svg class="score-ring" viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" [style.stop-color]="getScoreColor(lastMatchScore || 0)" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+        <circle class="score-ring__track" cx="60" cy="60" r="54" fill="none" stroke-width="8"/>
+        <circle class="score-ring__fill" cx="60" cy="60" r="54" fill="none" stroke-width="8"
+          stroke="url(#scoreGrad)"
+          stroke-linecap="round"
+          stroke-dasharray="339.3"
+          [style.stroke-dashoffset]="339.3 - (339.3 * (lastMatchScore || 0) / 100)"
+          transform="rotate(-90 60 60)"/>
+      </svg>
+      <div class="score-ring__center">
+        <span class="score-ring__num" [style.color]="getScoreColor(lastMatchScore || 0)">{{ lastMatchScore }}%</span>
+        <span class="score-ring__label">Match</span>
+      </div>
+    </div>
+
+    <h2 class="score-modal__title">
+      {{ lastMatchScore !== null && lastMatchScore! >= 70 ? '🎉 Outstanding Match!' : lastMatchScore !== null && lastMatchScore! >= 40 ? '👍 Solid Match!' : '📄 Keep Applying!' }}
+    </h2>
+
+    <p class="score-modal__desc">
+      Your profile scored <strong [style.color]="getScoreColor(lastMatchScore || 0)">{{ lastMatchScore }}%</strong> compatibility.
+      <ng-container *ngIf="lastMatchScore !== null && lastMatchScore! >= 70">You're a top candidate for this role!</ng-container>
+      <ng-container *ngIf="lastMatchScore !== null && lastMatchScore! >= 40 && lastMatchScore! < 70">You have a good chance — stand out with a great cover letter.</ng-container>
+      <ng-container *ngIf="lastMatchScore !== null && lastMatchScore! < 40">Your CV may not fully match the requirements — consider tailoring it.</ng-container>
+    </p>
+
+    <div class="score-modal__actions">
+      <button class="btn btn--primary btn--lg" (click)="showScoreAnimation=false">Continue Exploring</button>
+    </div>
+  </div>
+</div>

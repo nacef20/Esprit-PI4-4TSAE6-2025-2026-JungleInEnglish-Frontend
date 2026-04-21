@@ -1,0 +1,82 @@
+<div class="scanner-container">
+  <div class="scanner-header text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Validation de Ticket Manuelle</h1>
+    <p class="text-gray-500">Saisissez le token de participation pour valider le ticket</p>
+  </div>
+
+  <div class="token-lookup-card mt-12 mx-auto max-w-lg bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+    <div class="text-center mb-6">
+      <span class="text-4xl">🎫</span>
+      <h2 class="mt-2 text-xl font-bold text-gray-800">Vérifier un Token</h2>
+    </div>
+
+    <div class="flex gap-3 mb-6">
+      <input
+        id="tokenInput"
+        type="text"
+        [(ngModel)]="tokenInput"
+        placeholder="Entrez le token ici…"
+        class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-emerald-400 focus:outline-none font-mono text-sm transition-colors"
+      />
+      <button
+        (click)="verifyToken()"
+        [disabled]="isLoading"
+        class="px-5 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 active:scale-95 transition-all shadow-md disabled:bg-blue-300"
+      >
+        <span *ngIf="!isLoading">Rechercher</span>
+        <span *ngIf="isLoading" class="spinner-small"></span>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-center font-semibold">
+      {{ errorMessage }}
+    </div>
+
+    <!-- QR Result -->
+    <div *ngIf="scannedResult" class="flex flex-col items-center gap-4 animate-fade-in">
+      
+      <div class="p-4 bg-gray-50 rounded-2xl border-2 border-emerald-100 shadow-inner">
+        <!-- Render the Base64 QR Code string returned from backend -->
+        <img *ngIf="scannedResult.qrCodeUrl" [src]="scannedResult.qrCodeUrl" alt="QR Code" class="w-48 h-48 object-contain mx-auto">
+        <div *ngIf="!scannedResult.qrCodeUrl" class="w-48 h-48 flex items-center justify-center text-gray-400">
+          Pas d'image QR
+        </div>
+      </div>
+      
+      <div class="text-center">
+        <h3 class="text-lg font-bold text-emerald-600">Ticket Valide</h3>
+        <p class="text-sm text-gray-600">Participant ID: <strong>{{ scannedResult.userId }}</strong></p>
+        <p class="text-sm text-gray-600">Événement: <strong>{{ scannedResult.event?.title }}</strong></p>
+        <p class="text-sm mt-2 font-bold" [ngClass]="scannedResult.present ? 'text-emerald-500' : 'text-orange-500'">
+          Statut: {{ scannedResult.present ? 'Déjà Présent' : 'En Attente de Check-in' }}
+        </p>
+      </div>
+
+      <div class="flex gap-4 mt-4 w-full">
+        <button
+          *ngIf="!scannedResult.present"
+          (click)="confirmCheckIn()"
+          [disabled]="isLoading"
+          class="flex-1 px-5 py-3 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-600 shadow-md transition-all disabled:bg-emerald-300"
+        >
+          Valider le Check-in
+        </button>
+        <button
+          (click)="reset()"
+          class="flex-1 px-5 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition-all"
+        >
+          Autre Ticket
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!scannedResult && !isLoading" class="flex flex-col items-center justify-center h-32 text-gray-300">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3m3-3v3m-3 3h3"/>
+      </svg>
+      <p class="mt-2 text-sm">Les informations du ticket apparaîtront ici</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+/* Admin Todo Dashboard Styles */
+.p-8 {
+  animation: slideBottom 0.5s ease-out;
+}
+
+@keyframes slideBottom {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.shadow-sm {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}

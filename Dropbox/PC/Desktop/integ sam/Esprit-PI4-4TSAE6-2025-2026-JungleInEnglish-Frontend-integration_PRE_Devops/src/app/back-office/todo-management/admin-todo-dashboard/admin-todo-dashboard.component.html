@@ -1,0 +1,50 @@
+<div class="p-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">School Todo Analytics</h1>
+    <p class="text-gray-500">Monitor overall student engagement and goal completion across the platform.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="text-gray-400 text-xs font-black uppercase mb-1">Total Students</div>
+      <div class="text-3xl font-black text-school-primary">{{analytics?.totalStudents || 0}}</div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="text-gray-400 text-xs font-black uppercase mb-1">Avg Completion</div>
+      <div class="text-3xl font-black text-emerald-600">{{(analytics?.averageCompletionRate || 0) | number:'1.0-1'}}%</div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="text-gray-400 text-xs font-black uppercase mb-1">Total Completed</div>
+      <div class="text-3xl font-black text-blue-600">{{analytics?.totalCompletedTodos || 0}}</div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div class="text-gray-400 text-xs font-black uppercase mb-1">Total Pending</div>
+      <div class="text-3xl font-black text-amber-600">{{analytics?.totalPendingTodos || 0}}</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+      <h3 class="text-xl font-bold text-gray-800 mb-6">Global Completion Balance</h3>
+      <div class="h-[300px] flex items-center justify-center">
+        <canvas baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Management Shortcut -->
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center">
+      <div class="w-16 h-16 bg-school-primary/10 rounded-full flex items-center justify-center mb-6">
+        <i class="fas fa-user-graduate text-2xl text-school-primary"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Student Level Management</h3>
+      <p class="text-gray-500 mb-8">Directly adjust student English levels based on their task performance and curriculum progress.</p>
+      <a routerLink="/admin/student-levels" class="w-fit px-8 py-3 bg-school-primary text-white font-bold rounded-xl hover:bg-teal-800 transition-all">
+        Manage Levels
+      </a>
+    </div>
+  </div>
+</div>

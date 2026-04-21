@@ -1,0 +1,117 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#0ea37a]">quiz</span>
+      Quiz Management
+    </h1>
+    <button (click)="addQuiz()"
+      class="flex items-center gap-2 px-4 py-2 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all">
+      <span class="material-symbols-outlined text-xl">add</span>
+      New Quiz
+    </button>
+  </div>
+
+  <!-- Search bar -->
+  <div class="relative">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+    <input type="text" placeholder="Search for a quiz..." (input)="onSearch($event)"
+      class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all" />
+  </div>
+
+  <!-- Status filter -->
+  <div class="flex items-center gap-2">
+    <span class="text-sm font-medium text-gray-500">Filter:</span>
+    <button (click)="onFilterStatus('')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === '' ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      All
+    </button>
+    <button (click)="onFilterStatus('DRAFT')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === 'DRAFT' ? 'bg-yellow-500 text-white border-yellow-500' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      Draft
+    </button>
+    <button (click)="onFilterStatus('PUBLISHED')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === 'PUBLISHED' ? 'bg-green-600 text-white border-green-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      Published
+    </button>
+    <button (click)="onFilterStatus('CLOSED')"
+      class="px-3 py-1.5 text-sm rounded-full border transition-all"
+      [ngClass]="statusFilter === 'CLOSED' ? 'bg-red-500 text-white border-red-500' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+      Closed
+    </button>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="quizzes.length === 0" class="text-center py-16 text-gray-400">
+    <span class="material-symbols-outlined text-5xl mb-4 block">inventory_2</span>
+    <p class="text-lg">No quizzes yet</p>
+  </div>
+
+  <!-- Cards grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let quiz of quizzes"
+      class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+
+      <!-- Status badge -->
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full"
+          [ngClass]="{
+            'bg-yellow-100 text-yellow-700': quiz.status === 'DRAFT',
+            'bg-green-100 text-green-700': quiz.status === 'PUBLISHED',
+            'bg-red-100 text-red-700': quiz.status === 'CLOSED'
+          }">
+          {{ quiz.status }}
+        </span>
+        <span class="text-xs text-gray-400">{{ quiz.duration }} min</span>
+      </div>
+
+      <!-- Title & description -->
+      <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ quiz.title }}</h3>
+      <p class="text-sm text-gray-500 mb-4 line-clamp-2">{{ quiz.description }}</p>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
+        <button (click)="manageQuestions(quiz.id!)"
+          class="flex-1 flex items-center justify-center gap-1 text-sm px-3 py-2 bg-[#0ea37a]/10 text-[#0ea37a] rounded-lg hover:bg-[#0ea37a]/20 transition-all font-medium">
+          <span class="material-symbols-outlined text-base">help</span>
+          Questions
+        </button>
+        <button (click)="editQuiz(quiz.id!)"
+          class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all" title="Edit">
+          <span class="material-symbols-outlined text-xl">edit</span>
+        </button>
+        <button (click)="deleteQuiz(quiz.id!)"
+          class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Delete">
+          <span class="material-symbols-outlined text-xl">delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4">
+    <span class="text-sm text-gray-500">
+      Page {{ currentPage }} of {{ totalPages }} — {{ totalElements }} quiz(es)
+    </span>
+    <div class="flex items-center gap-1">
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        ← Previous
+      </button>
+      <ng-container *ngFor="let page of getPageNumbers()">
+        <button (click)="goToPage(page)"
+          class="w-9 h-9 text-sm rounded-lg border transition-all"
+          [ngClass]="page === currentPage ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 hover:bg-gray-50'">
+          {{ page }}
+        </button>
+      </ng-container>
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+        class="px-3 py-1.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+        Next →
+      </button>
+    </div>
+  </div>
+</div>

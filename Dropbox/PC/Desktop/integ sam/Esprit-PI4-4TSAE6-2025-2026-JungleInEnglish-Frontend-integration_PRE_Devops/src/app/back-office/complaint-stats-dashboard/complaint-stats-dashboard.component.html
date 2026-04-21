@@ -1,0 +1,111 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">monitoring</span>
+        Complaints Analytics Dashboard
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">Server-side statistics for admin decision making</p>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap justify-end">
+      <button (click)="exportAdminReportPdf()" [disabled]="exportingPdf"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0ea37a] text-white text-sm font-medium hover:bg-[#0c8d6a] transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+        <span *ngIf="!exportingPdf" class="material-symbols-outlined text-base">picture_as_pdf</span>
+        <span *ngIf="exportingPdf" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+        {{ exportingPdf ? 'Generating PDF...' : 'Export Admin PDF' }}
+      </button>
+
+      <button (click)="exportAdminReportExcel()" [disabled]="exportingExcel"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+        <span *ngIf="!exportingExcel" class="material-symbols-outlined text-base">table_view</span>
+        <span *ngIf="exportingExcel" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+        {{ exportingExcel ? 'Generating Excel...' : 'Export Admin Excel' }}
+      </button>
+
+      <button (click)="onPeriodChange('DAY')"
+        class="px-3 py-1.5 text-sm rounded-full border transition-all"
+        [ngClass]="selectedPeriod === 'DAY' ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Day
+      </button>
+      <button (click)="onPeriodChange('MONTH')"
+        class="px-3 py-1.5 text-sm rounded-full border transition-all"
+        [ngClass]="selectedPeriod === 'MONTH' ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Month
+      </button>
+      <button (click)="onPeriodChange('YEAR')"
+        class="px-3 py-1.5 text-sm rounded-full border transition-all"
+        [ngClass]="selectedPeriod === 'YEAR' ? 'bg-[#0ea37a] text-white border-[#0ea37a]' : 'border-gray-200 text-gray-600 hover:bg-gray-50'">
+        Year
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex items-center justify-center py-16">
+    <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#0ea37a] border-t-transparent"></div>
+  </div>
+
+  <div *ngIf="!loading && stats as dashboard" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wider">Total Complaints</p>
+        <p class="text-3xl font-extrabold text-gray-800 mt-1">{{ dashboard.totalComplaints }}</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wider">Avg Processing Time</p>
+        <p class="text-3xl font-extrabold text-[#0ea37a] mt-1">{{ dashboard.averageProcessingHours | number:'1.1-2' }}h</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wider">Unresolved Rate</p>
+        <p class="text-3xl font-extrabold text-yellow-600 mt-1">{{ dashboard.unresolvedRate | number:'1.1-2' }}%</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wider">Resolved Complaints</p>
+        <p class="text-3xl font-extrabold text-green-600 mt-1">{{ getStatusCount('TRAITEE') }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined text-[#0ea37a]">pie_chart</span>
+          <h3 class="font-semibold text-gray-800">Complaints by Status</h3>
+        </div>
+        <div class="h-72">
+          <canvas baseChart [data]="statusChartData" [options]="statusChartOptions" type="doughnut"></canvas>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="material-symbols-outlined text-[#0ea37a]">bar_chart</span>
+          <h3 class="font-semibold text-gray-800">Complaints by {{ selectedPeriod | lowercase }}</h3>
+        </div>
+        <div class="h-72">
+          <canvas baseChart [data]="periodChartData" [options]="periodChartOptions" type="bar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-[#0ea37a]">insights</span>
+        <h3 class="font-semibold text-gray-800">Status Breakdown</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+        <div class="rounded-lg bg-yellow-50 border border-yellow-100 p-4">
+          <p class="text-yellow-700 font-semibold">Pending</p>
+          <p class="text-2xl text-yellow-700 font-bold mt-1">{{ getStatusCount('EN_ATTENTE') }}</p>
+        </div>
+        <div class="rounded-lg bg-green-50 border border-green-100 p-4">
+          <p class="text-green-700 font-semibold">Resolved</p>
+          <p class="text-2xl text-green-700 font-bold mt-1">{{ getStatusCount('TRAITEE') }}</p>
+        </div>
+        <div class="rounded-lg bg-red-50 border border-red-100 p-4">
+          <p class="text-red-700 font-semibold">Rejected</p>
+          <p class="text-2xl text-red-700 font-bold mt-1">{{ getStatusCount('REJETEE') }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

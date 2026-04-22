@@ -1,0 +1,196 @@
+<div class="min-h-screen bg-gradient-to-br from-school-secondary via-white to-school-secondary-light py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-12 animate-fade-in">
+      <div>
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
+          Daily <span class="text-transparent bg-clip-text bg-gradient-to-r from-school-primary to-school-primary-light">Missions</span>
+        </h1>
+        <p class="text-gray-500">Track your English learning goals and stay ahead.</p>
+      </div>
+      <button 
+        (click)="showForm = !showForm"
+        class="mt-6 md:mt-0 group relative flex items-center px-6 py-3 bg-school-primary text-white font-bold rounded-xl shadow-lg hover:shadow-school-primary/30 transition-all duration-300 hover:-translate-y-1">
+        <svg class="w-5 h-5 mr-2 transform group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        New Mission
+      </button>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-sm flex items-center">
+        <div class="w-10 h-10 rounded-full bg-school-primary/10 flex items-center justify-center mr-3">
+          <i class="fas fa-tasks text-school-primary"></i>
+        </div>
+        <div>
+          <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Total</div>
+          <div class="text-xl font-black text-gray-800">{{todos.length}}</div>
+        </div>
+      </div>
+      <div class="bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-sm flex items-center">
+        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mr-3">
+          <i class="fas fa-check text-emerald-600"></i>
+        </div>
+        <div>
+          <div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Done</div>
+          <div class="text-xl font-black text-gray-800">{{getCompletedCount()}}</div>
+        </div>
+      </div>
+      <!-- Add more stats if needed -->
+    </div>
+
+    <!-- Add Task Form (Glassmorphism Modal-like) -->
+    <div *ngIf="showForm" class="mb-10 bg-white/80 backdrop-blur-xl p-8 rounded-3xl border border-white shadow-2xl animate-slide-up">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Add New Goal</h2>
+        <button (click)="showForm = false" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form (submit)="onSubmit()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-gray-700 ml-1">Title</label>
+            <input 
+              name="title" [(ngModel)]="newTodo.title"
+              type="text" placeholder="What's the mission?" 
+              class="w-full px-5 py-3 rounded-xl bg-school-secondary/30 border-2 border-transparent focus:border-school-primary/50 focus:bg-white outline-none transition-all">
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-bold text-gray-700 ml-1">Priority</label>
+            <select 
+              name="priority" [(ngModel)]="newTodo.priority"
+              class="w-full px-5 py-3 rounded-xl bg-school-secondary/30 border-2 border-transparent focus:border-school-primary/50 focus:bg-white outline-none transition-all">
+              <option value="LOW">Low - Casual</option>
+              <option value="MEDIUM">Medium - Important</option>
+              <option value="HIGH">High - Urgent</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-gray-700 ml-1">
+            <i class="fas fa-calendar-alt mr-1 text-school-primary"></i>
+            Due Date <span class="text-gray-400 text-xs">(optional)</span>
+          </label>
+          <input 
+            name="dueDate" [(ngModel)]="newTodo.dueDate"
+            type="datetime-local"
+            class="w-full px-5 py-3 rounded-xl bg-school-secondary/30 border-2 border-transparent focus:border-school-primary/50 focus:bg-white outline-none transition-all">
+        </div>
+
+        <!-- Target Level (Teachers/Admins only) -->
+        <div *ngIf="isTeacher" class="space-y-2">
+          <label class="text-sm font-bold text-gray-700 ml-1">
+            <i class="fas fa-users mr-1 text-school-primary"></i>
+            Assign to Level <span class="text-gray-400 text-xs">(optional – leave empty for personal todo)</span>
+          </label>
+          <select
+            name="targetLevel" [(ngModel)]="selectedLevel"
+            class="w-full px-5 py-3 rounded-xl bg-school-secondary/30 border-2 border-transparent focus:border-school-primary/50 focus:bg-white outline-none transition-all">
+            <option value="">— Personal Mission (just for me) —</option>
+            <option *ngFor="let lvl of levels" [value]="lvl">Level {{lvl}} — All Students</option>
+          </select>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-sm font-bold text-gray-700 ml-1">Notes</label>
+          <textarea 
+            name="description" [(ngModel)]="newTodo.description"
+            rows="3" placeholder="Add some details..." 
+            class="w-full px-5 py-3 rounded-xl bg-school-secondary/30 border-2 border-transparent focus:border-school-primary/50 focus:bg-white outline-none transition-all"></textarea>
+        </div>
+        <div class="flex justify-end pt-4">
+          <button type="submit" class="px-10 py-4 bg-gradient-to-r from-school-primary to-school-primary-light text-white font-black rounded-xl shadow-xl hover:shadow-school-primary/40 hover:-translate-y-1 active:scale-95 transition-all">
+            ACTIVATE MISSION
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && todos.length === 0" class="text-center py-20 bg-white/40 backdrop-blur-sm rounded-3xl border-2 border-dashed border-gray-200">
+      <div class="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <i class="fas fa-clipboard-list text-5xl text-gray-300"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-600 mb-2">Your mission log is empty</h3>
+      <p class="text-gray-400">Time to set some new learning goals!</p>
+      <button (click)="showForm = true" class="mt-6 text-school-primary font-bold hover:underline">Start here</button>
+    </div>
+
+    <!-- Skeleton Loading -->
+    <div *ngIf="loading" class="space-y-4">
+      <div *ngFor="let i of [1,2,3]" class="h-24 bg-gray-100/50 rounded-2xl animate-pulse"></div>
+    </div>
+
+    <!-- Tasks List -->
+    <div class="space-y-4" *ngIf="!loading">
+      <div *ngFor="let todo of todos" 
+           class="group relative bg-white/80 backdrop-blur-lg p-6 rounded-2xl border border-white shadow-sm hover:shadow-xl hover:border-school-primary/30 transition-all duration-300 animate-fade-in"
+           [class.opacity-60]="todo.checked">
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-6 flex-1">
+            <!-- Awesome Checkbox -->
+            <div class="relative" 
+                 [class.cursor-pointer]="isTeacher || !todo.level"
+                 [class.cursor-not-allowed]="!isTeacher && todo.level"
+                 [title]="(!isTeacher && todo.level) ? 'Locked: Only teachers can check off level missions' : ''"
+                 (click)="(!isTeacher && todo.level) ? null : toggleTodo(todo)">
+              <div class="w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center"
+                   [class.bg-school-primary]="todo.checked"
+                   [class.border-school-primary]="todo.checked"
+                   [class.border-gray-300]="!todo.checked"
+                   [class.bg-gray-100]="!isTeacher && todo.level && !todo.checked">
+                <i class="fas fa-check text-white text-xs" *ngIf="todo.checked"></i>
+                <i class="fas fa-lock text-gray-400 text-[10px]" *ngIf="!isTeacher && todo.level && !todo.checked"></i>
+              </div>
+            </div>
+
+            <div class="flex-1">
+              <div class="flex items-center space-x-3 mb-1">
+                <h3 class="text-lg font-bold text-gray-800 transition-all"
+                    [class.line-through]="todo.checked"
+                    [class.text-gray-400]="todo.checked">
+                  {{todo.title}}
+                </h3>
+                <span 
+                  [class]="'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ' + getPriorityClass(todo.priority)">
+                  {{todo.priority}}
+                </span>
+                <span *ngIf="todo.level"
+                  class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-indigo-50 text-indigo-600 border-indigo-200">
+                  <i class="fas fa-shield-alt mr-1"></i>
+                  Level {{todo.level}}
+                </span>
+                <span *ngIf="todo.dueDate"
+                  class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border bg-red-50 text-red-600 border-red-200">
+                  <i class="fas fa-clock mr-1"></i>
+                  Due: {{todo.dueDate | date:'short'}}
+                </span>
+              </div>
+              <p class="text-sm text-gray-500" *ngIf="todo.description && !todo.checked">{{todo.description}}</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button (click)="deleteTodo(todo.id!)" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Decoration -->
+        <div *ngIf="todo.checked" class="absolute left-0 top-0 h-full w-1.5 bg-school-primary rounded-l-2xl"></div>
+      </div>
+    </div>
+
+  </div>
+</div>

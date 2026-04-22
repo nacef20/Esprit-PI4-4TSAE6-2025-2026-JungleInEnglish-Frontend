@@ -1,0 +1,193 @@
+<div class="groupe-container">
+  <!-- Header -->
+  <div class="groupe-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <svg class="title-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        Group Management
+      </h1>
+      <button class="btn-primary" (click)="createGroupe()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New Group
+      </button>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="filters-section">
+    <div class="search-bar">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search for a group (name or code)..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+      />
+    </div>
+
+    <div class="filter-controls">
+      <select class="filter-select" [(ngModel)]="filterStatut" (change)="applyFilters()">
+        <option value="ALL">All statuses</option>
+        <option *ngFor="let s of statutValues" [value]="s">{{ getStatusLabel(s) }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="filterType" (change)="applyFilters()">
+        <option value="ALL">All types</option>
+        <option *ngFor="let t of typeValues" [value]="t">{{ getTypeLabel(t) }}</option>
+      </select>
+
+      <button class="btn-secondary" (click)="resetFilters()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="1 4 1 10 7 10"></polyline>
+          <polyline points="23 20 23 14 17 14"></polyline>
+          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+        </svg>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-message" *ngIf="errorMessage">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading groups...</p>
+  </div>
+
+  <!-- Group Cards Grid -->
+  <div class="groupe-grid" *ngIf="!isLoading && filteredGroupes.length > 0">
+    <div class="groupe-card" *ngFor="let groupe of filteredGroupes">
+      <div class="card-header">
+        <div class="card-badges">
+          <span class="badge" [ngClass]="getTypeClass(groupe.type)">{{ getTypeLabel(groupe.type) }}</span>
+          <span class="badge" [ngClass]="getStatutClass(groupe.statut)">{{ getStatusLabel(groupe.statut) }}</span>
+        </div>
+        <div class="card-actions">
+          <button class="action-btn view-btn" (click)="viewDetails(groupe.idGroupe)" title="View details">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+          <button class="action-btn edit-btn" (click)="editGroupe(groupe.idGroupe)" title="Edit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+            <button class="action-btn delete-btn" (click)="confirmDelete(groupe)" title="Delete">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h3 class="card-title">{{ groupe.nom }}</h3>
+        <p class="card-code">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          {{ groupe.codeGroupe }}
+        </p>
+
+        <div class="capacity-bar" *ngIf="groupe.capaciteMax">
+          <div class="capacity-label">
+            <span>Capacity</span>
+            <span>{{ groupe.capaciteActuelle || 0 }} / {{ groupe.capaciteMax }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getCapacitePercent(groupe)"
+              [ngClass]="{'progress-full': getCapacitePercent(groupe) >= 100, 'progress-high': getCapacitePercent(groupe) >= 75}">
+            </div>
+          </div>
+        </div>
+
+        <div class="card-details">
+          <div class="detail-item" *ngIf="groupe.dateDebut">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Start: {{ formatDate(groupe.dateDebut) }}</span>
+          </div>
+          <div class="detail-item" *ngIf="groupe.dateFin">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>End: {{ formatDate(groupe.dateFin) }}</span>
+          </div>
+          <div class="detail-item" *ngIf="groupe.niveauId">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span>Level ID: {{ groupe.niveauId }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && filteredGroupes.length === 0">
+    <svg class="empty-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+    <h3>No groups found</h3>
+    <p>Start by creating a new group or adjusting your filters.</p>
+    <button class="btn-primary" (click)="createGroupe()">Create a group</button>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <h3>Confirm deletion</h3>
+      </div>
+      <p>Do you really want to delete group <strong>{{ selectedGroupe?.nom }}</strong> ({{ selectedGroupe?.codeGroupe }})?</p>
+      <p class="modal-warning">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger" (click)="deleteGroupe()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

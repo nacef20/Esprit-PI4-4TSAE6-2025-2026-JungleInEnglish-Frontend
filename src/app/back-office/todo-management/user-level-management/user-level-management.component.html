@@ -1,0 +1,75 @@
+<div class="p-8">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Student Progression</h1>
+      <p class="text-gray-500">Manage student English levels and monitor their academic standing.</p>
+    </div>
+    <div class="flex space-x-4">
+      <div class="relative">
+        <input type="text" placeholder="Search students..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-school-primary/20 transition-all">
+        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      </div>
+      <button 
+        (click)="syncData()"
+        [disabled]="syncing"
+        class="flex items-center px-6 py-2 bg-school-primary text-white rounded-xl font-bold hover:shadow-lg hover:shadow-school-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <i class="fas fa-sync-alt mr-2" [class.animate-spin]="syncing"></i>
+        {{ syncing ? 'Syncing...' : 'Refresh Students' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+    <table class="w-full text-left">
+      <thead>
+        <tr class="bg-gray-50/50 border-b border-gray-100">
+          <th class="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Student</th>
+          <th class="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Email</th>
+          <th class="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Current Level</th>
+          <th class="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let student of students" class="hover:bg-gray-50/50 transition-colors">
+          <td class="px-8 py-6">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-full bg-school-primary/10 flex items-center justify-center text-school-primary font-bold mr-3 uppercase">
+                {{student.username[0]}}
+              </div>
+              <span class="font-bold text-gray-700">{{student.username}}</span>
+            </div>
+          </td>
+          <td class="px-8 py-6 text-gray-500 font-medium">{{student.email}}</td>
+          <td class="px-8 py-6">
+            <span class="inline-flex px-3 py-1 rounded-lg text-xs font-black bg-blue-50 text-blue-600 border border-blue-100">
+              {{student.level || 'NOT SET'}}
+            </span>
+          </td>
+          <td class="px-8 py-6">
+            <div class="flex justify-center items-center space-x-4">
+              <select 
+                [value]="student.level"
+                (change)="onLevelChange(student, $event)"
+                class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-school-primary/20 transition-all">
+                <option *ngFor="let lvl of levels" [value]="lvl">{{lvl}}</option>
+                <option value="" *ngIf="!student.level">Select Level</option>
+              </select>
+              <button class="p-2 text-gray-400 hover:text-school-primary transition-colors">
+                <i class="fas fa-history"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && students.length === 0" class="p-20 text-center">
+      <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-users text-gray-300 text-2xl"></i>
+      </div>
+      <h3 class="text-gray-900 font-bold mb-1">No Students Registered</h3>
+      <p class="text-gray-500 text-sm max-w-xs mx-auto">Students will automatically appear here once they log into the application for the first time.</p>
+    </div>
+  </div>
+</div>

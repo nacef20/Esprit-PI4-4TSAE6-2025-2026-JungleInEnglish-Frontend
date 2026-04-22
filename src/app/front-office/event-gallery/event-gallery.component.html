@@ -1,0 +1,125 @@
+<section id="events" class="relative py-24 bg-white overflow-hidden">
+  <div class="max-w-screen-xl px-6 mx-auto relative z-10">
+    <div class="text-center mb-16">
+      <span class="inline-block px-4 py-1.5 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium tracking-wide mb-4">
+        📅 Événements à venir
+      </span>
+      <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
+        Boostez votre <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600">Apprentissage</span>
+      </h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Participez à nos masterclasses, workshops et événements culturels pour pratiquer l'anglais dans un environnement vivant.
+      </p>
+    </div>
+
+    <!-- Ticket Section -->
+    <div class="mb-16 p-8 bg-emerald-50 border-2 border-emerald-200 rounded-3xl text-center animate-fade-in" *ngIf="lastParticipation">
+       <div class="flex flex-col items-center gap-6">
+          <div class="p-6 bg-white rounded-2xl shadow-xl min-w-[300px]">
+             <h4 class="text-emerald-800 font-bold mb-2 text-lg">🎟️ Inscription Confirmée!</h4>
+             <p class="text-gray-500 text-sm mb-4" *ngIf="lastParticipation.event">{{ lastParticipation.event.title }}</p>
+             
+             <!-- QR Code -->
+             <div *ngIf="lastParticipation.qrCodeUrl" class="flex flex-col items-center">
+               <img [src]="getQrCodeSrc(lastParticipation.qrCodeUrl)" 
+                    class="w-56 h-56 object-contain border-4 border-gray-100 rounded-lg"
+                    alt="QR Code Ticket">
+             </div>
+             <div *ngIf="!lastParticipation.qrCodeUrl" class="w-56 h-56 bg-gray-100 rounded-lg flex items-center justify-center mx-auto">
+               <span class="text-gray-400 text-sm">QR Code en cours...</span>
+             </div>
+
+             <p class="mt-3 text-xs text-gray-400 font-mono break-all px-2" *ngIf="lastParticipation.publicToken">
+               TOKEN: {{ lastParticipation.publicToken }}
+             </p>
+          </div>
+          <button (click)="lastParticipation = null" class="text-emerald-600 font-medium hover:underline text-sm">
+            Fermer le ticket
+          </button>
+       </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" *ngIf="!isLoading">
+      <div class="event-card group" *ngFor="let event of events">
+        <div class="relative overflow-hidden rounded-2xl aspect-[16/9] mb-6 shadow-lg">
+          <img [src]="eventService.getMediaUrl(event.imageUrl)" 
+               class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
+               alt="{{ event.title }}">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+             <span class="font-bold">{{ event.startTime | date:'mediumDate' }}</span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex justify-between items-start">
+            <h3 class="text-xl font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">{{ event.title }}</h3>
+            <div class="flex gap-2">
+              <button (click)="openInfo(event)" class="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors shadow-sm" title="Plus d'infos">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </button>
+              <span class="px-2 py-1 bg-school-secondary text-xs font-bold rounded flex items-center" *ngIf="event.level">{{ event.level }}</span>
+            </div>
+          </div>
+          
+          <p class="text-gray-600 text-sm line-clamp-2">{{ event.description }}</p>
+
+          <div class="flex flex-col gap-2 text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ event.startTime | date:'shortTime' }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span>{{ event.location }}</span>
+            </div>
+            <div class="flex items-center gap-2" [ngClass]="event.availableSeats === 0 ? 'text-red-500 font-bold' : 'text-emerald-500 font-bold'">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <span>{{ event.availableSeats }} places disponibles</span>
+            </div>
+          </div>
+
+          <div *ngIf="!isRegistered(event.eventId!)">
+            <button (click)="register(event.eventId!)" 
+                    [disabled]="event.availableSeats === 0"
+                    [ngClass]="event.availableSeats === 0 ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' : 'bg-white border-emerald-500 text-emerald-600 hover:bg-emerald-500 hover:text-white hover:-translate-y-1 active:scale-95 shadow-md'"
+                    class="w-full py-3 border-2 font-bold rounded-xl transition-all duration-300 transform">
+              <span *ngIf="event.availableSeats === 0">Complet</span>
+              <span *ngIf="event.availableSeats !== 0">S'inscrire à l'événement</span>
+            </button>
+          </div>
+
+          <div *ngIf="isRegistered(event.eventId!)">
+            <button (click)="unregister(event.eventId!)" 
+                    class="w-full py-3 border-2 border-red-500 text-red-600 font-bold rounded-xl hover:bg-red-500 hover:text-white hover:-translate-y-1 transition-all duration-300 transform active:scale-95 shadow-md flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Annuler l'inscription
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center py-20" *ngIf="!isLoading && events.length === 0">
+      <p class="text-gray-500 italic text-xl">Aucun événement prévu pour le moment. Reclamez à votre école !</p>
+    </div>
+  </div>
+</section>

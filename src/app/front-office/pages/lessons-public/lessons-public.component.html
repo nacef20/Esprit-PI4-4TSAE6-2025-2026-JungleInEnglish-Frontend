@@ -1,0 +1,184 @@
+<div class="lessons-wrap">
+  <!-- Header -->
+  <div class="lessons-header">
+    <div class="header-left">
+      <h3 class="lessons-title">Course Lessons</h3>
+      <p class="lessons-subtitle">
+        Organized curriculum • Click a lesson to open it • Progress tracking enabled
+      </p>
+    </div>
+
+    <div class="header-right" *ngIf="!loading && !error">
+      <div class="pill">
+        <span class="dot"></span>
+        <span>{{ lessons.length }} lesson{{ lessons.length > 1 ? 's' : '' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="state-box">
+    <div class="spinner"></div>
+    <p>Loading curriculum...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="state-box error">
+    <div class="state-title">Couldn’t load lessons</div>
+    <p class="muted">{{ error }}</p>
+    <button class="btn-primary" (click)="loadLessons()">Retry</button>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && !error && lessons.length === 0" class="state-box">
+    <div class="state-title">No lessons yet</div>
+    <p class="muted">This course doesn’t have lessons published yet.</p>
+  </div>
+
+  <!-- Curriculum list -->
+  <div *ngIf="!loading && !error && lessons.length > 0" class="lessons-list">
+    <button
+      type="button"
+      class="lesson-row"
+      *ngFor="let lesson of lessons"
+      (click)="openLesson(lesson)"
+    >
+      <div class="row-left">
+        <div class="index-badge">#{{ lesson.orderIndex }}</div>
+
+        <div class="row-text">
+          <div class="row-title">
+            {{ lesson.title }}
+            <span class="tag" *ngIf="lesson.videoUrl">Video</span>
+          </div>
+
+          <div class="row-preview">
+            {{ (lesson.content || 'No content') | slice:0:110 }}
+            <span *ngIf="(lesson.content || '').length > 110">...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-right">
+        <div class="meta" *ngIf="lesson.duration">⏱ {{ lesson.duration }}</div>
+        <div class="chev">›</div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- LESSON VIEWER OVERLAY -->
+<div class="overlay" *ngIf="showLessonViewer" (click)="closeLesson()">
+  <div class="viewer" (click)="$event.stopPropagation()">
+    <!-- Viewer Header -->
+    <div class="viewer-header">
+      <div class="viewer-title">
+        <div class="crumbs">
+          <span class="crumb">Course</span>
+          <span class="sep">/</span>
+          <span class="crumb">Lessons</span>
+          <span class="sep">/</span>
+          <span class="crumb strong">#{{ selectedLesson?.orderIndex }}</span>
+        </div>
+
+        <h3 class="title">{{ selectedLesson?.title }}</h3>
+
+        <div class="viewer-meta">
+          <span class="chip" *ngIf="selectedLesson?.duration">⏱ {{ selectedLesson?.duration }}</span>
+          <span class="chip" *ngIf="selectedLesson?.videoUrl">🎥 Video available</span>
+
+          <!-- ✅ REALISTIC tracking indicator -->
+          <span class="chip live">
+            <span class="pulse"></span>
+            Tracking time
+          </span>
+        </div>
+      </div>
+
+      <button class="icon-btn" (click)="closeLesson()" aria-label="Close lesson">
+        ✖
+      </button>
+    </div>
+
+    <!-- Viewer Body (2-column layout like real LMS) -->
+    <div class="viewer-body">
+      <!-- Left column: content -->
+      <div class="col-main">
+        <section class="block">
+          <div class="block-head">
+            <h4>Lesson Content</h4>
+          </div>
+          <p class="content">
+            {{ selectedLesson?.content || 'No content provided.' }}
+          </p>
+        </section>
+
+        <section class="block" *ngIf="normalizeVideoUrl(selectedLesson?.videoUrl) as v">
+          <div class="block-head">
+            <h4>Resources</h4>
+          </div>
+
+          <div class="resource">
+            <div class="resource-left">
+              <div class="resource-icon">🎥</div>
+              <div>
+                <div class="resource-title">Lesson Video</div>
+                <div class="resource-sub muted">{{ v }}</div>
+              </div>
+            </div>
+
+            <a class="btn-secondary" [href]="v" target="_blank" rel="noopener noreferrer">
+              Open
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right column: realistic sidebar -->
+      <aside class="col-side">
+        <div class="side-card">
+          <h4>Lesson Actions</h4>
+
+          <!-- realistic actions (disabled because auth not done) -->
+          <button class="btn-primary" disabled>
+            Mark as Completed (requires login)
+          </button>
+
+          <button class="btn-lite" disabled>
+            Download Resources (coming soon)
+          </button>
+
+          <div class="side-divider"></div>
+
+          <div class="side-section">
+            <div class="side-label">Time Tracking</div>
+            <p class="muted small">
+              Time is recorded automatically while this lesson is open (heartbeat every 15s).
+            </p>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <div class="side-head">
+            <h4>Feedback</h4>
+            <button class="btn-secondary" disabled>+ Add Review</button>
+          </div>
+
+          <div class="stars">
+            ★★★★☆ <span class="muted">(preview)</span>
+          </div>
+
+          <div class="review">
+            <p class="name">Student A</p>
+            <p class="text">Clear explanation, nice examples.</p>
+          </div>
+
+          <div class="review">
+            <p class="name">Student B</p>
+            <p class="text">Good pacing. Would love a short quiz.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

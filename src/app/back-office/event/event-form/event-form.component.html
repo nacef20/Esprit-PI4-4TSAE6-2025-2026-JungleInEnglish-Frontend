@@ -1,0 +1,182 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1 class="page-title">
+      {{ isEditMode ? 'Modifier l\'événement' : 'Nouvel Événement' }}
+    </h1>
+  </div>
+
+  <div class="form-card card-glass">
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="title">Nom de l'événement</label>
+          <input type="text" id="title" formControlName="title" placeholder="Ex: Masterclass Anglais des affaires">
+          <div class="error" *ngIf="eventForm.get('title')?.touched && eventForm.get('title')?.invalid">
+            Le nom est requis (min 3 chars).
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="description">Description</label>
+          <textarea id="description" formControlName="description" rows="4" placeholder="Détails de l'événement..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="startTime">Heure de début</label>
+          <div class="flex-row">
+            <input type="datetime-local" id="startTime" formControlName="startTime"
+              (change)="fetchWeather(eventForm.get('startTime')?.value, eventForm.get('location')?.value)">
+            <button type="button" class="btn-tool" (click)="showSuggester = !showSuggester">
+              💡 Suggérer
+            </button>
+            <button type="button" class="btn-tool btn-weather-tool" 
+                    title="Rafraîchir la météo"
+                    *ngIf="eventForm.get('startTime')?.value" 
+                    (click)="fetchWeather(eventForm.get('startTime')?.value, eventForm.get('location')?.value)">
+              🌤️ Météo
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="endTime">Heure de fin</label>
+          <input type="datetime-local" id="endTime" formControlName="endTime">
+        </div>
+
+        <!-- Smart Scheduler Section -->
+        <div class="suggester-box animate-fade-in" *ngIf="showSuggester">
+          <div class="suggester-header">
+            <h4>Assistant de Planification</h4>
+            <p>Trouvez le meilleur créneau sans conflits pour ce niveau.</p>
+          </div>
+          <div class="suggester-grid">
+            <div class="input-group">
+              <label>Plage de début</label>
+              <input type="datetime-local" [(ngModel)]="suggestionParams.fromDate" [ngModelOptions]="{standalone: true}">
+            </div>
+            <div class="input-group">
+              <label>Plage de fin</label>
+              <input type="datetime-local" [(ngModel)]="suggestionParams.toDate" [ngModelOptions]="{standalone: true}">
+            </div>
+            <div class="input-group">
+              <label>Durée (h)</label>
+              <input type="number" [(ngModel)]="suggestionParams.duration" [ngModelOptions]="{standalone: true}" min="1">
+            </div>
+          </div>
+          <div class="suggester-actions">
+            <button type="button" class="btn-suggest" (click)="onSuggestTime()">Vérifier Disponibilité</button>
+            <div class="result-badge animate-fade-in" *ngIf="suggestedTime">
+              <div class="result-info">
+                <span>✨ Créneau trouvé : {{ suggestedTime | date:'medium' }}</span>
+              </div>
+              <div class="result-actions">
+                <button type="button" class="btn-weather" (click)="checkSuggestedWeather()" title="Voir la météo pour cette date">
+                  🌤️ Météo
+                </button>
+                <button type="button" class="btn-apply" (click)="applySuggestion()">Appliquer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ☁️ Weather Forecast Card -->
+        <div class="weather-card full-width animate-fade-in" *ngIf="weatherLoading || weather || weatherError">
+          <div class="weather-header">
+            <span class="weather-label">🌤️ Météo prévisionnelle pour l'événement</span>
+            <span class="weather-meta" *ngIf="weatherCity && weatherDate">
+              {{ weatherCity }} · {{ weatherDate | date:'longDate' }}
+            </span>
+          </div>
+
+          <!-- Loading state -->
+          <div class="weather-loading" *ngIf="weatherLoading">
+            <div class="spinner"></div>
+            <span>Récupération des données météo...</span>
+          </div>
+
+          <!-- Error state -->
+          <div class="weather-unavailable" *ngIf="weatherError && !weatherLoading">
+            ⚠️ Données météo non disponibles pour cette date ou localisation.
+          </div>
+
+          <!-- Success state -->
+          <div class="weather-body" *ngIf="weather && !weatherLoading">
+            <div class="weather-icon-block">
+              <span class="weather-icon">{{ weather.icon }}</span>
+              <span class="weather-condition">{{ weather.condition }}</span>
+            </div>
+            <div class="weather-stats">
+              <div class="stat-item">
+                <span class="stat-label">🌡️ Max</span>
+                <span class="stat-value">{{ weather.temperature_max }}°C</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">❄️ Min</span>
+                <span class="stat-value">{{ weather.temperature_min }}°C</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">💨 Vent</span>
+                <span class="stat-value">{{ weather.windspeed }} km/h</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">🌧️ Pluie</span>
+                <span class="stat-value">{{ weather.precipitation }} mm</span>
+              </div>
+            </div>
+            <div class="weather-advice" [ngClass]="{
+              'advice-good': weather.weathercode <= 2,
+              'advice-warn': weather.weathercode >= 3 && weather.weathercode < 50,
+              'advice-bad': weather.weathercode >= 50
+            }">
+              <span *ngIf="weather.weathercode <= 2">✅ Conditions excellentes pour un événement en plein air !</span>
+              <span *ngIf="weather.weathercode >= 3 && weather.weathercode < 50">⚠️ Conditions nuageuses — prévoyez un espace couvert.</span>
+              <span *ngIf="weather.weathercode >= 50">🚫 Mauvaises conditions météo — envisagez un lieu intérieur.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Lieu</label>
+          <input type="text" id="location" formControlName="location" placeholder="Ex: Salle 101 or Zoom">
+        </div>
+
+        <div class="form-group">
+          <label for="capacity">Capacité Maximale</label>
+          <input type="number" id="capacity" formControlName="capacity">
+        </div>
+
+        <div class="form-group">
+          <label for="level">Niveau (Requis)</label>
+          <select id="level" formControlName="level">
+            <option value="">Sélectionnez un niveau</option>
+            <option value="A1">Débutant (A1)</option>
+            <option value="A2">Élémentaire (A2)</option>
+            <option value="B1">Intermédiaire (B1)</option>
+            <option value="B2">Intermédiaire Supérieur (B2)</option>
+            <option value="C1">Avancé (C1)</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Image de l'événement</label>
+          <div class="file-upload-wrapper">
+            <input type="file" id="imageFile" (change)="onFileSelected($event)" accept="image/*" class="file-input">
+            <div class="preview-area" *ngIf="eventForm.get('imageUrl')?.value">
+              <img [src]="eventForm.get('imageUrl')?.value" class="img-preview" alt="Preview">
+            </div>
+          </div>
+          <p class="hint">Sélectionnez une image JPG, PNG ou WEBP. Elle sera automatiquement optimisée.</p>
+          <input type="hidden" formControlName="imageUrl">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="onCancel()" [disabled]="isLoading">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="eventForm.invalid || isLoading">
+          <span *ngIf="!isLoading">{{ isEditMode ? 'Mettre à jour' : 'Créer l\'événement' }}</span>
+          <span *ngIf="isLoading">Traitement...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

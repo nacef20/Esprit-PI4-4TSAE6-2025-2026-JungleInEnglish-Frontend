@@ -1,0 +1,63 @@
+<div class="max-w-2xl mx-auto space-y-6">
+  <!-- Header -->
+  <div class="flex items-center gap-3">
+    <button (click)="cancel()" class="p-2 hover:bg-gray-100 rounded-lg transition-all">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#0ea37a]">{{ isEdit ? 'edit_note' : 'playlist_add' }}</span>
+      {{ isEdit ? 'Edit Choice' : 'New Choice' }}
+    </h1>
+  </div>
+
+  <!-- General Error -->
+  <div *ngIf="generalError" class="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+    <span class="material-symbols-outlined text-red-500 mt-0.5">error</span>
+    <p class="text-sm font-medium text-red-700">{{ generalError }}</p>
+  </div>
+
+  <!-- Form card -->
+  <form [formGroup]="choiceForm" (ngSubmit)="onSubmit()" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5">
+
+    <!-- Content -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Choice content <span class="text-red-400">*</span></label>
+      <input formControlName="content" type="text" placeholder="Choice text"
+        class="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-[#0ea37a]/30 focus:border-[#0ea37a] outline-none transition-all"
+        [ngClass]="serverErrors['content'] ? 'border-red-400' : 'border-gray-200'" />
+      <p *ngIf="serverErrors['content']" class="mt-1 text-sm text-red-500 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">error</span>
+        {{ serverErrors['content'] }}
+      </p>
+    </div>
+
+    <!-- Is Correct -->
+    <div>
+      <div class="flex items-center gap-3">
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input formControlName="isCorrect" type="checkbox" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#0ea37a] peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+        </label>
+        <span class="text-sm font-medium text-gray-700">Correct answer</span>
+      </div>
+      <p *ngIf="serverErrors['isCorrect']" class="mt-1 text-sm text-red-500 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">error</span>
+        {{ serverErrors['isCorrect'] }}
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+      <button type="submit" [disabled]="submitting"
+        class="flex items-center gap-2 px-6 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium">
+        <span class="material-symbols-outlined text-xl">{{ isEdit ? 'save' : 'add_circle' }}</span>
+        {{ isEdit ? 'Save' : 'Create' }}
+      </button>
+      <button type="button" (click)="cancel()"
+        class="flex items-center gap-2 px-6 py-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all font-medium">
+        <span class="material-symbols-outlined text-xl">close</span>
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

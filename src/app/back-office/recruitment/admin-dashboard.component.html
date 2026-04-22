@@ -1,0 +1,926 @@
+<div class="container py-5">
+  <!-- Toast Notifications -->
+  <div *ngIf="success" style="
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999;
+      min-width: 340px; max-width: 480px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-left: 4px solid #10b981;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);
+      backdrop-filter: blur(12px);
+      animation: slideInRight 0.3s ease;">
+    <i class="fas fa-check-circle mt-1" style="color: #10b981; font-size: 1.1rem; flex-shrink: 0;"></i>
+    <span style="color: var(--text-primary); font-size: 0.9rem; flex: 1; line-height: 1.5;">{{ success }}</span>
+    <button (click)="success = null"
+      style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0; font-size: 1rem; line-height: 1; flex-shrink: 0;">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div *ngIf="error" style="
+      position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999;
+      min-width: 340px; max-width: 480px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-left: 4px solid #ef4444;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+      backdrop-filter: blur(12px);
+      animation: slideInRight 0.3s ease;">
+    <i class="fas fa-exclamation-triangle mt-1" style="color: #ef4444; font-size: 1.1rem; flex-shrink: 0;"></i>
+    <span style="color: var(--text-primary); font-size: 0.9rem; flex: 1; line-height: 1.5;">{{ error }}</span>
+    <button (click)="error = null"
+      style="background: none; border: none; color: var(--text-secondary); cursor: pointer; padding: 0; font-size: 1rem; line-height: 1; flex-shrink: 0;">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div *ngIf="!showStatistics && !focusedJob">
+    <div class="d-flex justify-content-between align-items-center mb-5" *ngIf="userRole !== 'CANDIDATE'">
+      <h1 style="font-weight: 800; font-size: 2.5rem; color: var(--text-primary);">Job Offers Management</h1>
+      <div class="d-flex gap-2">
+        <button class="jungle-btn" [class.jungle-btn-primary]="showShortlisted"
+          style="background: rgba(16, 185, 129, 0.1); color: var(--primary-color); border: 1px solid rgba(16, 185, 129, 0.2);"
+          (click)="toggleShortlistedView(!showShortlisted)">
+          <i class="fas fa-heart me-1"></i> {{ showShortlisted ? 'Back to Offers' : 'Shortlisted Favorites' }}
+        </button>
+        <button class="jungle-btn jungle-btn-primary" (click)="openJobModal()" *ngIf="!showShortlisted">
+          <i class="fas fa-plus"></i> New Job Offer
+        </button>
+      </div>
+    </div>
+
+    <!-- Candidate Header View -->
+    <div class="mb-5" *ngIf="userRole === 'CANDIDATE' || candidateViewMode">
+      <div style="padding-top: 1rem;">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span
+            style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); padding: 0.4rem 1.2rem; border-radius: 99px; font-size: 0.85rem; font-weight: 600;">
+            Portail Candidat
+          </span>
+          <span style="color: var(--text-secondary); font-size: 0.85rem;">• {{ jobOffers.length }} available positions</span>
+        </div>
+        <h1 style="font-weight: 800; font-size: 2.8rem; color: var(--text-primary); margin: 0; letter-spacing: -0.02em;">Explore Career Opportunities</h1>
+        <p style="color: var(--text-secondary); max-width: 650px; margin-top: 1rem; font-size: 1.1rem; line-height: 1.6;">
+          Find your perfect role and apply in one click. We use AI technology to match your unique skills with our latest job openings.
+        </p>
+      </div>
+    </div>
+
+    <!-- Premium Job Offer Modal -->
+    <div class="jungle-modal-overlay" *ngIf="showJobModal" (click)="closeJobModal()">
+      <div class="jungle-modal" (click)="$event.stopPropagation()">
+        <div class="jungle-modal-header">
+          <h4 class="m-0" style="font-weight: 700;">{{ editingJobId ? 'Edit Job Offer' : 'Create New Job Offer' }}</h4>
+          <button class="btn-close" (click)="closeJobModal()"></button>
+        </div>
+
+        <div class="jungle-modal-body">
+          <form (ngSubmit)="editingJobId ? updateJobOffer() : createJobOffer()" id="jobForm">
+            <!-- Section: General Information -->
+            <div class="modal-section mb-4">
+              <div class="section-title">GENERAL INFORMATION</div>
+              <div class="row g-3">
+                <div class="col-md-12">
+                  <label class="form-label text-secondary small fw-bold">JOB TITLE <span
+                      class="text-danger">*</span></label>
+                  <input type="text" [(ngModel)]="jobForm.title" name="title" class="form-control jungle-input"
+                    placeholder="e.g. Senior Full Stack Developer" required #titleInput="ngModel" />
+                  <div *ngIf="titleInput.touched && !jobForm.title" class="text-danger small mt-1">Title is required
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label text-secondary small fw-bold">DESCRIPTION <span
+                      class="text-danger">*</span></label>
+                  <textarea [(ngModel)]="jobForm.description" name="description" class="form-control jungle-input"
+                    rows="4" placeholder="Summarize the role and responsibilities..." required
+                    #descInput="ngModel"></textarea>
+                  <div *ngIf="descInput.touched && !jobForm.description" class="text-danger small mt-1">Description is
+                    required</div>
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label text-secondary small fw-bold">LOCATION</label>
+                  <input type="text" [(ngModel)]="jobForm.location" name="location" class="form-control jungle-input"
+                    placeholder="Remote / City, Country" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Employment & Salary -->
+            <div class="modal-section mb-4">
+              <div class="section-title">EMPLOYMENT & SALARY</div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold">EMPLOYMENT TYPE</label>
+                  <input type="text" [(ngModel)]="jobForm.employmentType" name="employmentType"
+                    class="form-control jungle-input" placeholder="Full-time / Contract" />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label text-secondary small fw-bold">SALARY RANGE</label>
+                  <input type="number" [(ngModel)]="jobForm.salary" name="salary" class="form-control jungle-input"
+                    placeholder="Min. 0" min="0" />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label text-secondary small fw-bold">CURRENCY</label>
+                  <select [(ngModel)]="jobForm.currency" name="currency" class="form-select jungle-input">
+                    <option value="Euro">Euro</option>
+                    <option value="Dinar">Dinar</option>
+                    <option value="USD">USD</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Candidate Matching Criteria -->
+            <div class="modal-section mb-4"
+              style="border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem;">
+              <div class="section-title d-flex align-items-center gap-2">
+                <i class="fas fa-chart-bar text-success"></i>
+                CANDIDATE MATCHING CRITERIA
+              </div>
+              <p class="text-secondary small mb-3" style="margin-top: -0.5rem;">
+                <i class="fas fa-info-circle me-1"></i>
+                These fields are used by the matching algorithm to calculate compatibility scores with candidate CVs.
+                Each category contributes 20% to the overall match score.
+              </p>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold"><i
+                      class="fas fa-check-circle text-success me-1"></i> REQUIRED SKILLS
+                    <span class="badge ms-1"
+                      style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.65rem;">20%
+                      weight</span>
+                  </label>
+                  <input type="text" [(ngModel)]="requiredSkillsString" name="requiredSkills"
+                    class="form-control jungle-input" placeholder="Java, Angular, SQL..." />
+                  <div class="text-secondary small mt-1" style="font-size: 0.7rem;">Comma-separated list of technical
+                    skills</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold"><i
+                      class="fas fa-user-clock text-info me-1"></i> EXPERIENCE LEVEL
+                    <span class="badge ms-1"
+                      style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-size: 0.65rem;">20%
+                      weight</span>
+                  </label>
+                  <input type="text" [(ngModel)]="jobForm.experienceLevel" name="experienceLevel"
+                    class="form-control jungle-input" placeholder="e.g. 5+ Years, Senior, Junior" />
+                  <div class="text-secondary small mt-1" style="font-size: 0.7rem;">Matched against candidate's work
+                    experience</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold"><i
+                      class="fas fa-graduation-cap text-primary me-1"></i> QUALIFICATIONS
+                    <span class="badge ms-1"
+                      style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-size: 0.65rem;">20%
+                      weight</span>
+                  </label>
+                  <input type="text" [(ngModel)]="requiredQualificationsString" name="requiredQualifications"
+                    class="form-control jungle-input" placeholder="Master Degree in CS, Bachelor..." />
+                  <div class="text-secondary small mt-1" style="font-size: 0.7rem;">Comma-separated list of required
+                    degrees/education</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold"><i
+                      class="fas fa-language text-warning me-1"></i> LANGUAGES
+                    <span class="badge ms-1"
+                      style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; font-size: 0.65rem;">20%
+                      weight</span>
+                  </label>
+                  <input type="text" [(ngModel)]="requiredLanguagesString" name="requiredLanguages"
+                    class="form-control jungle-input" placeholder="English, French, Arabic..." />
+                  <div class="text-secondary small mt-1" style="font-size: 0.7rem;">Comma-separated list of required
+                    languages</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold"><i
+                      class="fas fa-certificate text-danger me-1"></i> CERTIFICATIONS
+                    <span class="badge ms-1"
+                      style="background: rgba(239, 68, 68, 0.15); color: #ef4444; font-size: 0.65rem;">20% weight</span>
+                  </label>
+                  <input type="text" [(ngModel)]="requiredCertificationsString" name="requiredCertifications"
+                    class="form-control jungle-input" placeholder="AWS, Azure, CISSP, PMP..." />
+                  <div class="text-secondary small mt-1" style="font-size: 0.7rem;">Comma-separated list of professional
+                    certifications</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Settings -->
+            <div class="modal-section mb-2">
+              <div class="section-title">SETTINGS & DEADLINE</div>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold">CLOSING DATE</label>
+                  <input type="date" [(ngModel)]="jobForm.closingDate" name="closingDate"
+                    class="form-control jungle-input" [min]="minDate" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-secondary small fw-bold">OFFER STATUS</label>
+                  <select [(ngModel)]="jobForm.active" name="active" class="form-select jungle-input">
+                    <option [ngValue]="true">Active (Visible to candidates)</option>
+                    <option [ngValue]="false">Inactive (Hidden)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="jungle-modal-footer">
+          <div *ngIf="error" class="text-danger small mb-3"><i class="fas fa-exclamation-triangle me-1"></i> {{ error }}
+          </div>
+          <div class="d-flex justify-content-end gap-3 w-100">
+            <button type="button" class="jungle-btn jungle-btn-secondary" (click)="closeJobModal()">Cancel</button>
+            <button type="submit" form="jobForm" class="jungle-btn jungle-btn-primary px-4">
+              {{ editingJobId ? 'Update Offer' : 'Post Job Offer' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job List -->
+    <div *ngIf="!showShortlisted && !candidateViewMode && userRole !== 'CANDIDATE'">
+      <h2 class="mb-4" style="font-weight: 700;">Current Job Offers</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4" *ngFor="let job of jobOffers">
+          <div class="jungle-card h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="badge"
+                [style.background-color]="job.active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'"
+                [style.color]="job.active ? '#10b981' : '#ef4444'">
+                {{ job.active ? 'Active' : 'Inactive' }}
+              </span>
+              <div class="d-flex gap-2">
+                <button class="jungle-btn p-2" (click)="openRankingModal(job)" title="Ranking Leaderboard"
+                  style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">
+                  <i class="fas fa-sort-amount-down"></i>
+                </button>
+                <button class="jungle-btn p-2" (click)="openJobModal(job)" title="Edit"
+                  style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="jungle-btn p-2" (click)="confirmDelete(job)" title="Delete"
+                  style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <h4 class="mb-2 fw-bold">{{ job.title }}</h4>
+            <p class="text-secondary small mb-3 text-truncate-3">{{ job.description }}</p>
+
+            <div class="mb-3 d-flex flex-wrap gap-2">
+              <span class="badge bg-secondary opacity-75">{{ job.location }}</span>
+              <span class="badge bg-secondary opacity-75">{{ job.employmentType }}</span>
+            </div>
+
+            <div class="mt-auto pt-3 d-flex justify-content-between align-items-center"
+              style="border-top: 1px solid var(--border-color);">
+              <div class="small fw-bold text-success">{{ job.salary }} {{ job.currency }}</div>
+              <button class="jungle-btn jungle-btn-primary py-2 px-3 small" (click)="openCandidatesModal(job)">
+                <i class="fas fa-users me-1"></i> Candidates
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Candidate Job Board View -->
+    <div *ngIf="!showShortlisted && (candidateViewMode || userRole === 'CANDIDATE')">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="font-weight: 700;">Explore Open Positions</h2>
+        <span class="badge bg-success opacity-75 py-2 px-3 fw-bold">{{ jobOffers.length }} Available</span>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6" *ngFor="let job of jobOffers">
+          <div class="jungle-card h-100 border-0 p-4"
+            style="background: rgba(16, 185, 129, 0.02); border-left: 4px solid var(--primary-color) !important;">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <h4 class="mb-0 fw-bold" style="color: var(--text-primary);">{{ job.title }}</h4>
+              <div class="small fw-bold text-success px-3 py-1 rounded-pill"
+                style="background: rgba(16, 185, 129, 0.1);">{{ job.salary }} {{ job.currency }}</div>
+            </div>
+            <p class="text-secondary small mb-4 text-truncate-3">{{ job.description }}</p>
+
+            <div class="mb-4 d-flex flex-wrap gap-2">
+              <span class="badge" style="background: rgba(0,0,0,0.05); color: var(--text-secondary);"><i
+                  class="fas fa-map-marker-alt me-1"></i>{{ job.location }}</span>
+              <span class="badge" style="background: rgba(0,0,0,0.05); color: var(--text-secondary);"><i
+                  class="fas fa-briefcase me-1"></i>{{ job.employmentType }}</span>
+            </div>
+
+            <div class="mt-auto d-flex flex-wrap gap-1 mb-4" *ngIf="job.requiredSkills?.length">
+              <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;"
+                *ngFor="let s of (job.requiredSkills || []).slice(0, 3)">{{ s }}</span>
+              <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;"
+                *ngIf="(job.requiredSkills?.length || 0) > 3">+{{ (job.requiredSkills?.length || 0) - 3 }}</span>
+            </div>
+
+            <div class="d-flex justify-content-end border-top border-secondary border-opacity-10 pt-3 mt-auto">
+              <input type="file" #fileInput (change)="onFileSelected($event, job.id!)" style="display: none"
+                accept=".pdf,.doc,.docx" />
+
+              <button *ngIf="!appliedJobs[job.id!]?.applied" class="jungle-btn jungle-btn-primary fw-bold"
+                (click)="fileInput.click()">
+                <i class="fas fa-paper-plane me-1"></i> Apply Now
+              </button>
+
+              <div *ngIf="appliedJobs[job.id!]?.applied" class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 fw-bold px-4 py-2 rounded"
+                  style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 0.9rem">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Applied</span>
+                  <span class="border-start ps-2" style="border-color: rgba(16,185,129,0.3) !important;">AI Match:
+                    <strong>{{ appliedJobs[job.id!]?.score }}%</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shortlisted Favorites View -->
+    <div *ngIf="showShortlisted">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0" style="font-weight: 700;"><i class="fas fa-heart text-success me-2"></i>Shortlisted Candidates
+        </h2>
+        <div class="text-secondary small">Viewing all favorite candidates across all job offers</div>
+      </div>
+
+      <div class="jungle-card p-0 overflow-hidden" *ngIf="shortlistedMatches.length > 0; else noFavorites">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle"
+            style="--bs-table-bg: transparent; color: var(--text-primary);">
+            <thead style="background: var(--bg-color); opacity: 1;">
+              <tr>
+                <th class="ps-4 py-3 border-0">Candidate</th>
+                <th class="py-3 border-0">Job Applied For</th>
+                <th class="py-3 border-0 text-center">Match Score</th>
+                <th class="py-3 border-0">Breakdown</th>
+                <th class="pe-4 py-3 border-0 text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of shortlistedMatches" class="border-bottom border-secondary border-opacity-10"
+                style="background: transparent;">
+                <td class="ps-4">
+                  <div class="fw-bold">{{ m.candidateName }}</div>
+                  <div class="small text-secondary">{{ m.candidateEmail }}</div>
+                </td>
+                <td>
+                  <div class="badge bg-secondary opacity-75">{{ m.jobTitle }}</div>
+                </td>
+                <td class="text-center">
+                  <span class="badge px-3 py-2" [style.background]="getScoreColor(m.matchScore) + '20'"
+                    [style.color]="getScoreColor(m.matchScore)"
+                    [style.border]="'1px solid ' + getScoreColor(m.matchScore) + '40'">
+                    {{ m.matchScore | number:'1.0-0' }}%
+                  </span>
+                </td>
+                <td style="min-width: 200px;">
+                  <div class="progress" style="height: 6px; background: var(--border-color);">
+                    <div class="progress-bar bg-success" [style.width]="m.skillsMatch + '%' "></div>
+                    <div class="progress-bar bg-info" [style.width]="m.experienceMatch + '%' "></div>
+                    <div class="progress-bar bg-primary" [style.width]="m.educationMatch + '%' "></div>
+                    <div class="progress-bar bg-warning"
+                      [style.width]="((m.languageMatch + m.certificationMatch)/2) + '%' "></div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-1" style="font-size: 0.65rem; color: #94a3b8;">
+                    <span>S:{{m.skillsMatch}}%</span>
+                    <span>E:{{m.experienceMatch}}%</span>
+                    <span>Q:{{m.educationMatch}}%</span>
+                  </div>
+                </td>
+                <td class="pe-4 text-end">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <button class="jungle-btn p-2 px-3 fw-bold d-flex align-items-center gap-2"
+                      (click)="selectCandidate(m); openCVModal()"
+                      style="background: var(--text-primary); color: var(--bg-color);">
+                      <i class="fas fa-file-pdf"></i> View CV
+                    </button>
+                    <button class="jungle-btn p-2 px-3 fw-bold d-flex align-items-center gap-2"
+                      (click)="toggleShortlist(m.matchId, m.jobId, m.status)"
+                      style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);">
+                      <i class="fas fa-trash"></i> Remove
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <ng-template #noFavorites>
+        <div class="jungle-card text-center py-5">
+          <i class="fas fa-heart-broken display-4 text-secondary mb-3"></i>
+          <p class="text-secondary">You haven't shortlisted any candidates yet.</p>
+          <button class="jungle-btn jungle-btn-primary mt-2" (click)="toggleShortlistedView(false)">
+            Browse Job Offers
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- ========== FOCUSED JOB DETAIL VIEW (from notification click) ========== -->
+  <div *ngIf="!showStatistics && focusedJob">
+    <button class="jungle-btn jungle-btn-secondary mb-4" (click)="goBackToAllOffers()">
+      <i class="fas fa-arrow-left me-2"></i> Back to All Offers
+    </button>
+
+    <div class="jungle-card p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h2 class="fw-bold mb-1">{{ focusedJob.title }}</h2>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge"
+              [style.background-color]="focusedJob.active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'"
+              [style.color]="focusedJob.active ? '#10b981' : '#ef4444'">
+              {{ focusedJob.active ? 'Active' : 'Inactive' }}
+            </span>
+            <span class="badge bg-secondary opacity-75" *ngIf="focusedJob.location">{{ focusedJob.location }}</span>
+            <span class="badge bg-secondary opacity-75" *ngIf="focusedJob.employmentType">{{ focusedJob.employmentType
+              }}</span>
+            <span class="badge bg-secondary opacity-75" *ngIf="focusedJob.experienceLevel">{{ focusedJob.experienceLevel
+              }}</span>
+          </div>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="jungle-btn p-2" (click)="openJobModal(focusedJob)" title="Edit"
+            style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+            <i class="fas fa-edit me-1"></i> Edit
+          </button>
+        </div>
+      </div>
+
+      <p class="text-secondary mb-4">{{ focusedJob.description }}</p>
+
+      <div class="row g-3 mb-4" *ngIf="focusedJob.salary">
+        <div class="col-auto">
+          <div class="small text-secondary fw-bold">SALARY</div>
+          <div class="fw-bold text-success">{{ focusedJob.salary }} {{ focusedJob.currency }}</div>
+        </div>
+        <div class="col-auto" *ngIf="focusedJob.closingDate">
+          <div class="small text-secondary fw-bold">CLOSING DATE</div>
+          <div class="fw-bold">{{ focusedJob.closingDate | date:'mediumDate' }}</div>
+        </div>
+      </div>
+
+      <!-- Requirements badges -->
+      <div class="row g-3">
+        <div class="col-md-6" *ngIf="focusedJob.requiredSkills?.length">
+          <div class="small text-secondary fw-bold mb-2"><i class="fas fa-check-circle text-success me-1"></i> SKILLS
+          </div>
+          <div class="d-flex flex-wrap gap-1">
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"
+              *ngFor="let s of focusedJob.requiredSkills">{{ s }}</span>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="focusedJob.requiredQualifications?.length">
+          <div class="small text-secondary fw-bold mb-2"><i class="fas fa-graduation-cap text-primary me-1"></i>
+            QUALIFICATIONS</div>
+          <div class="d-flex flex-wrap gap-1">
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;"
+              *ngFor="let q of focusedJob.requiredQualifications">{{ q }}</span>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="focusedJob.requiredLanguages?.length">
+          <div class="small text-secondary fw-bold mb-2"><i class="fas fa-language text-warning me-1"></i> LANGUAGES
+          </div>
+          <div class="d-flex flex-wrap gap-1">
+            <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;"
+              *ngFor="let l of focusedJob.requiredLanguages">{{ l }}</span>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="focusedJob.requiredCertifications?.length">
+          <div class="small text-secondary fw-bold mb-2"><i class="fas fa-certificate text-danger me-1"></i>
+            CERTIFICATIONS</div>
+          <div class="d-flex flex-wrap gap-1">
+            <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;"
+              *ngFor="let c of focusedJob.requiredCertifications">{{ c }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline candidates list for this job (Ranked View) -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-bold mb-0"><i class="fas fa-users me-2 text-success"></i>Applicants Ranking</h3>
+      <div class="small text-secondary"><i class="fas fa-sort-amount-down me-1"></i>Sorted by Match Score</div>
+    </div>
+
+    <div *ngIf="focusedJobCandidates.length; else noFocusedCandidates">
+      <div class="table-responsive jungle-card p-0 overflow-hidden mb-5">
+        <table class="table table-hover mb-0 align-middle"
+          style="--bs-table-bg: transparent; color: var(--text-primary);">
+          <thead style="background: var(--bg-color); opacity: 1;">
+            <tr>
+              <th class="ps-4 py-3 border-0">Rank</th>
+              <th class="py-3 border-0">Candidate</th>
+              <th class="py-3 border-0">Match Score</th>
+              <th class="py-3 border-0">Breakdown</th>
+              <th class="py-3 border-0">Status</th>
+              <th class="pe-4 py-3 border-0 text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of focusedJobCandidates; let i = index"
+              class="border-bottom border-secondary border-opacity-10" style="background: transparent;">
+              <td class="ps-4">
+                <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold"
+                  [style.background]="i === 0 ? 'rgba(234, 179, 8, 0.2)' : 'var(--border-color)'"
+                  [style.color]="i === 0 ? '#eab308' : 'var(--text-secondary)'"
+                  style="width: 32px; height: 32px; font-size: 0.85rem;">
+                  #{{ i + 1 }}
+                </div>
+              </td>
+              <td>
+                <div class="fw-bold">{{ c.candidateName }}</div>
+                <div class="small text-secondary">{{ c.candidateEmail }}</div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge px-2 py-1" [style.background]="getScoreColor(c.matchScore) + '20'"
+                    [style.color]="getScoreColor(c.matchScore)"
+                    [style.border]="'1px solid ' + getScoreColor(c.matchScore) + '40'">
+                    {{ c.matchScore | number:'1.0-0' }}%
+                  </span>
+                  <span class="small fw-bold" [style.color]="getScoreColor(c.matchScore)">
+                    {{ getScoreLabel(c.matchScore) }}
+                  </span>
+                </div>
+              </td>
+              <td style="min-width: 250px;">
+                <div class="small text-secondary mb-1 d-flex justify-content-between">
+                  <span>Skills: {{ c.skillsMatch }}%</span>
+                  <span>Exp: {{ c.experienceMatch }}%</span>
+                </div>
+                <div class="progress mb-2" style="height: 4px; background: var(--border-color);">
+                  <div class="progress-bar bg-success" [style.width]="c.skillsMatch + '%' "></div>
+                  <div class="progress-bar bg-info" [style.width]="c.experienceMatch + '%' "></div>
+                </div>
+                <div class="small text-secondary mb-1 d-flex justify-content-between">
+                  <span>Edu: {{ c.educationMatch }}%</span>
+                  <span>Lang/Cert: {{ (c.languageMatch + c.certificationMatch)/2 | number:'1.0-0' }}%</span>
+                </div>
+                <div class="progress" style="height: 4px; background: var(--border-color);">
+                  <div class="progress-bar bg-primary" [style.width]="c.educationMatch + '%' "></div>
+                  <div class="progress-bar bg-warning"
+                    [style.width]="((c.languageMatch + c.certificationMatch)/2) + '%' "></div>
+                </div>
+              </td>
+              <td>
+                <span class="badge rounded-pill"
+                  [style.background]="c.status === 'SHORTLISTED' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(148, 163, 184, 0.1)'"
+                  [style.color]="c.status === 'SHORTLISTED' ? '#10b981' : '#94a3b8'">
+                  {{ c.status || 'PENDING' }}
+                </span>
+              </td>
+              <td class="pe-4 text-end">
+                <div class="d-flex gap-2 justify-content-end">
+                  <button class="jungle-btn p-2 small" (click)="selectCandidate(c); openCVModal();" title="View CV">
+                    <i class="fas fa-file-alt"></i>
+                  </button>
+                  <button class="jungle-btn p-2 small" *ngIf="c.status !== 'SHORTLISTED'"
+                    (click)="toggleShortlist(c.matchId, focusedJob!.id!, c.status)" title="Shortlist"
+                    style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                  <button class="jungle-btn p-2 small" *ngIf="c.status === 'SHORTLISTED'"
+                    (click)="toggleShortlist(c.matchId, focusedJob!.id!, c.status)" title="Remove from Shortlist"
+                    style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <ng-template #noFocusedCandidates>
+      <div class="jungle-card text-center py-5 mb-5">
+        <i class="fas fa-users-slash display-4 text-secondary mb-3"></i>
+        <p class="text-secondary">No candidates have applied to this offer yet.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="showStatistics">
+    <div class="jungle-card max-auto" style="max-width: 800px; margin: 0 auto;">
+      <h1 class="mb-5" style="font-weight: 800;">Dashboard Statistics</h1>
+      <div class="row g-4" *ngIf="stats">
+        <div class="col-md-6">
+          <div class="p-4 rounded-4" style="background: rgba(59, 130, 246, 0.1);">
+            <div class="text-secondary small fw-bold mb-1">CANDIDATES</div>
+            <div class="display-5 fw-bold text-info">{{ stats.nbrCandidat }}</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="p-4 rounded-4" style="background: rgba(16, 185, 129, 0.1);">
+            <div class="text-secondary small fw-bold mb-1">MATCH RATE</div>
+            <div class="display-5 fw-bold text-success">{{ stats.tauxMoyenMatching | number:'1.3-3' }}</div>
+          </div>
+        </div>
+        <div class="col-12 mt-4">
+          <div class="jungle-card" style="background: var(--surface-color);">
+            <h5 class="mb-3 fw-bold">Popular Skills</h5>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge jungle-btn-primary opacity-75" *ngFor="let skill of stats.competencePop">{{ skill
+                }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 mt-4">
+          <h5 class="fw-bold mb-3">Profile Trends</h5>
+          <p class="text-secondary">{{ stats.tendancesProfils }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrops & Components styled as cards -->
+<div class="modal fade" tabindex="-1" [ngClass]="{show: showCandidatesModal}"
+  [ngStyle]="{display: showCandidatesModal ? 'block' : 'none'}">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content jungle-card border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0">
+        <h4 class="modal-title fw-bold text-dark mb-0">Candidates for: {{ selectedJobForCandidates?.title }}</h4>
+        <button type="button" class="jungle-btn p-2 rounded-circle ml-auto"
+          style="background: rgba(239, 68, 68, 0.1); color: #ef4444; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; padding: 0;"
+          (click)="closeCandidatesModal(); clearSelectedCandidate()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body p-0 d-flex flex-column" style="height: 600px;">
+        <!-- Dual Mode Toggle -->
+        <div class="d-flex px-4 py-3 border-bottom border-secondary border-opacity-10 gap-4"
+          style="background: var(--bg-color);">
+          <div class="d-flex align-items-center gap-2 p-1 rounded-pill"
+            style="background: rgba(0,0,0,0.05); display: flex; flex-direction: row;">
+            <button class="jungle-btn rounded-pill px-4 py-2 border-0 fw-bold transition-all"
+              [style.background]="!rankingMode ? '#10b981' : 'transparent'"
+              [style.color]="!rankingMode ? 'white' : '#64748b'" (click)="setRankingMode(false)">
+              <i class="fas fa-address-card me-2"></i>Browse Profiles
+            </button>
+            <button class="jungle-btn rounded-pill px-4 py-2 border-0 fw-bold transition-all"
+              [style.background]="rankingMode ? '#10b981' : 'transparent'"
+              [style.color]="rankingMode ? 'white' : '#64748b'" (click)="setRankingMode(true)">
+              <i class="fas fa-trophy me-2"></i>Ranking System
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-grow-1 overflow-hidden d-flex flex-column">
+          <!-- Nested Alerts for Modal Context -->
+          <div class="px-4 pt-3" *ngIf="success || error">
+            <div *ngIf="success"
+              class="alert alert-success py-2 px-3 mb-0 small border-0 shadow-sm d-flex align-items-center"
+              style="background: rgba(16, 185, 129, 0.1); color: var(--primary-color); border-radius: 8px;">
+              <i class="fas fa-check-circle me-2"></i> {{ success }}
+            </div>
+            <div *ngIf="error"
+              class="alert alert-danger py-2 px-3 mb-0 small border-0 shadow-sm d-flex align-items-center"
+              style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color); border-radius: 8px;">
+              <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+            </div>
+          </div>
+
+          <div *ngIf="candidateMatchesForSelectedJob.length; else noCandidatesModal" class="h-100">
+            <!-- Mode 1: Detailed Browse Mode -->
+            <div *ngIf="!rankingMode" class="row g-0 h-100">
+              <!-- Left Sidebar: Names -->
+              <div class="col-md-4 border-end border-secondary border-opacity-10 overflow-auto p-3 h-100"
+                style="background: rgba(0,0,0,0.1);">
+                <button type="button"
+                  class="list-group-item list-group-item-action jungle-input mb-2 border-0 py-3 px-3 transition-all"
+                  *ngFor="let c of candidateMatchesForSelectedJob" [class.active]="selectedCandidate === c"
+                  [style.background]="selectedCandidate === c ? 'rgba(16, 185, 129, 0.15)' : 'var(--surface-color)'"
+                  [style.border-left]="selectedCandidate === c ? '4px solid var(--primary-color)' : '4px solid transparent'"
+                  (click)="selectCandidate(c)">
+                  <div class="d-flex justify-content-between align-items-center w-100">
+                    <span [style.color]="selectedCandidate === c ? 'var(--primary-color)' : 'var(--text-primary)'">{{
+                      c.candidateName }}</span>
+                    <span class="badge rounded-pill" [style.background]="getScoreColor(c.matchScore) + '20'"
+                      [style.color]="getScoreColor(c.matchScore)">
+                      {{ c.matchScore | number:'1.0-0' }}%
+                    </span>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Right Detail Panel -->
+              <div class="col-md-8 overflow-auto p-4 h-100" style="color: var(--text-primary);"
+                *ngIf="selectedCandidate">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                  <div>
+                    <h3 class="fw-bold mb-1">{{ selectedCandidate?.candidateName }}</h3>
+                    <p class="text-secondary">{{ selectedCandidate?.candidateEmail }}</p>
+                  </div>
+                  <div class="text-end">
+                    <div class="display-6 fw-bold" [style.color]="getScoreColor(selectedCandidate?.matchScore)">
+                      {{ selectedCandidate?.matchScore | number:'1.0-0' }}%
+                    </div>
+                    <div class="small text-secondary fw-bold">OVERALL MATCH</div>
+                  </div>
+                </div>
+
+                <div class="jungle-card p-4 mb-4 border-0" style="background: var(--bg-color);">
+                  <div class="small text-secondary fw-bold mb-3"><i
+                      class="fas fa-chart-pie me-2 text-info"></i>COMPATIBILITY BREAKDOWN</div>
+                  <div class="row g-4">
+                    <div class="col-6">
+                      <div class="small text-secondary mb-1">Technical Skills</div>
+                      <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" [style.width]="selectedCandidate?.skillsMatch + '%'"></div>
+                      </div>
+                      <div class="mt-1 fw-bold">{{ selectedCandidate?.skillsMatch }}%</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="small text-secondary mb-1">Work Experience</div>
+                      <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" [style.width]="selectedCandidate?.experienceMatch + '%'">
+                        </div>
+                      </div>
+                      <div class="mt-1 fw-bold">{{ selectedCandidate?.experienceMatch }}%</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="small text-secondary mb-1">Education Level</div>
+                      <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" [style.width]="selectedCandidate?.educationMatch + '%'">
+                        </div>
+                      </div>
+                      <div class="mt-1 fw-bold">{{ selectedCandidate?.educationMatch }}%</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="small text-secondary mb-1">Lang & Certs</div>
+                      <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning"
+                          [style.width]="((selectedCandidate?.languageMatch + selectedCandidate?.certificationMatch)/2) + '%'">
+                        </div>
+                      </div>
+                      <div class="mt-1 fw-bold">{{ (selectedCandidate?.languageMatch +
+                        selectedCandidate?.certificationMatch)/2 | number:'1.0-0' }}%</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex gap-3">
+                  <button class="jungle-btn jungle-btn-primary flex-grow-1 py-3 fw-bold" (click)="openCVModal()">
+                    <i class="fas fa-file-pdf me-2"></i>View Full CV Content
+                  </button>
+                  <button class="jungle-btn py-3 px-4 fw-bold flex-grow-1"
+                    *ngIf="selectedCandidate?.status !== 'SHORTLISTED'"
+                    (click)="toggleShortlist(selectedCandidate?.matchId, selectedJobForCandidates!.id!, selectedCandidate!.status)"
+                    style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <i class="fas fa-heart me-2"></i>Shortlist This Candidate
+                  </button>
+                  <button class="jungle-btn py-3 px-4 fw-bold flex-grow-1"
+                    *ngIf="selectedCandidate?.status === 'SHORTLISTED'"
+                    (click)="toggleShortlist(selectedCandidate?.matchId, selectedJobForCandidates!.id!, selectedCandidate!.status)"
+                    style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);">
+                    <i class="fas fa-trash me-2"></i>Remove from Shortlist
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mode 2: Ranking Table Mode -->
+            <div *ngIf="rankingMode" class="table-responsive h-100 overflow-auto">
+              <table class="table table-hover mb-0 align-middle"
+                style="--bs-table-bg: transparent; color: var(--text-primary);">
+                <thead style="background: var(--bg-color); position: sticky; top: 0; z-index: 10;">
+                  <tr>
+                    <th class="ps-4 py-3 border-0">Rank</th>
+                    <th class="py-3 border-0">Candidate</th>
+                    <th class="py-3 border-0">Match Score</th>
+                    <th class="py-3 border-0">Breakdown</th>
+                    <th class="pe-4 py-3 border-0 text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let c of candidateMatchesForSelectedJob; let i = index"
+                    class="border-bottom border-secondary border-opacity-10" style="background: transparent;">
+                    <td class="ps-4">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold"
+                        [style.background]="i === 0 ? 'rgba(234, 179, 8, 0.2)' : 'var(--border-color)'"
+                        [style.color]="i === 0 ? '#eab308' : 'var(--text-secondary)'"
+                        style="width: 32px; height: 32px; font-size: 0.85rem;">
+                        #{{ i + 1 }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="fw-bold">{{ c.candidateName }}</div>
+                      <div class="small text-secondary">{{ c.candidateEmail }}</div>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="badge px-2 py-1" [style.background]="getScoreColor(c.matchScore) + '20'"
+                          [style.color]="getScoreColor(c.matchScore)"
+                          [style.border]="'1px solid ' + getScoreColor(c.matchScore) + '40'">
+                          {{ c.matchScore | number:'1.0-0' }}%
+                        </span>
+                      </div>
+                    </td>
+                    <td style="min-width: 200px;">
+                      <div class="progress mb-1" style="height: 4px; background: var(--border-color);">
+                        <div class="progress-bar bg-success" [style.width]="c.skillsMatch + '%' "></div>
+                        <div class="progress-bar bg-info" [style.width]="c.experienceMatch + '%' "></div>
+                      </div>
+                      <div class="small text-secondary" style="font-size: 0.65rem;">
+                        S: {{c.skillsMatch}}% | E: {{c.experienceMatch}}% | Q: {{c.educationMatch}}%
+                      </div>
+                    </td>
+                    <td class="pe-4 text-end">
+                      <div class="d-flex gap-2 justify-content-end">
+                        <button class="jungle-btn p-2 small" (click)="selectCandidate(c); openCVModal();"
+                          title="View CV">
+                          <i class="fas fa-file-alt"></i>
+                        </button>
+                        <button class="jungle-btn p-2 small" *ngIf="c.status !== 'SHORTLISTED'"
+                          (click)="toggleShortlist(c.matchId, selectedJobForCandidates!.id!, c.status)"
+                          title="Shortlist" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                          <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="jungle-btn p-2 small" *ngIf="c.status === 'SHORTLISTED'"
+                          (click)="toggleShortlist(c.matchId, selectedJobForCandidates!.id!, c.status)"
+                          title="Remove from Shortlist" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <ng-template #noCandidatesModal>
+          <div class="text-center py-5">
+            <i class="fas fa-users-slash display-4 text-secondary mb-3"></i>
+            <p class="text-secondary">No candidates have applied yet.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Extracted CV -->
+<div class="modal fade" tabindex="-1" [ngClass]="{show: showCVModal}"
+  [ngStyle]="{display: showCVModal ? 'block' : 'none'}">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content jungle-card border-0 shadow-lg">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold">Extracted CV: {{ selectedCandidate?.candidateName }}</h5>
+        <button type="button" class="btn-close" (click)="closeCVModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="jungle-card" style="background: var(--bg-color); max-height: 500px; overflow-y: auto;">
+          <pre class="m-0"
+            style="color: var(--text-secondary); white-space: pre-wrap; font-size: 0.9rem;">{{ selectedCandidate?.cvContent }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Premium Delete Confirmation Modal -->
+<div class="modal fade" tabindex="-1" [ngClass]="{show: showDeleteModal}"
+  [ngStyle]="{display: showDeleteModal ? 'block' : 'none'}">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+    <div class="modal-content jungle-card border-0 shadow-lg text-center p-4"
+      style="background: var(--surface-color); backdrop-filter: blur(16px);">
+      <div class="modal-body">
+        <div class="mb-4">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+            style="width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <i class="fas fa-exclamation-triangle fa-2x"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Delete Job Offer?</h4>
+          <p class="text-secondary small">
+            Are you sure you want to delete <span class="text-primary fw-bold">"{{ jobToDelete?.title }}"</span>?<br>
+            This action cannot be undone.
+          </p>
+        </div>
+        <div class="d-grid gap-2">
+          <button type="button" class="jungle-btn jungle-btn-danger py-2 fw-bold" (click)="deleteJobOffer()">
+            Yes, Delete Offer
+          </button>
+          <button type="button" class="jungle-btn jungle-btn-secondary py-2" (click)="closeDeleteModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

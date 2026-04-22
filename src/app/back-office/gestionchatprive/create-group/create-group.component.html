@@ -1,0 +1,75 @@
+<div class="modal-overlay" (click)="cancel()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <span class="bar"></span>
+        {{ isEditMode ? 'Edit group' : 'Create group' }}
+      </h2>
+
+      <button class="btn-close" type="button" (click)="cancel()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      <div class="form-group">
+        <label>Group photo</label>
+
+        <div class="image-upload-area" (click)="fileInput.click()">
+          <img
+            *ngIf="previewUrl"
+            [src]="previewUrl"
+            class="image-preview"
+            alt="Preview"
+          />
+
+          <div class="upload-placeholder" *ngIf="!previewUrl">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span class="upload-text">Click to choose an image</span>
+            <span class="upload-hint">PNG, JPG, WEBP - max 5 MB</span>
+          </div>
+        </div>
+
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          class="file-input-hidden"
+          (change)="onFileSelected($event)"
+        />
+
+        <button
+          *ngIf="previewUrl"
+          type="button"
+          class="btn-change-image"
+          (click)="fileInput.click()"
+        >
+          Change image
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label for="groupName">Group name</label>
+        <input
+          type="text"
+          id="groupName"
+          name="groupName"
+          placeholder="Example: Design Team"
+          [(ngModel)]="groupName"
+          required
+        />
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-submit" [disabled]="!groupName.trim()">
+          <i class="fa-solid fa-check"></i>
+          {{ isEditMode ? 'Update' : 'Create' }}
+        </button>
+
+        <button type="button" class="btn-cancel" (click)="cancel()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

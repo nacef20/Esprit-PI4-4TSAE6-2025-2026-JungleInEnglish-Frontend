@@ -1,0 +1,203 @@
+/* =========================================================
+   Animations (pro & soft)
+   ========================================================= */
+
+/* Fade-in used by: animate-fade-in + delay-200/300 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeInUp .7s cubic-bezier(.2,.9,.2,1) both;
+}
+
+/* optional delays if you use "delay-200" as a class (Tailwind has its own, but this helps if not) */
+.delay-200 { animation-delay: .2s; }
+.delay-300 { animation-delay: .3s; }
+
+/* Pulse slow blobs */
+@keyframes pulseSlow {
+  0%,100% { transform: scale(1); opacity: .65; }
+  50%     { transform: scale(1.05); opacity: .95; }
+}
+.animate-pulse-slow {
+  animation: pulseSlow 6.5s ease-in-out infinite;
+}
+.animation-delay-2000 { animation-delay: 2s; }
+
+/* Float badges */
+@keyframes floatSoft {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+.animate-float {
+  animation: floatSoft 4.2s ease-in-out infinite;
+}
+.animation-delay-1500 { animation-delay: 1.5s; }
+
+/* =========================================================
+   PRO BADGES (Students / Success)
+   ========================================================= */
+.badge-pro {
+  background: rgba(255,255,255,.96);
+  border-radius: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(14,163,122,.18);
+  box-shadow: 0 18px 46px rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
+
+  min-width: 175px;
+  will-change: transform;
+}
+
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge-ico {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+
+  display: grid;
+  place-items: center;
+
+  /* premium green */
+  background: linear-gradient(135deg, #0ea37a, #0b6b56);
+  box-shadow: 0 12px 22px rgba(14,163,122,.25);
+}
+
+.badge-ico-dark {
+  background: linear-gradient(135deg, #0b6b56, #064a3f);
+}
+
+.badge-text {
+  line-height: 1.05;
+}
+
+.badge-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(17,24,39,.62);
+  letter-spacing: .2px;
+}
+
+.badge-value {
+  margin: 3px 0 0;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: .2px;
+
+  background: linear-gradient(90deg, #0b6b56, #0ea37a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.badge-green {
+  border-color: rgba(14,163,122,.22);
+}
+.badge-white {
+  border-color: rgba(14,163,122,.16);
+}
+
+/* hover subtle (pro) */
+.badge-pro:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 24px 60px rgba(0,0,0,.22);
+}
+
+/* =========================================================
+   HERO IMAGE polish (without changing your HTML)
+   ========================================================= */
+img[alt="English Learning Journey"] {
+  transform: translateZ(0);
+}
+
+/* the image wrapper you have: rounded-3xl shadow-2xl border-4 ... */
+.rounded-3xl.shadow-2xl {
+  box-shadow: 0 30px 70px rgba(0,0,0,.22);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.rounded-3xl.shadow-2xl:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 40px 90px rgba(0,0,0,.26);
+}
+
+/* =========================================================
+   Responsive tweak (badges not too big on small screens)
+   ========================================================= */
+@media (max-width: 1024px) {
+  .badge-pro {
+    min-width: 155px;
+    padding: 12px 14px;
+  }
+  .badge-value {
+    font-size: 20px;
+  }
+  .badge-ico {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+}
+
+
+
+
+
+/* ================= VIDEO MODAL ================= */
+
+/* ===== VIDEO MODAL ===== */
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.video-modal {
+  position: relative;
+  width: min(420px, 92vw);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 40px 90px rgba(0,0,0,.45);
+}
+
+.tiktok-container {
+  position: relative;
+  width: 100%;
+  padding-top: 177%; /* TikTok vertical ratio */
+}
+
+.tiktok-container iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* close */
+.video-close {
+  position: absolute;
+  top: -42px;
+  right: 0;
+  background: white;
+  color: #0b6b56;
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  font-weight: 900;
+  box-shadow: 0 10px 25px rgba(0,0,0,.25);
+  cursor: pointer;
+}

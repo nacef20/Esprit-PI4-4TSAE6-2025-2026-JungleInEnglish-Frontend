@@ -1,0 +1,324 @@
+<div class="chat-container">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <div class="sidebar-header">
+      <h1 class="app-title">
+        <i class="fa-solid fa-comments"></i>
+        ChatGroupe
+      </h1>
+      
+      <button 
+        class="btn-add-group" 
+        title="Nouveau groupe" 
+        (click)="showAddGroupModal = true">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+
+      <app-create-group
+        *ngIf="showAddGroupModal"
+        [isEditMode]="isEditMode"
+        [editGroupData]="selectedGroupToEdit"
+        (cancelled)="showAddGroupModal = false"
+        (groupCreated)="handleCreateGroup($event)"
+      ></app-create-group>
+    </div>
+
+    <div class="search-container">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher un groupe..."
+        [(ngModel)]="searchQuery"
+      />
+    </div>
+
+    <div class="groups-list">
+      <div
+        *ngFor="let group of filteredGroups"
+        class="group-item"
+        [class.active]="selectedGroup?.id === group.id"
+        (click)="selectGroup(group)"
+      >
+        <!-- Avatar -->
+        <div class="group-avatar">
+          <img
+            class="group-avatar"
+            [src]="'http://localhost:8222/uploads/images/' + group.avatar"
+            [alt]="group.name"
+          />
+        </div>
+
+        <!-- Infos -->
+        <div class="group-info">
+          <div class="group-header">
+            <h3 class="group-name">{{ group.name }}</h3>
+            <span class="group-time">{{ group.time }}</span>
+          </div>
+          <div class="group-footer">
+            <p class="group-last-message">{{ group.lastMessage }}</p>
+            <span class="group-unread" *ngIf="group.unread > 0">{{ group.unread }}</span>
+          </div>
+          <div class="group-online">
+            <span class="online-dot"></span>
+            {{ group.online }} en ligne
+          </div>
+        </div>
+
+        <!-- ===== ACTIONS ===== -->
+        <div class="group-actions" (click)="$event.stopPropagation()">
+
+          <!-- Aucune demande -->
+          <button
+            *ngIf="!group.isMember && group.ownerId != currentUserId && (statusMap[group.id] === null || statusMap[group.id] === undefined     )"
+            class="btn-join"
+            (click)="joinGroup(group)"
+            title="Rejoindre le groupe"
+          >
+            <i class="fa-solid fa-user-plus"  ></i>
+          </button>
+
+          <!-- En attente -->
+          <button 
+            *ngIf="statusMap[group.id] === 'ATTENTE'"
+            class="btn-join"
+            title="En attente"
+            disabled
+          >
+            <i class="fa-solid fa-clock"></i>
+          </button>
+
+          <!-- Accepté → rien -->
+          <span *ngIf="statusMap[group.id] === 'ACCEPTE'"></span>
+
+          <!-- Refusé -->
+          <button 
+            *ngIf="statusMap[group.id] === 'REFUSE'"              
+            class="btn-join"
+            title="Refusé"
+            disabled
+          >
+            <i class="fa-solid fa-user-xmark"></i>
+          </button>
+
+
+        
+ 
+
+  
+
+<i class="fa-solid fa-users-gear" style="color: rgb(99, 230, 190);"
+   title="Voir les membres du groupe"
+   (click)="openGroupMembers(group.id); $event.stopPropagation()">
+</i>
+
+
+          <!-- Menu 3 points (seulement pour le owner) -->
+          
+
+          <div class="dropdown-menu" *ngIf="group.ownerId === currentUserId">
+            <button
+              class="btn-menu"
+              (click)="toggleMenu(group.id)"
+              title="Options"
+            >
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+
+            <!-- Liste déroulante -->
+            <div class="dropdown-list" *ngIf="openMenuId === group.id">
+              <button class="dropdown-item" (click)="editGroup(group)">
+                <i class="fa-solid fa-pen"></i>
+                Modifier
+              </button>
+
+              <button class="dropdown-item delete" (click)="deleteGroup(group)">
+                <i class="fa-solid fa-trash"></i>
+                Supprimer
+              </button>
+
+              <!-- ✅ Seulement le bouton ici, PAS app-joingroup -->
+              <button class="btn-join-group" (click)="openJoinRequests(group.id); $event.stopPropagation()">
+                <i class="fa-solid fa-users"></i>
+                Voir toutes les demandes
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ===== CHAT MAIN ===== -->
+  <main class="chat-main">
+
+    <!-- Header -->
+    <div class="chat-header" *ngIf="selectedGroup">
+      <div class="header-info">
+        <div class="header-avatar">
+          <img class="group-avatar" [src]="'http://localhost:8222/uploads/images/' + selectedGroup.avatar" alt="{{selectedGroup.name}}" />
+        </div>
+        <div>
+          <h2 class="header-title">{{ selectedGroup.name }}</h2>
+          
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-call" (click)="startAudioCall()" title="Appel audio">
+          <i class="fa-solid fa-phone"></i>
+        </button>
+        <button class="btn-video" (click)="startVideoCall()" title="Appel vidéo">
+          <i class="fa-solid fa-video"></i>
+        </button>
+        <button class="btn-more" title="Plus d'options">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+   <div class="messages-container" *ngIf="selectedGroup">
+  <div class="messages-list">
+    <div
+      *ngFor="let message of messages"
+      class="message"
+      (dblclick)="showDeleteIcon(message)"
+      [class.own]="message.sender === currentUserId"
+    >
+      <div class="message-avatar">👨‍💻</div>
+
+      <div class="message-content" [class.deleted-text]="message.deleted">
+        <span class="message-sender">
+          {{ message.senderInfo?.firstName }} {{ message.senderInfo?.lastName }}
+        </span>
+
+        <div class="message-bubble">
+          <p class="message-text" [class.deleted-text]="message.deleted">
+            {{ message.deleted ? 'Message supprimé' : message.content }}
+          </p>
+
+          <!-- ✅ Traduction affichée -->
+          <p class="translated-text" *ngIf="message.translatedText">
+            🌍 {{ message.translatedText }}
+          </p>
+
+          <!-- ✅ Loading traduction -->
+          <p class="translating" *ngIf="message.isTranslating">
+            ⏳ Traduction...
+          </p>
+
+          <div class="message-actions">
+            <!-- ✅ Icône Supprimer -->
+            <i
+              *ngIf="message.showDelete && message.sender === currentUserId && !message.deleted"
+              class="fa-solid fa-trash delete-icon"
+              (click)="deleteMessage(message)"
+            ></i>
+
+            <!-- ✅ Icône Traduire -->
+            <div class="translate-wrapper" *ngIf="!message.deleted">
+              <i
+                class="fa-solid fa-language translate-icon"
+                (click)="toggleLangMenu(message)"
+              ></i>
+
+                <i
+    *ngIf="!message.deleted"
+    class="fa-solid fa-robot robot-icon"
+    title="Demander à l'IA"
+    (click)="askRobot(message)"
+  ></i>
+</div>
+
+
+<div class="robot-response" *ngIf="message.robotResponse || message.isRobotTyping">
+  <span class="robot-label">🤖 Assistant IA</span>
+  <p *ngIf="!message.isRobotTyping">{{ message.robotResponse }}</p>
+  <p class="typing-indicator" *ngIf="message.isRobotTyping">
+    <span></span><span></span><span></span>
+  </p>
+</div>
+ 
+
+              <!-- ✅ Dropdown langues -->
+              <div class="lang-menu" *ngIf="message.showLangMenu">
+                <ul>
+                  <li (click)="translateMessage(message, 'anglais')">🇬🇧 Anglais</li>
+                  <li (click)="translateMessage(message, 'français')">🇫🇷 Français</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <span class="message-time">{{ message.time }}</span>
+      </div>
+    </div>
+  </div>
+
+    <!-- Zone de saisie -->
+    <div class="message-input-container" *ngIf="selectedGroup">
+      <div class="input-wrapper">
+        <button class="btn-emoji" title="Emoji" type="button" (click)="loadEmojis()">
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+        <input
+          type="text"
+          class="message-input"
+          placeholder="Écrivez votre message..."
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+        />
+        <button class="btn-attach" title="Joindre un fichier">
+          <i class="fa-solid fa-paperclip"></i>
+        </button>
+        <button class="btn-send"
+                (click)="sendMessage()"
+                [disabled]="!newMessage.trim()"
+                title="Envoyer">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+
+      <!-- POPUP EMOJI -->
+      <div class="emoji-popup" *ngIf="showEmojis">
+        <span
+          *ngFor="let e of emojis"
+          (click)="addEmoji(e.htmlCode[0])"
+          [innerHTML]="e.htmlCode[0]"
+          class="emoji-item">
+        </span>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <div class="empty-state" *ngIf="!selectedGroup">
+      <i class="fa-regular fa-comments"></i>
+      <h2>Sélectionnez un groupe</h2>
+      <p>Choisissez un groupe dans la liste pour commencer à discuter</p>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ✅ app-joingroup ICI, HORS du chat-container et du ngFor -->
+<app-joingroup 
+  *ngIf="showJoinGroup" 
+  (close)="showJoinGroup = false"
+   [groupChatId]="selectedGroupId">
+</app-joingroup>
+
+
+<app-membregroup
+  *ngIf="showGroupMembers"
+  (close)="showGroupMembers = false"
+  [groupId]="selectedGroupId">
+</app-membregroup>

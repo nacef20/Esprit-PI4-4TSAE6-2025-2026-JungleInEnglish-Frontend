@@ -1,0 +1,156 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+  <!-- Navigation bar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-screen-xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a routerLink="/back" class="text-xl font-bold text-[#0ea37a]">Jungle In English</a>
+      <div class="flex items-center gap-4">
+        <!-- Countdown timer in nav -->
+        <div *ngIf="attemptId && !submitted && !blocked && !loading"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-sm font-bold transition-all"
+          [ngClass]="{
+            'bg-red-100 text-red-600 animate-pulse': timerWarning,
+            'bg-[#0ea37a]/10 text-[#0ea37a]': !timerWarning
+          }">
+          <span class="material-symbols-outlined text-base">timer</span>
+          {{ timerDisplay }}
+        </div>
+        <a routerLink="/back/student-quizzes" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Quiz</a>
+        <a routerLink="/back/student-attempts" routerLinkActive="text-[#0ea37a]" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">My Attempts</a>
+        <a routerLink="/back" class="text-sm font-medium text-gray-600 hover:text-[#0ea37a] transition-colors">Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-24 pb-16 px-6">
+    <div class="max-w-3xl mx-auto">
+
+    <!-- Blocked message -->
+    <div *ngIf="blocked" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
+        <span class="material-symbols-outlined text-4xl">block</span>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+      <p class="text-gray-600 mb-6">{{ blockReason }}</p>
+      <button (click)="goBack()"
+        class="px-6 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all font-medium">
+        Back to quizzes
+      </button>
+    </div>
+
+    <!-- Score result -->
+    <div *ngIf="submitted && !blocked" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center mb-8">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center"
+        [ngClass]="score >= totalPoints / 2 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'">
+        <span *ngIf="score >= totalPoints / 2" class="material-symbols-outlined text-4xl">check_circle</span>
+        <span *ngIf="score < totalPoints / 2" class="material-symbols-outlined text-4xl">cancel</span>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800 mb-1">
+        {{ timeExpiredOnSubmit ? 'Time\'s up!' : 'Quiz completed!' }}
+      </h2>
+      <p *ngIf="timeExpiredOnSubmit" class="text-sm text-amber-600 mb-2">
+        <span class="material-symbols-outlined text-sm align-middle">warning</span>
+        Your quiz was auto-submitted because time expired.
+      </p>
+      <p class="text-lg text-gray-600">
+        Score: <span class="font-bold text-[#0ea37a]">{{ score }}</span> / {{ totalPoints }}
+      </p>
+      <button (click)="goBack()"
+        class="mt-6 px-6 py-2.5 bg-[#0ea37a] text-white rounded-lg hover:bg-[#0b8a68] transition-all font-medium">
+        Back to quizzes
+      </button>
+    </div>
+
+    <!-- Quiz header -->
+    <div *ngIf="quiz && !blocked" class="mb-8">
+      <button (click)="goBack()" class="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-4 transition-colors">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        Back
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800 mb-1">{{ quiz.title }}</h1>
+      <p class="text-gray-500">{{ quiz.description }}</p>
+      <div class="flex items-center gap-4 mt-3 text-sm text-gray-400">
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">schedule</span>
+          {{ quiz.duration }} min
+        </span>
+        <span>{{ questions.length }} questions</span>
+        <span>{{ totalPoints }} points</span>
+      </div>
+
+      <!-- Large timer display (shown while quiz is active) -->
+      <div *ngIf="attemptId && !submitted && !loading"
+        class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-lg font-mono font-bold transition-all"
+        [ngClass]="{
+          'bg-red-50 text-red-600 border border-red-200': timerWarning,
+          'bg-gray-50 text-gray-700 border border-gray-200': !timerWarning
+        }">
+        <span class="material-symbols-outlined">timer</span>
+        Time remaining: {{ timerDisplay }}
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading && !blocked" class="text-center py-16">
+      <span class="material-symbols-outlined text-5xl text-[#0ea37a] animate-spin block mx-auto mb-4">progress_activity</span>
+      <p class="text-gray-500">Loading questions...</p>
+    </div>
+
+    <!-- Questions -->
+    <div class="space-y-6" *ngIf="!loading && !blocked">
+      <div *ngFor="let question of questions; let i = index"
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-sm font-bold text-[#0ea37a] bg-[#0ea37a]/10 px-2.5 py-1 rounded-full">Q{{ i + 1 }}</span>
+          <span class="text-xs text-gray-400">{{ question.points }} pts</span>
+        </div>
+
+        <p class="text-gray-800 font-medium mb-4">{{ question.content }}</p>
+
+        <!-- Choices -->
+        <div class="space-y-2">
+          <button *ngFor="let choice of choicesByQuestion.get(question.id!)"
+            (click)="!submitted && !submitting && selectChoice(question.id!, choice.id!)"
+            [disabled]="submitted || submitting"
+            class="w-full text-left px-4 py-3 rounded-lg border-2 transition-all flex items-center gap-3"
+            [ngClass]="{
+              'border-[#0ea37a] bg-[#0ea37a]/5': isSelected(question.id!, choice.id!) && !submitted,
+              'border-gray-200 hover:border-gray-300': !isSelected(question.id!, choice.id!) && !submitted,
+              'border-green-500 bg-green-50': submitted && isCorrectChoice(question.id!, choice.id!),
+              'border-red-400 bg-red-50': submitted && isSelected(question.id!, choice.id!) && !isCorrectChoice(question.id!, choice.id!),
+              'border-gray-100 opacity-60': submitted && !isSelected(question.id!, choice.id!) && !isCorrectChoice(question.id!, choice.id!)
+            }">
+
+            <!-- Radio circle -->
+            <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+              [ngClass]="{
+                'border-[#0ea37a]': isSelected(question.id!, choice.id!) && !submitted,
+                'border-gray-300': !isSelected(question.id!, choice.id!) && !submitted,
+                'border-green-500': submitted && isCorrectChoice(question.id!, choice.id!),
+                'border-red-400': submitted && isSelected(question.id!, choice.id!) && !isCorrectChoice(question.id!, choice.id!)
+              }">
+              <span *ngIf="isSelected(question.id!, choice.id!)" class="w-2.5 h-2.5 rounded-full"
+                [ngClass]="submitted ? (isCorrectChoice(question.id!, choice.id!) ? 'bg-green-500' : 'bg-red-400') : 'bg-[#0ea37a]'">
+              </span>
+            </span>
+
+            <span class="text-gray-700">{{ choice.content }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit button -->
+    <div *ngIf="!submitted && !loading && !blocked && questions.length > 0" class="mt-8 text-center">
+      <button (click)="submit()"
+        [disabled]="submitting"
+        class="px-8 py-3 bg-[#0ea37a] text-white rounded-lg font-medium hover:bg-[#0b8a68] transition-all shadow-md hover:shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="!submitting">Submit quiz</span>
+        <span *ngIf="submitting" class="flex items-center gap-2">
+          <span class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+          Submitting...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

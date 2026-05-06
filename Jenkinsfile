@@ -20,9 +20,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
-                        rm -rf node_modules package-lock.json
-                        npm cache clean --force
-                        npm install
+                        npm ci
                     '''
                 }
             }
@@ -31,7 +29,9 @@ pipeline {
         stage('Build Angular') {
             steps {
                 dir('frontend') {
-                    sh 'npm run build -- --configuration production'
+                    sh '''
+                        npm run build -- --configuration production
+                    '''
                 }
             }
         }
@@ -39,7 +39,9 @@ pipeline {
         stage('Tests') {
             steps {
                 dir('frontend') {
-                    sh 'npm run test -- --watch=false'
+                    sh '''
+                        npm run test -- --watch=false
+                    '''
                 }
             }
         }

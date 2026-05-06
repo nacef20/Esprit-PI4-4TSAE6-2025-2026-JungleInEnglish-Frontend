@@ -4,8 +4,6 @@ pipeline {
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000'
         SONAR_TOKEN = credentials('sonar-token')
-        npm_config_platform = 'linux'
-        NODE_OPTIONS = '--openssl-legacy-provider'
     }
 
     stages {
@@ -22,8 +20,12 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
-                        rm -rf node_modules package-lock.json
-                        npm install --legacy-peer-deps
+                        node -v
+                        npm -v
+                        rm -rf node_modules package-lock.json .angular
+                        npm install --legacy-peer-deps --include=optional
+                        npm install @rollup/rollup-linux-x64-gnu --no-save --legacy-peer-deps || true
+                        npm install @rollup/rollup-linux-x64-musl --no-save --legacy-peer-deps || true
                     '''
                 }
             }
@@ -82,6 +84,15 @@ pipeline {
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline frontend terminé avec succès'
+        }
+        failure {
+            echo 'Pipeline échoué — vérifier les logs ci-dessus'
         }
     }
 }

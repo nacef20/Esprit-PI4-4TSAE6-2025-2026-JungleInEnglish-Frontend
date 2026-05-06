@@ -19,7 +19,11 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
+                    sh '''
+                        rm -rf node_modules package-lock.json
+                        npm cache clean --force
+                        npm install
+                    '''
                 }
             }
         }
@@ -71,8 +75,10 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker push nacef17/forum-frontend:latest'
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push nacef17/forum-frontend:latest
+                    '''
                 }
             }
         }

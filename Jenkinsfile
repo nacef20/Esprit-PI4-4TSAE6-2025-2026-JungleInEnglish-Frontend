@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/nacef20/Esprit-PI4-4SAE-6-2025-2026-JungleInEnglish-Frontend.git',
+                git url: 'https://github.com/nacef20/Esprit-PI4-4TSAE6-2025-2026-JungleInEnglish-Frontend.git',
                     branch: 'devops',
                     credentialsId: 'github-token'
             }

@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000'
-        SONAR_TOKEN = credentials('sonar-token')
         CHROME_BIN = '/usr/bin/chromium'
     }
 
@@ -52,14 +51,13 @@ pipeline {
             steps {
                 dir('frontend') {
                     withSonarQubeEnv('SonarQube') {
-                        sh """
-                            sonar-scanner \
+                        sh '''
+                            npx sonar-scanner \
                             -Dsonar.projectKey=forum-frontend \
                             -Dsonar.sources=src \
-                            -Dsonar.host.url=$SONAR_HOST_URL \
-                            -Dsonar.login=$SONAR_TOKEN \
+                            -Dsonar.host.url=${SONAR_HOST_URL} \
                             -Dsonar.javascript.lcov.reportPaths=coverage/school-management/lcov.info
-                        """
+                        '''
                     }
                 }
             }

@@ -4,6 +4,7 @@ pipeline {
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000'
         SONAR_TOKEN = credentials('sonar-token')
+        CHROME_BIN = '/usr/bin/chromium'
     }
 
     stages {
@@ -42,7 +43,7 @@ pipeline {
         stage('Tests') {
             steps {
                 dir('frontend') {
-                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+                    sh 'npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox --code-coverage'
                 }
             }
         }
@@ -56,7 +57,8 @@ pipeline {
                             -Dsonar.projectKey=forum-frontend \
                             -Dsonar.sources=src \
                             -Dsonar.host.url=$SONAR_HOST_URL \
-                            -Dsonar.login=$SONAR_TOKEN
+                            -Dsonar.login=$SONAR_TOKEN \
+                            -Dsonar.javascript.lcov.reportPaths=coverage/school-management/lcov.info
                         """
                     }
                 }
@@ -89,10 +91,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline frontend terminé avec succès'
+            echo 'Pipeline frontend terminé avec succès ✅'
         }
         failure {
-            echo 'Pipeline échoué — vérifier les logs ci-dessus'
+            echo 'Pipeline échoué — vérifier les logs ci-dessus ❌'
         }
     }
 }

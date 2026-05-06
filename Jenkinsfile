@@ -57,7 +57,7 @@ pipeline {
                         -Dsonar.projectKey=forum-frontend \
                         -Dsonar.sources=src \
                         -Dsonar.host.url=${SONAR_HOST_URL} \
-                        -Dsonar.javascript.lcov.reportPaths=coverage/**/lcov.info
+                        -Dsonar.javascript.lcov.reportPaths=coverage/school-management/lcov.info
                     '''
                 }
             }

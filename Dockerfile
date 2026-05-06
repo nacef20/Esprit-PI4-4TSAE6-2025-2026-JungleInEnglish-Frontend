@@ -4,17 +4,20 @@ FROM node:18 AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+
+# FIX CONFLITS DEPENDENCIES
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
 RUN npm run build -- --configuration production
 
 
-# Étape 2 : serveur web (Nginx)
+# Étape 2 : serveur Nginx
 FROM nginx:alpine
 
-COPY --from=build /app/dist /usr/share/nginx/html
+# COPY du bon dossier Angular (IMPORTANT)
+COPY --from=build /app/dist/school-management /usr/share/nginx/html
 
 EXPOSE 80
 

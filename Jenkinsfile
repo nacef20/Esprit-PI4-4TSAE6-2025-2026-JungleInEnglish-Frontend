@@ -22,9 +22,8 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
-                        rm -rf node_modules
-                        npm cache verify
-                        npm ci --legacy-peer-deps
+                        rm -rf node_modules package-lock.json
+                        npm install --legacy-peer-deps
                     '''
                 }
             }
@@ -33,9 +32,7 @@ pipeline {
         stage('Build Angular') {
             steps {
                 dir('frontend') {
-                    sh '''
-                        npm run build -- --configuration production
-                    '''
+                    sh 'npm run build -- --configuration production'
                 }
             }
         }
@@ -43,9 +40,7 @@ pipeline {
         stage('Tests') {
             steps {
                 dir('frontend') {
-                    sh '''
-                        npm run test -- --watch=false
-                    '''
+                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
                 }
             }
         }
@@ -55,11 +50,11 @@ pipeline {
                 dir('frontend') {
                     withSonarQubeEnv('SonarQube') {
                         sh """
-                        sonar-scanner \
-                        -Dsonar.projectKey=forum-frontend \
-                        -Dsonar.sources=src \
-                        -Dsonar.host.url=$SONAR_HOST_URL \
-                        -Dsonar.login=$SONAR_TOKEN
+                            sonar-scanner \
+                            -Dsonar.projectKey=forum-frontend \
+                            -Dsonar.sources=src \
+                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.login=$SONAR_TOKEN
                         """
                     }
                 }

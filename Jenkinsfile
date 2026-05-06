@@ -22,9 +22,7 @@ pipeline {
                     node -v
                     npm -v
                     rm -rf node_modules package-lock.json .angular
-                    npm install --legacy-peer-deps --include=optional
-                    npm install @rollup/rollup-linux-x64-gnu --no-save --legacy-peer-deps || true
-                    npm install @rollup/rollup-linux-x64-musl --no-save --legacy-peer-deps || true
+                    npm install --legacy-peer-deps
                 '''
             }
         }
@@ -35,9 +33,19 @@ pipeline {
             }
         }
 
-        stage('Tests') {
+        stage('Tests + Coverage') {
             steps {
                 sh 'npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox --code-coverage'
+            }
+        }
+
+        stage('Debug Coverage') {
+            steps {
+                sh '''
+                    echo "=== COVERAGE FILE CHECK ==="
+                    find . -name lcov.info || true
+                    ls -R coverage || true
+                '''
             }
         }
 
@@ -49,7 +57,7 @@ pipeline {
                         -Dsonar.projectKey=forum-frontend \
                         -Dsonar.sources=src \
                         -Dsonar.host.url=${SONAR_HOST_URL} \
-                        -Dsonar.javascript.lcov.reportPaths=coverage/school-management/lcov.info
+                        -Dsonar.javascript.lcov.reportPaths=coverage/**/lcov.info
                     '''
                 }
             }
@@ -82,7 +90,7 @@ pipeline {
             echo 'Pipeline frontend terminé avec succès ✅'
         }
         failure {
-            echo 'Pipeline échoué — vérifier les logs ci-dessus ❌'
+            echo 'Pipeline échoué — vérifier les logs ❌'
         }
     }
 }

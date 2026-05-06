@@ -69,6 +69,7 @@ pipeline {
             }
         }
 
+
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(

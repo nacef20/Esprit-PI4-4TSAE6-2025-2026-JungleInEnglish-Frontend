@@ -1,0 +1,77 @@
+@import '../transferts-impact/transferts-impact.component.scss';
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-left: 6px solid #cbd5e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
+  &.active { border-left-width: 10px; background: #f8fafc; }
+
+  .stat-label { font-size: 0.9rem; color: #718096; font-weight: 600; text-transform: uppercase; }
+  .stat-value { font-size: 1.75rem; font-weight: 700; color: #2d3748; }
+  
+  .material-symbols-outlined { font-size: 2.5rem; }
+  .icon-critique { color: #feb2b2; }
+  .icon-faible { color: #fbd38d; }
+  .icon-moyen { color: #faf089; }
+  .icon-bon { color: #9ae6b4; }
+}
+
+.group-info {
+  display: flex;
+  flex-direction: column;
+  .nom { font-weight: 600; color: #2d3748; }
+  .code { font-size: 0.85rem; color: #718096; }
+}
+
+.score-progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .progress-bar-bg { flex: 1; height: 8px; background: #edf2f7; border-radius: 4px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+  .score-value { font-weight: 700; font-size: 0.95rem; min-width: 3.5rem; text-align: right; }
+}
+
+.badge {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+
+  &.badge-critique { background: #fff5f5; color: #c53030; border-color: #feb2b2; }
+  &.badge-faible { background: #fffaf0; color: #9c4221; border-color: #fbd38d; }
+  &.badge-moyen { background: #fffff0; color: #744210; border-color: #faf089; }
+  &.badge-bon { background: #f0fff4; color: #276749; border-color: #9ae6b4; }
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  
+  label { font-size: 0.9rem; font-weight: 600; color: #4a5568; }
+  .compact { padding: 0.4rem 0.75rem; border-radius: 8px; min-width: 150px; }
+}
+
+.btn-text { background: none; border: none; color: #667eea; font-weight: 600; cursor: pointer; &:hover { text-decoration: underline; } }
+
+.justify-between { display: flex; justify-content: space-between; align-items: center; }

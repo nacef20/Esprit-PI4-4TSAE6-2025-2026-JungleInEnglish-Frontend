@@ -1,0 +1,98 @@
+<div class="analysis-container dashboard-fade-in">
+  <header class="analysis-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined">report_problem</span>
+        Anomaly Scan
+      </h1>
+    </div>
+    
+    <div class="stat-summary" *ngIf="!loading && stats">
+      <div class="stat-item stat-critique"><strong>{{ stats.CRITIQUE }}</strong> Critiques</div>
+      <div class="divider"></div>
+      <div class="stat-item stat-warning"><strong>{{ stats.WARNING }}</strong> Warnings</div>
+      <div class="divider"></div>
+      <div class="stat-item stat-info"><strong>{{ stats.INFO }}</strong> Infos</div>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-refresh-mini" (click)="loadAlertes()" [disabled]="loading" title="Rerun the scan">
+        <span class="material-symbols-outlined" [class.rotating]="loading">refresh</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs-nav" *ngIf="!loading">
+    <button class="tab-btn" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">All</button>
+    <button class="tab-btn tab-critique" [class.active]="activeFilter === 'CRITIQUE'" (click)="setFilter('CRITIQUE')">Critical</button>
+    <button class="tab-btn tab-warning" [class.active]="activeFilter === 'WARNING'" (click)="setFilter('WARNING')">Warnings</button>
+    <button class="tab-btn tab-info" [class.active]="activeFilter === 'INFO'" (click)="setFilter('INFO')">Infos</button>
+  </nav>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Real-time data analysis...</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error && !loading">{{ error }}</div>
+
+  <div class="alertes-list" *ngIf="!loading && filteredAlertes.length > 0">
+    <article *ngFor="let alerte of filteredAlertes" 
+             class="alerte-card" 
+             [ngClass]="'alerte-' + alerte.severite.toLowerCase()">
+      
+      <div class="alerte-icon-wrap">
+        <span class="material-symbols-outlined">{{ getSeveriteIcon(alerte.severite) }}</span>
+      </div>
+
+      <div class="alerte-content">
+        <div class="alerte-header">
+          <div class="alerte-type">
+            <span class="material-symbols-outlined type-icon">{{ getTypeIcon(alerte.typeAnomalie) }}</span>
+            {{ getTypeLabel(alerte.typeAnomalie) }}
+          </div>
+          <span class="badge" [ngClass]="getSeveriteClass(alerte.severite)">
+            {{ alerte.severite }}
+          </span>
+        </div>
+
+        <h3 class="alerte-groupe">
+          {{ alerte.nomGroupe }} 
+          <small *ngIf="alerte.codeGroupe">#{{ alerte.codeGroupe }}</small>
+        </h3>
+
+        <div class="retard-badge" *ngIf="alerte.joursRetard && alerte.joursRetard > 0">
+          Overdue by {{ alerte.joursRetard }} days
+        </div>
+
+        <p class="alerte-description">{{ alerte.description }}</p>
+
+        <div class="alerte-footer">
+          <div class="alerte-suggestion" *ngIf="alerte.suggestion">
+            <span class="material-symbols-outlined">lightbulb</span>
+            <span>Tip: {{ alerte.suggestion }}</span>
+          </div>
+
+          <!-- Actions Contextuelles -->
+          <button class="btn-action" *ngIf="alerte.typeAnomalie === 'SANS_FORMATEUR'" [routerLink]="['/admin/groupe/details', alerte.idGroupe]" [queryParams]="{ tab: 'members' }">
+            Assign an instructor
+          </button>
+          <button class="btn-action btn-secondary" *ngIf="alerte.typeAnomalie === 'SANS_FORMATEUR'" [routerLink]="['/admin/groupe/details', alerte.idGroupe]">
+            View group
+          </button>
+          <button class="btn-action" *ngIf="alerte.typeAnomalie === 'OBJECTIF_EN_RETARD' || alerte.typeAnomalie === 'SANS_OBJECTIF'" routerLink="/admin/objectif">
+            Manage objectives
+          </button>
+          <button class="btn-action" *ngIf="alerte.typeAnomalie === 'CAPACITE_INCOHERENTE'" routerLink="/admin/groupe">
+            Adjust capacity
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div *ngIf="!loading && filteredAlertes.length === 0" class="empty-state">
+    <span class="material-symbols-outlined">check_circle</span>
+    <p>Great news! No anomalies were detected in this category.</p>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+<div class="analysis-container dashboard-fade-in">
+  <header class="analysis-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined">balance</span>
+        Group Balancing
+      </h1>
+    </div>
+  </header>
+
+  <!-- Configuration -->
+  <section class="config-card">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Level to optimize</label>
+        <select [(ngModel)]="selectedNiveau" class="form-control">
+          <option *ngFor="let niv of niveauxEligibles" [value]="niv">Level {{ niv }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tolerance threshold (students)</label>
+        <input type="number" [(ngModel)]="seuilTolerance" class="form-control" min="1" max="10">
+      </div>
+      <button class="btn-generate" (click)="genererPlan()" [disabled]="generating">
+        <span class="material-symbols-outlined" *ngIf="!generating">analytics</span>
+        {{ generating ? 'Analyzing...' : 'Simulate Plan' }}
+      </button>
+    </div>
+  </section>
+
+  <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+  <div class="alert alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+
+  <!-- Dashboard de Simulation -->
+  <div *ngIf="plan" class="plan-dashboard">
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="label">Total Students</span>
+        <span class="value">{{ plan.totalEtudiants }}</span>
+        <span class="sub">across {{ plan.nombreGroupes }} groups</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Ideal Target</span>
+        <span class="value">{{ plan.cibleIdeale }}</span>
+        <span class="sub">± {{ plan.seuilTolerance }} students</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">Improvement</span>
+        <span class="value">{{ plan.ameliorationPourcent }}%</span>
+        <div class="amelioration-badge" [ngClass]="getAmeliorationClass()">
+          {{ plan.ameliorationPourcent >= 50 ? 'Excellent' : 'Stable' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Impact Visuel (Ecart-type) -->
+    <div class="impact-viz">
+      <div class="viz-item">
+        <span class="val">{{ plan.ecartTypeAvant | number:'1.1-2' }}</span>
+        <span class="lab">Deviation Before</span>
+      </div>
+      <div class="viz-arrow">
+        <span class="material-symbols-outlined">trending_down</span>
+      </div>
+      <div class="viz-item">
+        <span class="val">{{ plan.ecartTypeApres | number:'1.1-2' }}</span>
+        <span class="lab">Projected Deviation</span>
+      </div>
+    </div>
+
+    <!-- Liste des mouvements -->
+    <div class="section-title">
+      <span class="material-symbols-outlined">move_up</span>
+      Suggested moves ({{ plan.totalTransferts }})
+    </div>
+
+    <div class="mouvements-list" *ngIf="plan.mouvements.length > 0">
+      <article *ngFor="let m of plan.mouvements" class="mouvement-card">
+        <div class="m-source">
+          <div class="m-icon"><span class="material-symbols-outlined">logout</span></div>
+          <div class="m-info">
+            <strong>{{ m.groupeSourceCode }}</strong>
+            <span>Initial: {{ m.capaciteAvantSource }} students</span>
+          </div>
+        </div>
+
+        <div class="m-arrow">
+          <span class="material-symbols-outlined">arrow_right_alt</span>
+        </div>
+
+        <div class="m-quantity">
+          <span>{{ m.nombreEtudiantsATransferer }}</span>
+          <small>Transfers</small>
+        </div>
+
+        <div class="m-arrow">
+          <span class="material-symbols-outlined">arrow_right_alt</span>
+        </div>
+
+        <div class="m-target">
+          <div class="m-icon"><span class="material-symbols-outlined">login</span></div>
+          <div class="m-info">
+            <strong>{{ m.groupeCibleCode }}</strong>
+            <span>Initial: {{ m.capaciteAvantCible }} students</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="plan.mouvements.length === 0">
+      <span class="material-symbols-outlined">task_alt</span>
+      <p>The level is already perfectly balanced. No move is needed.</p>
+    </div>
+
+    <!-- Action Bar (Sticky) -->
+    <div class="action-bar" *ngIf="plan.statut === 'SIMULE' && plan.mouvements.length > 0">
+      <div class="action-info">
+        <strong>Ready to execute?</strong>
+        <p>This action will permanently move {{ plan.totalTransferts }} students.</p>
+      </div>
+      <button class="btn-execute" (click)="executerPlan()" [disabled]="executing">
+        <span class="material-symbols-outlined" *ngIf="!executing">bolt</span>
+        {{ executing ? 'Transferring...' : 'Apply balancing' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!plan && !generating" class="empty-state">
+    <span class="material-symbols-outlined">auto_awesome_motion</span>
+    <p>Select a level and run a simulation to see balancing opportunities.</p>
+  </div>
+</div>

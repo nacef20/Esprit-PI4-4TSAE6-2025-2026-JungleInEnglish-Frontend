@@ -1,0 +1,51 @@
+<header class="site-header fixed top-0 left-0 right-0 w-full z-30 bg-white/95 backdrop-blur border-b border-gray-100 transition-all"
+  [ngClass]="{'shadow-sm': scrollActive}"
+>
+  <nav class="max-w-screen-xl mx-auto px-6 sm:px-8 lg:px-16 h-16 flex items-center justify-between">
+
+    <!-- LOGO + TITLE -->
+    <div class="flex items-center gap-3 min-w-[220px]">
+      <img src="assets/logo.jpg" class="h-9 w-9 object-contain" alt="Logo" />
+      <h1 class="text-base font-extrabold tracking-tight text-gray-900 leading-none">
+        Jungle in English
+      </h1>
+    </div>
+
+    <!-- MENU -->
+    <ul class="hidden lg:flex items-center gap-8 font-semibold text-gray-700">
+      <li (click)="scrollTo('about')" [ngClass]="activeLink === 'about' ? 'menu-active' : ''" class="menu-link">About</li>
+      <li (click)="scrollTo('feature')" [ngClass]="activeLink === 'feature' ? 'menu-active' : ''" class="menu-link">Feature</li>
+      <li (click)="scrollTo('events')" [ngClass]="activeLink === 'events' ? 'menu-active' : ''" class="menu-link">Events</li>
+      <li (click)="scrollTo('pricing')" [ngClass]="activeLink === 'pricing' ? 'menu-active' : ''" class="menu-link">Pricing</li>
+      <li (click)="scrollTo('testimonials')" [ngClass]="activeLink === 'testimonials' ? 'menu-active' : ''" class="menu-link">Testimonials</li>
+    </ul>
+
+    <div class="flex items-center gap-4">
+      <a routerLink="/courses" class="courses-link">Courses</a>
+      <a routerLink="/shop" class="courses-link">Shop</a>
+      <a routerLink="/jobs" class="courses-link">Jobs</a>
+      <a routerLink="/my-complaints" class="courses-link">Complaints</a>
+      <a routerLink="/my-todos" class="courses-link">Missions</a>
+      <a routerLink="/my-stats" class="courses-link">Progress</a>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="flex items-center justify-end min-w-[200px] gap-4">
+      @if (!isLoggedIn()) {
+        <a (click)="login()" class="signin-link cursor-pointer">
+          Sign In
+        </a>
+      } @else {
+        @if (isAdmin()) {
+          <a routerLink="/admin" class="signin-link" style="background: #0ea37a; color: white; padding: 0.5rem 1rem; border-radius: 8px;">
+            Dashboard
+          </a>
+        }
+        <a (click)="logout()" class="text-red-600 font-bold cursor-pointer hover:underline">
+          Logout
+        </a>
+      }
+    </div>
+
+  </nav>
+</header>

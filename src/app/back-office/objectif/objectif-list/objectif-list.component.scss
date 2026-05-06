@@ -1,0 +1,25 @@
+@import '../../groupe/groupe-list/groupe-list.component.scss';
+
+.competence-badge { background: #e9d8fd; color: #44337a; }
+
+.non_commence { background: #e2e8f0; color: #4a5568; }
+.en_cours { background: #fefcbf; color: #744210; }
+.atteint { background: #c6f6d5; color: #22543d; }
+.partiellement_atteint { background: #feebc8; color: #7b341e; }
+.non_atteint { background: #fed7e2; color: #702459; }
+
+.priority-high { background: #fff5f5; border: 1px solid #fc8181; color: #c53030; }
+.priority-medium { background: #fffaf0; border: 1px solid #f6ad55; color: #9c4221; }
+.priority-low { background: #f0fff4; border: 1px solid #68d391; color: #22543d; }
+
+.card-footer-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+
+  .btn-status-activate {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 px-4">
+  <div class="max-w-3xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3">
+      <button (click)="goBack()" class="p-2 hover:bg-white rounded-lg transition-all shadow-sm bg-white/80">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
+      <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">description</span>
+        My Complaint
+      </h1>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-4 border-[#0ea37a] border-t-transparent"></div>
+    </div>
+
+    <!-- Complaint card -->
+    <div *ngIf="complaint && !loading" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-5">
+
+      <!-- Status -->
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-semibold px-3 py-1.5 rounded-full flex items-center gap-1"
+          [ngClass]="{
+            'bg-yellow-100 text-yellow-700': complaint.status === 'EN_ATTENTE',
+            'bg-green-100 text-green-700': complaint.status === 'TRAITEE',
+            'bg-red-100 text-red-700': complaint.status === 'REJETEE'
+          }">
+          <span class="material-symbols-outlined text-sm">{{ getStatusIcon(complaint.status) }}</span>
+          {{ getStatusLabel(complaint.status) }}
+        </span>
+        <span class="text-sm text-gray-400">{{ complaint.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+
+      <!-- Title -->
+      <h2 class="text-2xl font-bold text-gray-800">{{ complaint.title }}</h2>
+
+      <!-- Description -->
+      <div class="bg-gray-50 rounded-xl p-5">
+        <p class="text-gray-600 leading-relaxed">{{ complaint.description }}</p>
+      </div>
+
+      <!-- Complaint attachment -->
+      <div *ngIf="complaint.attachmentFileName" class="rounded-xl border border-emerald-100 bg-emerald-50 p-4 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <p class="text-sm font-medium text-emerald-700 truncate">{{ complaint.attachmentFileName }}</p>
+          <p class="text-xs text-emerald-600">Complaint attachment</p>
+        </div>
+        <button
+          (click)="downloadComplaintAttachment()"
+          class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-all">
+          <span class="material-symbols-outlined text-base">download</span>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="downloadError" class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+      <span class="material-symbols-outlined text-base">error</span>
+      {{ downloadError }}
+    </div>
+
+    <!-- Responses -->
+    <div *ngIf="complaint && !loading" class="space-y-4">
+      <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#0ea37a]">forum</span>
+        Responses ({{ responses.length }})
+      </h3>
+
+      <div *ngIf="responses.length === 0"
+        class="text-center py-10 bg-white rounded-2xl shadow-sm border border-gray-100">
+        <span class="material-symbols-outlined text-5xl text-gray-300 mb-3 block">chat_bubble_outline</span>
+        <p class="text-gray-500">No responses yet</p>
+        <p class="text-sm text-gray-400 mt-1">You will be notified when a response is added</p>
+      </div>
+
+      <div *ngFor="let response of responses"
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-full bg-[#0ea37a]/10 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-[#0ea37a]">support_agent</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-semibold text-gray-700">Administration</span>
+              <span class="text-xs text-gray-400">{{ response.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <p class="text-gray-600 leading-relaxed">{{ response.message }}</p>
+
+            <div *ngIf="response.attachmentFileName" class="mt-3 flex items-center justify-between gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2">
+              <p class="text-xs text-blue-700 truncate"><strong>{{ response.attachmentFileName }}</strong></p>
+              <button
+                (click)="downloadResponseAttachment(response)"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-white border border-blue-200 text-blue-700 hover:bg-blue-50 transition-all">
+                <span class="material-symbols-outlined text-base">download</span>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

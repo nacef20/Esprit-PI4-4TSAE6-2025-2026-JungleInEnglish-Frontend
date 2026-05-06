@@ -1,0 +1,104 @@
+.analysis-container { padding: 2.5rem; max-width: 1400px; margin: 0 auto; color: #2d3436; }
+.analysis-header { margin-bottom: 2rem; }
+.page-title { display: flex; align-items: center; gap: 1rem; font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; .material-symbols-outlined { font-size: 2.8rem; color: #6c5ce7; -webkit-text-fill-color: initial; } }
+
+.tabs-nav { display: flex; gap: 1rem; margin-bottom: 2.5rem; background: #f1f2f6; padding: 0.5rem; border-radius: 16px; width: fit-content; }
+.tab-btn { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1.5rem; border: none; border-radius: 12px; background: transparent; cursor: pointer; font-size: 1rem; font-weight: 600; color: #636e72; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .material-symbols-outlined { font-size: 1.4rem; }
+  &:hover { background: rgba(255,255,255,0.5); }
+  &.active { background: white; color: #0984e3; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+}
+
+.search-bar { display: flex; gap: 1rem; align-items: center; margin-bottom: 3rem; background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f2f6; 
+  label { font-weight: 600; color: #2d3436; }
+}
+
+.form-control { flex: 1; padding: 0.8rem 1.2rem; border: 2px solid #f1f2f6; border-radius: 12px; font-size: 1rem; transition: all 0.2s;
+  &:focus { outline: none; border-color: #0984e3; }
+  &.small { max-width: 120px; }
+}
+
+.btn-primary { padding: 0.8rem 2rem; background: #0984e3; color: white; border: none; border-radius: 12px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s;
+  &:hover { background: #0773c5; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+}
+
+// ── Parcours Résumé ──
+.parcours-resume { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+.resume-card { padding: 1.5rem; background: white; border-radius: 20px; border: 1px solid #f1f2f6; text-align: left; transition: transform 0.3s;
+  &:hover { transform: translateY(-5px); }
+}
+.resume-value { font-size: 2rem; font-weight: 800; color: #2d3436; display: flex; align-items: center; gap: 0.5rem; .material-symbols-outlined { font-size: 1.8rem; } }
+.resume-label { font-size: 0.9rem; color: #636e72; font-weight: 600; margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.score-up .resume-value { color: #00b894; }
+.score-down .resume-value { color: #d63031; }
+.score-neutral .resume-value { color: #636e72; }
+
+// ── Timeline ──
+.timeline { position: relative; padding-left: 20px; }
+.timeline-item { display: flex; gap: 2.5rem; margin-bottom: 0; }
+.timeline-connector { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; }
+.timeline-dot { width: 24px; height: 24px; border-radius: 50%; border: 4px solid white; background: #dfe6e9; z-index: 1; flex-shrink: 0; box-shadow: 0 0 0 4px #dfe6e920; }
+.timeline-dot.badge-actif { background: #00b894; box-shadow: 0 0 0 4px #00b89420; }
+.timeline-dot.badge-sorti { background: #b2bec3; box-shadow: 0 0 0 4px #b2bec320; }
+.timeline-dot.badge-suspendu { background: #f39c12; box-shadow: 0 0 0 4px #f39c1220; }
+.timeline-line { width: 4px; flex-grow: 1; background: #f1f2f6; margin: 4px 0; border-radius: 2px; }
+
+.timeline-content { 
+    flex-grow: 1; 
+    background: white; 
+    border-radius: 24px; 
+    padding: 1.8rem; 
+    margin-bottom: 2rem; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.04); 
+    border: 1px solid #f1f2f6;
+    transition: all 0.3s ease;
+    &:hover { border-color: #0984e3; box-shadow: 0 15px 40px rgba(9, 132, 227, 0.08); }
+}
+
+.timeline-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;
+  h3 { font-size: 1.4rem; font-weight: 800; color: #2d3436; margin: 0; small { color: #636e72; font-weight: 400; font-size: 1rem; } }
+}
+.badge { padding: 0.5rem 1rem; border-radius: 12px; font-size: 0.85rem; font-weight: 700; }
+.badge-actif { background: #00b89415; color: #00b894; }
+.badge-sorti { background: #636e7215; color: #636e72; }
+.badge-suspendu { background: #f39c1215; color: #f39c12; }
+
+.timeline-dates { display: flex; align-items: center; gap: 0.8rem; color: #636e72; font-weight: 600; margin-bottom: 1.2rem; font-size: 0.95rem; }
+.duree { background: #f1f2f6; padding: 0.2rem 0.6rem; border-radius: 8px; color: #2d3436; font-size: 0.85rem; }
+
+.timeline-scores { 
+    display: flex; 
+    align-items: center; 
+    gap: 1.5rem; 
+    background: #fdfdfd; 
+    padding: 1rem 1.5rem; 
+    border-radius: 16px; 
+    border: 1px solid #f1f2f6;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+}
+.evolution { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.8rem; border-radius: 10px; font-weight: 700; }
+.score-up { color: #00b894; background: #00b89410; }
+.score-down { color: #d63031; background: #d6303110; }
+.score-neutral { color: #636e72; background: #f1f2f6; }
+
+.timeline-raison { display: flex; align-items: center; gap: 0.8rem; font-size: 0.95rem; font-weight: 600; color: #0984e3; margin-bottom: 0.8rem;
+  .material-symbols-outlined { font-size: 1.4rem; }
+}
+.timeline-comment { font-size: 0.95rem; color: #636e72; font-style: italic; border-left: 3px solid #dfe6e9; padding-left: 1rem; margin-top: 1rem; }
+
+// ── Rétention Table ──
+.content-card { background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 15px 40px rgba(0,0,0,0.05); border: 1px solid #f1f2f6; }
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0 0.5rem;
+  th { padding: 1rem; text-align: left; font-size: 0.85rem; color: #b2bec3; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 2px solid #f1f2f6; }
+  td { padding: 1.2rem 1rem; vertical-align: middle; }
+  tr:hover td { background: #fdfdfd; }
+}
+
+.retention-bar { position: relative; width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; min-width: 120px; }
+.retention-fill { height: 100%; border-radius: 10px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.retention-bon { background: #00b894; }
+.retention-moyen { background: #fdcb6e; }
+.retention-faible { background: #ff7675; }
+.retention-value { display: block; margin-top: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #2d3436; }

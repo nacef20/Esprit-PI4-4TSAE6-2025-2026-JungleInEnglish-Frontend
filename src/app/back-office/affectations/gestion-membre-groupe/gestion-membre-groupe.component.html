@@ -1,0 +1,188 @@
+<div class="members-container">
+  <div class="alert alert-error" *ngIf="error">
+    <span class="material-symbols-outlined">error</span>
+    {{ error }}
+  </div>
+
+  <div class="alert alert-warning" *ngIf="groupe && (groupe.statut === 'COMPLET' || groupe.statut === 'TERMINE' || groupe.statut === 'ANNULE')">
+    <span class="material-symbols-outlined">report_problem</span>
+    {{ getStudentAffectationBlockedMessage() }}
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMessage">
+    <span class="material-symbols-outlined">check_circle</span>
+    {{ successMessage }}
+  </div>
+
+  <section class="mb-5">
+    <div class="section-header">
+      <h3>
+        <span class="material-symbols-outlined">person_pin</span>
+        Teaching Team
+      </h3>
+      <div class="actions">
+        <button class="btn-primary" (click)="showAffectFormateur = !showAffectFormateur">
+          <span class="material-symbols-outlined">person_add</span>
+          Assign Instructor
+        </button>
+      </div>
+    </div>
+
+    <div class="alert alert-warning" *ngIf="!formateurPrincipal && !loading">
+      <span class="material-symbols-outlined">report_problem</span>
+      This group does not yet have a <strong>PRINCIPAL</strong> instructor assigned.
+    </div>
+
+    <div class="inline-form" *ngIf="showAffectFormateur">
+      <input type="number" [(ngModel)]="newFormateur.id" placeholder="Instructor ID" class="form-control">
+      <select [(ngModel)]="newFormateur.role" class="form-control">
+        <option *ngFor="let r of roles" [value]="r">{{ getRoleLabel(r) }}</option>
+      </select>
+      <input type="text" [(ngModel)]="newFormateur.matiere" placeholder="Subject" class="form-control">
+      <input type="number" [(ngModel)]="newFormateur.hours" placeholder="Hours/week" class="form-control">
+      <button class="btn-success" (click)="onAffectFormateur()">Confirm</button>
+      <button class="btn-secondary" (click)="showAffectFormateur = false">Cancel</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Instructor ID</th>
+            <th>Role</th>
+            <th>Subject</th>
+            <th class="text-center">Load</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of formateurs">
+            <td><strong>#{{ f.formateurId }}</strong></td>
+            <td>
+              <select [value]="f.role" (change)="onChangerRole(f.formateurId, $event.target)" class="role-select">
+                <option *ngFor="let r of roles" [value]="r">{{ getRoleLabel(r) }}</option>
+              </select>
+            </td>
+            <td>{{ f.matiere || '-' }}</td>
+            <td class="text-center">{{ f.heuresParSemaine || 0 }}h</td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="f.estActif ? 'badge-success' : 'badge-danger'">
+                {{ f.estActif ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button class="btn-danger-sm" (click)="onRetirerFormateur(f.formateurId)">Remove</button>
+            </td>
+          </tr>
+          <tr *ngIf="formateurs.length === 0">
+            <td colspan="6" class="empty-row">No instructor assigned.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-header">
+      <h3>
+        <span class="material-symbols-outlined">groups</span>
+        Enrolled Students
+      </h3>
+      <div class="actions">
+        <button class="btn-primary" (click)="showAffectEtudiant = !showAffectEtudiant" [disabled]="isStudentAffectationBlocked()">
+          <span class="material-symbols-outlined">person_add_alt</span>
+          Assign Student
+        </button>
+      </div>
+    </div>
+
+    <div class="inline-form" *ngIf="showAffectEtudiant">
+      <input type="number" [(ngModel)]="newEtudiant.id" placeholder="Student ID" class="form-control">
+      <input type="number" [(ngModel)]="newEtudiant.score" placeholder="Entry score" class="form-control">
+      <input type="text" [(ngModel)]="newEtudiant.comment" placeholder="Comment" class="form-control">
+      <button class="btn-success" (click)="onAffectEtudiant()">Assign</button>
+      <button class="btn-secondary" (click)="showAffectEtudiant = false">Cancel</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Assignment</th>
+            <th class="text-center">Score</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of etudiants">
+            <td><strong>#{{ e.etudiantId }}</strong></td>
+            <td>{{ e.dateAffectation | date:'shortDate' }}</td>
+            <td class="text-center">{{ e.scoreEntree || '-' }}</td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="getStatutClass(e.statut)">
+                  {{ getStatusLabel(e.statut) }}
+              </span>
+            </td>
+            <td class="text-center actions-group">
+              <button class="btn-table" (click)="openChangeGroupe(e.etudiantId)">Change Group</button>
+              <button class="btn-table warning" *ngIf="e.statut === 'ACTIF'" (click)="onSuspendEtudiant(e.etudiantId)">Suspend</button>
+              <button class="btn-table danger" (click)="onDesaffectEtudiant(e.etudiantId)">Unassign</button>
+            </td>
+          </tr>
+          <tr *ngIf="etudiants.length === 0">
+            <td colspan="5" class="empty-row">No student is assigned to this group.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="modal-overlay" *ngIf="showChangeGroupe">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Change Group</h3>
+        <button class="close-btn" (click)="showChangeGroupe = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-error" *ngIf="transferError">
+          <span class="material-symbols-outlined">error</span>
+          {{ transferError }}
+        </div>
+        <div class="form-group">
+          <label>New Group</label>
+          <select [(ngModel)]="transferEtudiant.newGroupeId" class="form-control">
+            <option [ngValue]="undefined" disabled selected>Choose a group</option>
+            <option *ngFor="let g of availableGroups" [ngValue]="g.idGroupe">
+              {{ g.nom }} ({{ g.codeGroupe }})
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reason for change</label>
+          <select [(ngModel)]="transferEtudiant.raison" class="form-control">
+            <option *ngFor="let r of raisons" [value]="r">{{ getReasonLabel(r) }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Initiated by</label>
+          <select [(ngModel)]="transferEtudiant.initie" class="form-control">
+            <option *ngFor="let i of initiateurs" [value]="i">{{ getInitiatorLabel(i) }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Comment</label>
+          <textarea [(ngModel)]="transferEtudiant.comment" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="showChangeGroupe = false">Cancel</button>
+        <button type="button" class="btn-primary" (click)="onConfirmTransfer()" [disabled]="transferLoading">
+          {{ transferLoading ? 'Transferring...' : 'Confirm transfer' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

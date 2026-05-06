@@ -1,0 +1,51 @@
+@import '../../groupe/groupe-list/groupe-list.component.scss';
+
+.categorie-presence { background: #bee3f8; color: #2c5282; }
+.categorie-retard { background: #fed7e2; color: #702459; }
+.categorie-participation { background: #c6f6d5; color: #22543d; }
+.categorie-comportement { background: #feebc8; color: #7b341e; }
+.categorie-devoirs { background: #e9d8fd; color: #44337a; }
+.categorie-materiel { background: #edf2f7; color: #2d3748; }
+.categorie-autre { background: #e2e8f0; color: #4a5568; }
+
+.status-toggle-container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-status-activate {
+  background: #48bb78;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover { background: #38a169; }
+}
+
+.btn-status-deactivate {
+  background: #f56565;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover { background: #e53e3e; }
+}
+
+.card-description {
+  color: #4a5568;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

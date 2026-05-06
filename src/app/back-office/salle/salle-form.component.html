@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="header">
+    <h2>{{ isEditMode ? 'Modifier' : 'Ajouter' }} une salle</h2>
+  </div>
+
+  <div class="message error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="message success-message" *ngIf="successMessage">{{ successMessage }}</div>
+
+  <div class="form-card">
+    <form (ngSubmit)="onSubmit()" #salleForm="ngForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom de la salle <span class="required">*</span></label>
+          <input name="nom_salle" [(ngModel)]="salle.nom_salle" required placeholder="Nom de la salle" />
+        </div>
+        <div class="form-group">
+          <label>Capacité <span class="required">*</span></label>
+          <input name="capacite" type="number" [(ngModel)]="salle.capacite" required placeholder="Capacité" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Localisation</label>
+          <input name="localisation" [(ngModel)]="salle.localisation" placeholder="Localisation" />
+        </div>
+      </div>
+      <div class="form-row">
+        <button type="submit" [disabled]="isLoading">{{ isEditMode ? 'Mettre à jour' : 'Créer' }}</button>
+        <button type="button" (click)="cancel()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

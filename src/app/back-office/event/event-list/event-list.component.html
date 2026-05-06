@@ -1,0 +1,109 @@
+<div class="event-container">
+  <div class="event-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <svg class="title-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        Gestion des Événements
+      </h1>
+      <button class="btn-primary" (click)="createEvent()" *ngIf="authService.isAdmin()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nouvel Événement
+      </button>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement des événements...</p>
+  </div>
+
+  <div class="event-grid" *ngIf="!isLoading && events.length > 0">
+    <div class="event-card" *ngFor="let event of events">
+      <div class="card-header">
+        <div class="card-actions" *ngIf="authService.isAdmin()">
+          <button class="action-btn view-btn text-emerald-600 hover:bg-emerald-50" style="padding: 6px; border-radius: 8px;" (click)="viewParticipants(event.eventId!)" title="Voir Participants">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </button>
+          <button class="action-btn edit-btn" (click)="editEvent(event.eventId!)" title="Modifier">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button class="action-btn delete-btn" (click)="deleteEvent(event.eventId!)" title="Supprimer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="event-image" *ngIf="event.imageUrl">
+          <img [src]="eventService.getMediaUrl(event.imageUrl)" alt="{{ event.title }}">
+        </div>
+        <h3 class="card-title">{{ event.title }}</h3>
+        <p class="card-description">{{ event.description }}</p>
+        
+        <div class="card-details">
+          <div class="detail-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>{{ event.startTime | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>{{ event.location }}</span>
+          </div>
+          <div class="detail-item capacity-detail" [ngClass]="{'is-low': event.availableSeats! <= 5, 'is-full': event.availableSeats === 0}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+            </svg>
+            <div class="capacity-info">
+              <span class="capacity-label">Disponibilité</span>
+              <span class="capacity-value">
+                <strong>{{ event.availableSeats }}</strong> / {{ event.capacity }} <small>places</small>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && events.length === 0">
+    <svg class="empty-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+       <line x1="16" y1="2" x2="16" y2="6"></line>
+       <line x1="8" y1="2" x2="8" y2="6"></line>
+    </svg>
+    <h3>Aucun événement trouvé</h3>
+    <button class="btn-primary" (click)="createEvent()" *ngIf="authService.isAdmin()">Créer un événement</button>
+  </div>
+</div>

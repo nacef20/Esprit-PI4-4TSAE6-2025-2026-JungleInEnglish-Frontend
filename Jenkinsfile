@@ -18,56 +18,46 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                dir('frontend') {
-                    sh '''
-                        node -v
-                        npm -v
-                        rm -rf node_modules package-lock.json .angular
-                        npm install --legacy-peer-deps --include=optional
-                        npm install @rollup/rollup-linux-x64-gnu --no-save --legacy-peer-deps || true
-                        npm install @rollup/rollup-linux-x64-musl --no-save --legacy-peer-deps || true
-                    '''
-                }
+                sh '''
+                    node -v
+                    npm -v
+                    rm -rf node_modules package-lock.json .angular
+                    npm install --legacy-peer-deps --include=optional
+                    npm install @rollup/rollup-linux-x64-gnu --no-save --legacy-peer-deps || true
+                    npm install @rollup/rollup-linux-x64-musl --no-save --legacy-peer-deps || true
+                '''
             }
         }
 
         stage('Build Angular') {
             steps {
-                dir('frontend') {
-                    sh 'npm run build -- --configuration production'
-                }
+                sh 'npm run build -- --configuration production'
             }
         }
 
         stage('Tests') {
             steps {
-                dir('frontend') {
-                    sh 'npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox --code-coverage'
-                }
+                sh 'npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox --code-coverage'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                dir('frontend') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh '''
-                            npx sonar-scanner \
-                            -Dsonar.projectKey=forum-frontend \
-                            -Dsonar.sources=src \
-                            -Dsonar.host.url=${SONAR_HOST_URL} \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/school-management/lcov.info
-                        '''
-                    }
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        npx sonar-scanner \
+                        -Dsonar.projectKey=forum-frontend \
+                        -Dsonar.sources=src \
+                        -Dsonar.host.url=${SONAR_HOST_URL} \
+                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                    '''
                 }
             }
         }
 
         stage('Docker Build') {
             steps {
-                dir('frontend') {
-                    sh 'docker build -t nacef17/forum-frontend:latest .'
-                }
+                sh 'docker build -t nacef17/forum-frontend:latest .'
             }
         }
 

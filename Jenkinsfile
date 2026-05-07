@@ -6,6 +6,8 @@ pipeline {
         CHROME_BIN = '/usr/bin/chromium'
     }
 
+
+
     stages {
 
         stage('Checkout') {
@@ -16,7 +18,7 @@ pipeline {
             }
         }
 
-        
+
 
         stage('Install Dependencies') {
             steps {
